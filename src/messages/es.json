@@ -16,13 +16,33 @@
       "subtitle": "Cocina tradicional francesa",
       "cta": "Reservar una mesa"
     },
-    "about": {
-      "title": "Nuestra historia",
-      "description": "En el corazón de Agde, Le Divino le da la bienvenida en un ambiente cálido para una cocina francesa auténtica, elaborada con productos frescos y de temporada."
+    "welcome": {
+      "title": "Bienvenido al Divino",
+      "description": "En el corazón de Agde, Le Divino le da la bienvenida en un ambiente cálido y elegante. Descubra una cocina francesa auténtica, elaborada con productos frescos y de temporada, sublimada por la maestría de nuestro chef."
+    },
+    "highlights": {
+      "cuisine": {
+        "title": "Cocina local",
+        "description": "Platos generosos preparados con productos locales y de temporada."
+      },
+      "ambiance": {
+        "title": "Ambiente elegante",
+        "description": "Una decoración refinada que combina autenticidad mediterránea y confort moderno."
+      },
+      "service": {
+        "title": "Servicio atento",
+        "description": "Un equipo apasionado a su servicio para una experiencia memorable."
+      }
     }
   },
   "menu": {
     "title": "Carta",
+    "subtitle": "Descubra nuestras especialidades",
+    "formules": "Menús",
+    "allergens": "Alérgenos",
+    "vegetarian": "Vegetariano",
+    "signature": "Firma del chef",
+    "empty": "Carta en preparación",
     "categories": {
       "entrees": "Entrantes",
       "plats": "Platos principales",
@@ -32,28 +52,42 @@
   },
   "reservation": {
     "title": "Reservar una mesa",
+    "subtitle": "Elija su momento",
+    "success": "Su solicitud de reserva ha sido enviada con éxito. Le confirmaremos por email.",
     "form": {
-      "name": "Nombre",
-      "email": "Email",
+      "name": "Nombre completo",
+      "email": "Dirección de email",
       "phone": "Teléfono",
-      "date": "Fecha",
+      "date": "Fecha deseada",
       "time": "Hora",
       "guests": "Número de comensales",
-      "message": "Mensaje",
-      "submit": "Reservar"
+      "message": "Mensaje o solicitud especial",
+      "submit": "Confirmar reserva"
     }
   },
   "gallery": {
-    "title": "Galería"
+    "title": "Galería",
+    "subtitle": "Descubra Le Divino en imágenes",
+    "empty": "Las fotos llegan pronto"
   },
   "contact": {
-    "title": "Contacto",
+    "title": "Encuéntrenos",
+    "subtitle": "Venga a visitarnos",
     "address": "Dirección",
     "phone": "Teléfono",
     "email": "Email",
-    "hours": "Horarios de apertura"
+    "hours": "Horarios de apertura",
+    "form_title": "Envíenos un mensaje",
+    "form_name": "Su nombre",
+    "form_email": "Su email",
+    "form_subject": "Asunto",
+    "form_message": "Su mensaje",
+    "form_submit": "Enviar"
   },
   "footer": {
+    "hours": "Horarios",
+    "contact": "Contacto",
+    "follow": "Síguenos",
     "rights": "Todos los derechos reservados",
     "legal": "Aviso legal"
   }

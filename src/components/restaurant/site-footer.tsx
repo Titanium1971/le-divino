@@ -1,40 +1,147 @@
+"use client";
+
+import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { restaurantConfig } from "@/restaurant.config";
-import { HoursDisplay } from "./hours-display";
+
+const dayNames: Record<number, string> = {
+  1: "Lundi",
+  2: "Mardi",
+  3: "Mercredi",
+  4: "Jeudi",
+  5: "Vendredi",
+  6: "Samedi",
+  7: "Dimanche",
+};
 
 export function SiteFooter() {
   const t = useTranslations("footer");
 
   return (
-    <footer className="border-t bg-muted/30 py-12">
-      <div className="container mx-auto grid gap-8 px-4 md:grid-cols-3">
-        <div>
-          <p className="text-lg font-medium">{restaurantConfig.name}</p>
-          <p className="mt-1 text-sm text-muted-foreground">{restaurantConfig.tagline}</p>
-          {restaurantConfig.address.street && (
-            <p className="mt-4 text-sm text-muted-foreground">
-              {restaurantConfig.address.street}
-              <br />
-              {restaurantConfig.address.postalCode} {restaurantConfig.address.city}
+    <footer className="relative bg-brand-dark text-brand-cream/80">
+      {/* Ambiance photo banner */}
+      <div className="relative h-64 overflow-hidden">
+        <Image
+          src="/images/exterior-terrace.jpg"
+          alt="Terrasse Le Divino"
+          fill
+          className="object-cover"
+          sizes="100vw"
+          quality={75}
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-brand-cream via-brand-dark/60 to-brand-dark" />
+      </div>
+
+      {/* Main content */}
+      <div className="mx-auto max-w-6xl px-6 py-16">
+        <div className="grid gap-12 md:grid-cols-3">
+          {/* Col 1: Logo + Brand + address */}
+          <div>
+            <Image
+              src="/images/logo-divino.jpg"
+              alt="Logo Le Divino"
+              width={80}
+              height={80}
+              className="rounded-full"
+            />
+            <p className="mt-4 text-2xl font-extralight tracking-[0.2em] text-brand-cream uppercase">
+              Le Divino
             </p>
-          )}
-        </div>
-        <div>
-          <HoursDisplay />
-        </div>
-        <div>
-          {restaurantConfig.phone && (
-            <p className="text-sm text-muted-foreground">{restaurantConfig.phone}</p>
-          )}
-          {restaurantConfig.email && (
-            <p className="text-sm text-muted-foreground">{restaurantConfig.email}</p>
-          )}
+            <p className="mt-2 text-xs font-light tracking-[0.15em] uppercase text-brand-gold">
+              {restaurantConfig.tagline}
+            </p>
+            <div className="mt-6 space-y-1 text-sm font-light text-brand-cream/80">
+              <p>{restaurantConfig.address.street}</p>
+              <p>
+                {restaurantConfig.address.postalCode} {restaurantConfig.address.city}
+              </p>
+            </div>
+          </div>
+
+          {/* Col 2: Hours */}
+          <div>
+            <h3 className="text-[11px] font-normal tracking-[0.2em] uppercase text-brand-gold">
+              {t("hours")}
+            </h3>
+            <ul className="mt-4 space-y-2">
+              {restaurantConfig.hours.map((h) => (
+                <li key={h.day} className="flex justify-between text-sm font-light">
+                  <span className="text-brand-cream/90">{dayNames[h.day]}</span>
+                  <span className="text-brand-cream/70">
+                    {h.open
+                      ? `${h.open}\u2013${h.close} / ${h.dinnerOpen}\u2013${h.dinnerClose}`
+                      : "Ferm\u00e9"}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Col 3: Contact + socials */}
+          <div>
+            <h3 className="text-[11px] font-normal tracking-[0.2em] uppercase text-brand-gold">
+              {t("contact")}
+            </h3>
+            <div className="mt-4 space-y-3 text-sm font-light">
+              <p>
+                <a
+                  href={`tel:${restaurantConfig.phone.replace(/\s/g, "")}`}
+                  className="text-brand-cream/90 transition-colors hover:text-brand-gold"
+                >
+                  {restaurantConfig.phone}
+                </a>
+              </p>
+              <p>
+                <a
+                  href={`mailto:${restaurantConfig.email}`}
+                  className="text-brand-cream/90 transition-colors hover:text-brand-gold"
+                >
+                  {restaurantConfig.email}
+                </a>
+              </p>
+            </div>
+
+            {/* Social links */}
+            {(restaurantConfig.social.instagram || restaurantConfig.social.facebook) && (
+              <div className="mt-6">
+                <h4 className="text-[11px] font-normal tracking-[0.2em] uppercase text-brand-gold">
+                  {t("follow")}
+                </h4>
+                <div className="mt-3 flex gap-4">
+                  {restaurantConfig.social.instagram && (
+                    <a
+                      href={restaurantConfig.social.instagram}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs font-light text-brand-cream/80 transition-colors hover:text-brand-gold"
+                    >
+                      Instagram
+                    </a>
+                  )}
+                  {restaurantConfig.social.facebook && (
+                    <a
+                      href={restaurantConfig.social.facebook}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs font-light text-brand-cream/80 transition-colors hover:text-brand-gold"
+                    >
+                      Facebook
+                    </a>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
-      <div className="container mx-auto mt-8 border-t px-4 pt-8">
-        <p className="text-center text-xs text-muted-foreground">
-          &copy; {new Date().getFullYear()} {restaurantConfig.name}. {t("rights")}.
-        </p>
+
+      {/* Bottom bar */}
+      <div className="border-t border-brand-cream/20">
+        <div className="mx-auto max-w-6xl px-6 py-6">
+          <p className="text-center text-[11px] font-light tracking-wider text-brand-cream/60">
+            &copy; {new Date().getFullYear()} {restaurantConfig.name}. {t("rights")}.
+          </p>
+        </div>
       </div>
     </footer>
   );

@@ -24,10 +24,10 @@ export function LanguageSwitcher() {
     <select
       value={locale}
       onChange={(e) => onChange(e.target.value)}
-      className="rounded border bg-transparent px-2 py-1 text-sm font-light"
+      className="appearance-none rounded-none border border-brand-cream/40 bg-transparent px-3 py-1.5 text-[11px] font-light tracking-[0.15em] text-brand-cream transition-colors hover:border-brand-gold hover:text-brand-gold focus:outline-none"
     >
       {routing.locales.map((loc) => (
-        <option key={loc} value={loc}>
+        <option key={loc} value={loc} className="bg-brand-dark text-brand-cream">
           {localeLabels[loc]}
         </option>
       ))}

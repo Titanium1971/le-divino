@@ -44,43 +44,51 @@
   --radius-2xl: calc(var(--radius) + 8px);
   --radius-3xl: calc(var(--radius) + 12px);
   --radius-4xl: calc(var(--radius) + 16px);
+
+  /* Le Divino brand tokens */
+  --color-brand-bordeaux: #6B1A2A;
+  --color-brand-gold: #C5A55A;
+  --color-brand-dark: #0F0A0A;
+  --color-brand-cream: #FAF6F0;
 }
 
+/* ── Light (public site) ── */
 :root {
   --radius: 0.625rem;
-  --background: oklch(0.98 0.005 80);
-  --foreground: oklch(0.18 0.02 60);
-  --card: oklch(0.97 0.004 80);
-  --card-foreground: oklch(0.18 0.02 60);
-  --popover: oklch(0.98 0.005 80);
-  --popover-foreground: oklch(0.18 0.02 60);
-  --primary: oklch(0.35 0.1 25);
-  --primary-foreground: oklch(0.98 0.005 80);
-  --secondary: oklch(0.92 0.03 80);
-  --secondary-foreground: oklch(0.25 0.02 60);
-  --muted: oklch(0.94 0.02 80);
-  --muted-foreground: oklch(0.50 0.02 60);
-  --accent: oklch(0.70 0.14 70);
-  --accent-foreground: oklch(0.15 0.02 60);
+  --background: #FAF6F0;
+  --foreground: #1a1210;
+  --card: #FAF6F0;
+  --card-foreground: #1a1210;
+  --popover: #FAF6F0;
+  --popover-foreground: #1a1210;
+  --primary: #6B1A2A;
+  --primary-foreground: #FAF6F0;
+  --secondary: #f0e8dc;
+  --secondary-foreground: #2a1a10;
+  --muted: #f0e8dc;
+  --muted-foreground: #7a6a5a;
+  --accent: #C5A55A;
+  --accent-foreground: #1a1210;
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.90 0.01 80);
-  --input: oklch(0.90 0.01 80);
-  --ring: oklch(0.35 0.1 25);
-  --chart-1: oklch(0.35 0.1 25);
-  --chart-2: oklch(0.70 0.14 70);
+  --border: #e0d6c8;
+  --input: #e0d6c8;
+  --ring: #6B1A2A;
+  --chart-1: #6B1A2A;
+  --chart-2: #C5A55A;
   --chart-3: oklch(0.50 0.08 150);
   --chart-4: oklch(0.65 0.10 40);
   --chart-5: oklch(0.55 0.12 280);
   --sidebar: oklch(0.96 0.005 80);
   --sidebar-foreground: oklch(0.18 0.02 60);
-  --sidebar-primary: oklch(0.35 0.1 25);
-  --sidebar-primary-foreground: oklch(0.98 0.005 80);
+  --sidebar-primary: #6B1A2A;
+  --sidebar-primary-foreground: #FAF6F0;
   --sidebar-accent: oklch(0.94 0.02 80);
   --sidebar-accent-foreground: oklch(0.25 0.02 60);
   --sidebar-border: oklch(0.90 0.01 80);
-  --sidebar-ring: oklch(0.35 0.1 25);
+  --sidebar-ring: #6B1A2A;
 }
 
+/* ── Dark (admin) ── */
 .dark {
   --background: oklch(0.15 0.01 60);
   --foreground: oklch(0.95 0.005 80);
@@ -94,14 +102,14 @@
   --secondary-foreground: oklch(0.95 0.005 80);
   --muted: oklch(0.25 0.01 60);
   --muted-foreground: oklch(0.65 0.02 80);
-  --accent: oklch(0.70 0.14 70);
+  --accent: #C5A55A;
   --accent-foreground: oklch(0.15 0.01 60);
   --destructive: oklch(0.704 0.191 22.216);
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
   --ring: oklch(0.75 0.10 25);
   --chart-1: oklch(0.75 0.10 25);
-  --chart-2: oklch(0.70 0.14 70);
+  --chart-2: #C5A55A;
   --chart-3: oklch(0.60 0.10 150);
   --chart-4: oklch(0.70 0.12 40);
   --chart-5: oklch(0.65 0.15 280);
@@ -122,4 +130,54 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* ── Hero animation ── */
+@keyframes hero-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes hero-line-expand {
+  from {
+    width: 0;
+  }
+  to {
+    width: 80px;
+  }
+}
+
+@keyframes hero-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.animate-hero-up {
+  animation: hero-fade-up 1s ease-out both;
+}
+
+.animate-hero-up-delay {
+  animation: hero-fade-up 1s ease-out 0.3s both;
+}
+
+.animate-hero-up-delay-2 {
+  animation: hero-fade-up 1s ease-out 0.6s both;
+}
+
+.animate-hero-up-delay-3 {
+  animation: hero-fade-up 1s ease-out 0.9s both;
+}
+
+.animate-hero-line {
+  animation: hero-line-expand 0.8s ease-out 0.5s both;
+}
+
+.animate-hero-fade {
+  animation: hero-fade-in 1.2s ease-out 1.2s both;
 }

@@ -16,13 +16,33 @@
       "subtitle": "Cuisine traditionnelle française",
       "cta": "Réserver une table"
     },
-    "about": {
-      "title": "Notre histoire",
-      "description": "Au cœur d'Agde, Le Divino vous accueille dans un cadre chaleureux pour une cuisine française authentique, élaborée à partir de produits frais et de saison."
+    "welcome": {
+      "title": "Bienvenue au Divino",
+      "description": "Au cœur d'Agde, Le Divino vous accueille dans un cadre chaleureux et élégant. Découvrez une cuisine française authentique, élaborée à partir de produits frais et de saison, sublimée par le savoir-faire de notre chef."
+    },
+    "highlights": {
+      "cuisine": {
+        "title": "Cuisine du terroir",
+        "description": "Des plats généreux préparés avec des produits locaux et de saison."
+      },
+      "ambiance": {
+        "title": "Cadre élégant",
+        "description": "Un décor raffiné mêlant authenticité méditerranéenne et confort moderne."
+      },
+      "service": {
+        "title": "Service attentionné",
+        "description": "Une équipe passionnée à votre écoute pour une expérience mémorable."
+      }
     }
   },
   "menu": {
     "title": "La Carte",
+    "subtitle": "Découvrez nos spécialités",
+    "formules": "Nos Formules",
+    "allergens": "Allergènes",
+    "vegetarian": "Végétarien",
+    "signature": "Signature du chef",
+    "empty": "Menu en cours de préparation",
     "categories": {
       "entrees": "Entrées",
       "plats": "Plats",
@@ -32,28 +52,42 @@
   },
   "reservation": {
     "title": "Réserver une table",
+    "subtitle": "Choisissez votre moment",
+    "success": "Votre demande de réservation a été envoyée avec succès. Nous vous confirmerons par email.",
     "form": {
-      "name": "Nom",
-      "email": "Email",
+      "name": "Nom complet",
+      "email": "Adresse email",
       "phone": "Téléphone",
-      "date": "Date",
+      "date": "Date souhaitée",
       "time": "Heure",
-      "guests": "Nombre de couverts",
-      "message": "Message",
-      "submit": "Réserver"
+      "guests": "Nombre de convives",
+      "message": "Message ou demande particulière",
+      "submit": "Confirmer la réservation"
     }
   },
   "gallery": {
-    "title": "Galerie"
+    "title": "Galerie",
+    "subtitle": "Découvrez Le Divino en images",
+    "empty": "Les photos arrivent bientôt"
   },
   "contact": {
-    "title": "Contact",
+    "title": "Nous trouver",
+    "subtitle": "Venez nous rendre visite",
     "address": "Adresse",
     "phone": "Téléphone",
     "email": "Email",
-    "hours": "Horaires d'ouverture"
+    "hours": "Horaires d'ouverture",
+    "form_title": "Envoyez-nous un message",
+    "form_name": "Votre nom",
+    "form_email": "Votre email",
+    "form_subject": "Sujet",
+    "form_message": "Votre message",
+    "form_submit": "Envoyer"
   },
   "footer": {
+    "hours": "Horaires",
+    "contact": "Contact",
+    "follow": "Suivez-nous",
     "rights": "Tous droits réservés",
     "legal": "Mentions légales"
   }

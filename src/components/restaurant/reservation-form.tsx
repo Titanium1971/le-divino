@@ -1,13 +1,11 @@
 "use client";
 
+import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 
 export function ReservationForm() {
-  const t = useTranslations("reservation.form");
+  const t = useTranslations("reservation");
+  const [submitted, setSubmitted] = useState(false);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -19,43 +17,147 @@ export function ReservationForm() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     });
+
+    setSubmitted(true);
+  }
+
+  if (submitted) {
+    return (
+      <div className="text-center py-12">
+        <div className="mx-auto mb-6 h-px w-16 bg-brand-gold" />
+        <p className="text-base font-light text-brand-dark/90">{t("success")}</p>
+      </div>
+    );
   }
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-lg space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-6">
+      {/* Name */}
       <div>
-        <Label htmlFor="name">{t("name")}</Label>
-        <Input id="name" name="name" required />
+        <label
+          htmlFor="name"
+          className="block text-[11px] font-normal tracking-[0.15em] uppercase text-brand-dark/80"
+        >
+          {t("form.name")}
+        </label>
+        <input
+          id="name"
+          name="name"
+          required
+          className="mt-2 w-full border-b border-brand-dark/30 bg-transparent px-0 py-3 text-sm font-light text-brand-dark placeholder:text-brand-dark/30 focus:border-brand-gold focus:outline-none transition-colors"
+        />
       </div>
-      <div>
-        <Label htmlFor="email">{t("email")}</Label>
-        <Input id="email" name="email" type="email" required />
-      </div>
-      <div>
-        <Label htmlFor="phone">{t("phone")}</Label>
-        <Input id="phone" name="phone" type="tel" required />
-      </div>
-      <div className="grid grid-cols-2 gap-4">
+
+      {/* Email + Phone */}
+      <div className="grid gap-6 sm:grid-cols-2">
         <div>
-          <Label htmlFor="date">{t("date")}</Label>
-          <Input id="date" name="date" type="date" required />
+          <label
+            htmlFor="email"
+            className="block text-[11px] font-normal tracking-[0.15em] uppercase text-brand-dark/80"
+          >
+            {t("form.email")}
+          </label>
+          <input
+            id="email"
+            name="email"
+            type="email"
+            required
+            className="mt-2 w-full border-b border-brand-dark/30 bg-transparent px-0 py-3 text-sm font-light text-brand-dark placeholder:text-brand-dark/30 focus:border-brand-gold focus:outline-none transition-colors"
+          />
         </div>
         <div>
-          <Label htmlFor="time">{t("time")}</Label>
-          <Input id="time" name="time" type="time" required />
+          <label
+            htmlFor="phone"
+            className="block text-[11px] font-normal tracking-[0.15em] uppercase text-brand-dark/80"
+          >
+            {t("form.phone")}
+          </label>
+          <input
+            id="phone"
+            name="phone"
+            type="tel"
+            required
+            className="mt-2 w-full border-b border-brand-dark/30 bg-transparent px-0 py-3 text-sm font-light text-brand-dark placeholder:text-brand-dark/30 focus:border-brand-gold focus:outline-none transition-colors"
+          />
         </div>
       </div>
-      <div>
-        <Label htmlFor="guests">{t("guests")}</Label>
-        <Input id="guests" name="guests" type="number" min={1} max={12} required />
+
+      {/* Date + Time + Guests */}
+      <div className="grid gap-6 sm:grid-cols-3">
+        <div>
+          <label
+            htmlFor="date"
+            className="block text-[11px] font-normal tracking-[0.15em] uppercase text-brand-dark/80"
+          >
+            {t("form.date")}
+          </label>
+          <input
+            id="date"
+            name="date"
+            type="date"
+            required
+            className="mt-2 w-full border-b border-brand-dark/30 bg-transparent px-0 py-3 text-sm font-light text-brand-dark focus:border-brand-gold focus:outline-none transition-colors"
+          />
+        </div>
+        <div>
+          <label
+            htmlFor="time"
+            className="block text-[11px] font-normal tracking-[0.15em] uppercase text-brand-dark/80"
+          >
+            {t("form.time")}
+          </label>
+          <input
+            id="time"
+            name="time"
+            type="time"
+            required
+            className="mt-2 w-full border-b border-brand-dark/30 bg-transparent px-0 py-3 text-sm font-light text-brand-dark focus:border-brand-gold focus:outline-none transition-colors"
+          />
+        </div>
+        <div>
+          <label
+            htmlFor="guests"
+            className="block text-[11px] font-normal tracking-[0.15em] uppercase text-brand-dark/80"
+          >
+            {t("form.guests")}
+          </label>
+          <input
+            id="guests"
+            name="guests"
+            type="number"
+            min={1}
+            max={12}
+            required
+            className="mt-2 w-full border-b border-brand-dark/30 bg-transparent px-0 py-3 text-sm font-light text-brand-dark focus:border-brand-gold focus:outline-none transition-colors"
+          />
+        </div>
       </div>
+
+      {/* Message */}
       <div>
-        <Label htmlFor="message">{t("message")}</Label>
-        <Textarea id="message" name="message" />
+        <label
+          htmlFor="message"
+          className="block text-[11px] font-normal tracking-[0.15em] uppercase text-brand-dark/80"
+        >
+          {t("form.message")}
+        </label>
+        <textarea
+          id="message"
+          name="message"
+          rows={3}
+          className="mt-2 w-full border-b border-brand-dark/30 bg-transparent px-0 py-3 text-sm font-light text-brand-dark placeholder:text-brand-dark/30 focus:border-brand-gold focus:outline-none transition-colors resize-none"
+        />
       </div>
-      <Button type="submit" className="w-full">
-        {t("submit")}
-      </Button>
+
+      {/* Submit */}
+      <div className="pt-4 text-center">
+        <button
+          type="submit"
+          className="border border-brand-bordeaux px-12 py-4 text-xs font-normal tracking-[0.2em] uppercase text-brand-bordeaux transition-all duration-300 hover:bg-brand-bordeaux hover:text-brand-cream"
+        >
+          {t("form.submit")}
+        </button>
+      </div>
     </form>
   );
 }

@@ -16,13 +16,33 @@
       "subtitle": "Traditional French cuisine",
       "cta": "Book a table"
     },
-    "about": {
-      "title": "Our story",
-      "description": "In the heart of Agde, Le Divino welcomes you in a warm setting for authentic French cuisine, crafted from fresh, seasonal products."
+    "welcome": {
+      "title": "Welcome to Le Divino",
+      "description": "In the heart of Agde, Le Divino welcomes you in a warm and elegant setting. Discover authentic French cuisine, crafted from fresh, seasonal products, elevated by our chef's expertise."
+    },
+    "highlights": {
+      "cuisine": {
+        "title": "Local cuisine",
+        "description": "Generous dishes prepared with local and seasonal products."
+      },
+      "ambiance": {
+        "title": "Elegant setting",
+        "description": "A refined decor blending Mediterranean authenticity and modern comfort."
+      },
+      "service": {
+        "title": "Attentive service",
+        "description": "A passionate team at your service for a memorable experience."
+      }
     }
   },
   "menu": {
     "title": "Menu",
+    "subtitle": "Discover our specialties",
+    "formules": "Set Menus",
+    "allergens": "Allergens",
+    "vegetarian": "Vegetarian",
+    "signature": "Chef's signature",
+    "empty": "Menu coming soon",
     "categories": {
       "entrees": "Starters",
       "plats": "Main courses",
@@ -32,28 +52,42 @@
   },
   "reservation": {
     "title": "Book a table",
+    "subtitle": "Choose your moment",
+    "success": "Your reservation request has been sent successfully. We will confirm by email.",
     "form": {
-      "name": "Name",
-      "email": "Email",
+      "name": "Full name",
+      "email": "Email address",
       "phone": "Phone",
-      "date": "Date",
+      "date": "Preferred date",
       "time": "Time",
       "guests": "Number of guests",
-      "message": "Message",
-      "submit": "Book"
+      "message": "Message or special request",
+      "submit": "Confirm reservation"
     }
   },
   "gallery": {
-    "title": "Gallery"
+    "title": "Gallery",
+    "subtitle": "Discover Le Divino in pictures",
+    "empty": "Photos coming soon"
   },
   "contact": {
-    "title": "Contact",
+    "title": "Find us",
+    "subtitle": "Come visit us",
     "address": "Address",
     "phone": "Phone",
     "email": "Email",
-    "hours": "Opening hours"
+    "hours": "Opening hours",
+    "form_title": "Send us a message",
+    "form_name": "Your name",
+    "form_email": "Your email",
+    "form_subject": "Subject",
+    "form_message": "Your message",
+    "form_submit": "Send"
   },
   "footer": {
+    "hours": "Hours",
+    "contact": "Contact",
+    "follow": "Follow us",
     "rights": "All rights reserved",
     "legal": "Legal notice"
   }
