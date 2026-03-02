@@ -1,0 +1,60 @@
+{
+  "metadata": {
+    "title": "Le Divino — Restaurant | Agde",
+    "description": "Restaurant de cuisine traditionnelle française au cœur d'Agde. Produits frais, terroir et savoir-faire."
+  },
+  "nav": {
+    "home": "Accueil",
+    "menu": "La Carte",
+    "reservation": "Réservation",
+    "gallery": "Galerie",
+    "contact": "Contact"
+  },
+  "home": {
+    "hero": {
+      "title": "Le Divino",
+      "subtitle": "Cuisine traditionnelle française",
+      "cta": "Réserver une table"
+    },
+    "about": {
+      "title": "Notre histoire",
+      "description": "Au cœur d'Agde, Le Divino vous accueille dans un cadre chaleureux pour une cuisine française authentique, élaborée à partir de produits frais et de saison."
+    }
+  },
+  "menu": {
+    "title": "La Carte",
+    "categories": {
+      "entrees": "Entrées",
+      "plats": "Plats",
+      "desserts": "Desserts",
+      "boissons": "Boissons"
+    }
+  },
+  "reservation": {
+    "title": "Réserver une table",
+    "form": {
+      "name": "Nom",
+      "email": "Email",
+      "phone": "Téléphone",
+      "date": "Date",
+      "time": "Heure",
+      "guests": "Nombre de couverts",
+      "message": "Message",
+      "submit": "Réserver"
+    }
+  },
+  "gallery": {
+    "title": "Galerie"
+  },
+  "contact": {
+    "title": "Contact",
+    "address": "Adresse",
+    "phone": "Téléphone",
+    "email": "Email",
+    "hours": "Horaires d'ouverture"
+  },
+  "footer": {
+    "rights": "Tous droits réservés",
+    "legal": "Mentions légales"
+  }
+}

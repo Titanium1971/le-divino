@@ -1,0 +1,60 @@
+{
+  "metadata": {
+    "title": "Le Divino — Restaurante | Agde",
+    "description": "Restaurante de cocina tradicional francesa en el corazón de Agde. Productos frescos, sabores locales y maestría."
+  },
+  "nav": {
+    "home": "Inicio",
+    "menu": "Carta",
+    "reservation": "Reserva",
+    "gallery": "Galería",
+    "contact": "Contacto"
+  },
+  "home": {
+    "hero": {
+      "title": "Le Divino",
+      "subtitle": "Cocina tradicional francesa",
+      "cta": "Reservar una mesa"
+    },
+    "about": {
+      "title": "Nuestra historia",
+      "description": "En el corazón de Agde, Le Divino le da la bienvenida en un ambiente cálido para una cocina francesa auténtica, elaborada con productos frescos y de temporada."
+    }
+  },
+  "menu": {
+    "title": "Carta",
+    "categories": {
+      "entrees": "Entrantes",
+      "plats": "Platos principales",
+      "desserts": "Postres",
+      "boissons": "Bebidas"
+    }
+  },
+  "reservation": {
+    "title": "Reservar una mesa",
+    "form": {
+      "name": "Nombre",
+      "email": "Email",
+      "phone": "Teléfono",
+      "date": "Fecha",
+      "time": "Hora",
+      "guests": "Número de comensales",
+      "message": "Mensaje",
+      "submit": "Reservar"
+    }
+  },
+  "gallery": {
+    "title": "Galería"
+  },
+  "contact": {
+    "title": "Contacto",
+    "address": "Dirección",
+    "phone": "Teléfono",
+    "email": "Email",
+    "hours": "Horarios de apertura"
+  },
+  "footer": {
+    "rights": "Todos los derechos reservados",
+    "legal": "Aviso legal"
+  }
+}
