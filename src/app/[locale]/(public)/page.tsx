@@ -2,6 +2,7 @@ import Image from "next/image";
 import { setRequestLocale } from "next-intl/server";
 import { getTranslations } from "next-intl/server";
 import { HeroSection } from "@/components/restaurant/hero-section";
+import { ReservationWidget } from "@/components/restaurant/reservation-widget";
 import { Link } from "@/i18n/navigation";
 
 type Props = {
@@ -92,6 +93,9 @@ export default async function HomePage({ params }: Props) {
           ))}
         </div>
       </section>
+
+      {/* ── Widget flottant réservation ── */}
+      <ReservationWidget locale={locale} />
 
       {/* ── CTA Réservation ── */}
       <section className="bg-brand-cream py-24">

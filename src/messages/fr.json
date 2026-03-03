@@ -84,6 +84,13 @@
     "form_message": "Votre message",
     "form_submit": "Envoyer"
   },
+  "widget": {
+    "title": "Réserver une table",
+    "date": "Choisir une date",
+    "lunch": "Déjeuner",
+    "dinner": "Dîner",
+    "cta": "Réserver"
+  },
   "footer": {
     "hours": "Horaires",
     "contact": "Contact",

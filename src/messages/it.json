@@ -84,6 +84,13 @@
     "form_message": "Il vostro messaggio",
     "form_submit": "Inviare"
   },
+  "widget": {
+    "title": "Prenota un tavolo",
+    "date": "Scegli una data",
+    "lunch": "Pranzo",
+    "dinner": "Cena",
+    "cta": "Prenota"
+  },
   "footer": {
     "hours": "Orari",
     "contact": "Contatto",

@@ -84,6 +84,13 @@
     "form_message": "Your message",
     "form_submit": "Send"
   },
+  "widget": {
+    "title": "Book a table",
+    "date": "Choose a date",
+    "lunch": "Lunch",
+    "dinner": "Dinner",
+    "cta": "Book"
+  },
   "footer": {
     "hours": "Hours",
     "contact": "Contact",

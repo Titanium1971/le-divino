@@ -84,6 +84,13 @@
     "form_message": "Su mensaje",
     "form_submit": "Enviar"
   },
+  "widget": {
+    "title": "Reservar una mesa",
+    "date": "Elegir una fecha",
+    "lunch": "Almuerzo",
+    "dinner": "Cena",
+    "cta": "Reservar"
+  },
   "footer": {
     "hours": "Horarios",
     "contact": "Contacto",

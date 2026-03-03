@@ -181,3 +181,87 @@
 .animate-hero-fade {
   animation: hero-fade-in 1.2s ease-out 1.2s both;
 }
+
+/* ── Reservation Widget ── */
+@keyframes widget-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes widget-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes widget-shimmer {
+  0% {
+    transform: translateX(-100%) rotate(15deg);
+  }
+  100% {
+    transform: translateX(200%) rotate(15deg);
+  }
+}
+
+.reservation-widget {
+  animation: widget-slide-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.reservation-widget-card {
+  background: rgba(15, 10, 10, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(197, 165, 90, 0.3);
+  box-shadow: 0 8px 32px rgba(197, 165, 90, 0.15);
+}
+
+/* Internal diagonal gloss */
+.reservation-widget-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.06) 0%,
+    rgba(255, 255, 255, 0) 50%,
+    rgba(255, 255, 255, 0.02) 100%
+  );
+  pointer-events: none;
+}
+
+/* Shimmer sweep */
+.reservation-widget-shimmer::after {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 40%;
+  height: 200%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(197, 165, 90, 0.06) 50%,
+    transparent 100%
+  );
+  animation: widget-shimmer 3s ease-in-out infinite;
+}
+
+.animate-widget-fade-in {
+  animation: widget-fade-in 0.3s ease-out both;
+}
+
+/* Collapsed floating button */
+.reservation-widget-btn {
+  background: rgba(15, 10, 10, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(197, 165, 90, 0.3);
+  box-shadow: 0 8px 32px rgba(197, 165, 90, 0.15);
+  animation: widget-slide-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
