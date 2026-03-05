@@ -20,8 +20,21 @@ export function MenuClient({ grouped, menus, locale }: Props) {
 
   const [activeTab, setActiveTab] = useState(tabs[0]?.id ?? "");
 
+  // Detect if translations are missing for current locale
+  const allDishes = grouped.flatMap((g) => g.dishes);
+  const hasTranslations =
+    loc === "fr" ||
+    allDishes.some((d) => d.name[loc]?.trim());
+
   return (
     <>
+      {/* Translation notice for non-FR locales */}
+      {!hasTranslations && (
+        <div className="mb-8 rounded border border-brand-gold/30 bg-brand-gold/5 px-5 py-3 text-center text-sm font-light text-brand-dark/70">
+          {t("translationNotice")}
+        </div>
+      )}
+
       {/* Tabs */}
       <div className="flex flex-wrap justify-center gap-2 border-b border-brand-dark/10 pb-4">
         {tabs.map((tab) => (
@@ -59,7 +72,7 @@ export function MenuClient({ grouped, menus, locale }: Props) {
                       </p>
                     )}
                   </div>
-                  <span className="shrink-0 text-lg font-light text-brand-gold">
+                  <span className="shrink-0 text-lg font-semibold text-brand-gold">
                     {menu.price.toFixed(2)} &euro;
                   </span>
                 </div>
@@ -114,7 +127,7 @@ export function MenuClient({ grouped, menus, locale }: Props) {
                       </p>
                     )}
                   </div>
-                  <span className="shrink-0 text-base font-light text-brand-gold">
+                  <span className="shrink-0 text-lg font-semibold text-brand-gold">
                     {dish.price.toFixed(2)} &euro;
                   </span>
                 </div>

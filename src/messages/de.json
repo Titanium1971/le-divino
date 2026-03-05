@@ -1,0 +1,102 @@
+{
+  "metadata": {
+    "title": "Le Divino — Restaurant | Agde",
+    "description": "Restaurant für traditionelle französische Küche im Herzen von Agde. Frische Produkte, lokale Aromen und Handwerkskunst."
+  },
+  "nav": {
+    "home": "Startseite",
+    "menu": "Speisekarte",
+    "reservation": "Reservierung",
+    "gallery": "Galerie",
+    "contact": "Kontakt"
+  },
+  "home": {
+    "hero": {
+      "title": "Le Divino",
+      "subtitle": "Traditionelle französische Küche",
+      "cta": "Tisch reservieren"
+    },
+    "welcome": {
+      "title": "Willkommen im Le Divino",
+      "description": "Im Herzen von Agde empfängt Sie Le Divino in einem warmen und eleganten Ambiente. Entdecken Sie authentische französische Küche, zubereitet aus frischen, saisonalen Produkten, veredelt durch die Expertise unseres Küchenchefs."
+    },
+    "highlights": {
+      "cuisine": {
+        "title": "Regionale Küche",
+        "description": "Großzügige Gerichte, zubereitet mit lokalen und saisonalen Produkten."
+      },
+      "ambiance": {
+        "title": "Elegantes Ambiente",
+        "description": "Ein raffiniertes Dekor, das mediterrane Authentizität und modernen Komfort vereint."
+      },
+      "service": {
+        "title": "Aufmerksamer Service",
+        "description": "Ein leidenschaftliches Team zu Ihrem Service für ein unvergessliches Erlebnis."
+      }
+    }
+  },
+  "menu": {
+    "title": "Speisekarte",
+    "subtitle": "Entdecken Sie unsere Spezialitäten",
+    "formules": "Menüs",
+    "allergens": "Allergene",
+    "vegetarian": "Vegetarisch",
+    "signature": "Empfehlung des Küchenchefs",
+    "empty": "Speisekarte in Vorbereitung",
+    "translationNotice": "Die Gerichtnamen werden auf Französisch angezeigt — Übersetzungen folgen in Kürze.",
+    "categories": {
+      "entrees": "Vorspeisen",
+      "plats": "Hauptgerichte",
+      "desserts": "Desserts",
+      "boissons": "Getränke"
+    }
+  },
+  "reservation": {
+    "title": "Tisch reservieren",
+    "subtitle": "Wählen Sie Ihren Moment",
+    "success": "Ihre Reservierungsanfrage wurde erfolgreich gesendet. Wir bestätigen per E-Mail.",
+    "form": {
+      "name": "Vollständiger Name",
+      "email": "E-Mail-Adresse",
+      "phone": "Telefon",
+      "date": "Gewünschtes Datum",
+      "time": "Uhrzeit",
+      "guests": "Anzahl der Gäste",
+      "message": "Nachricht oder besonderer Wunsch",
+      "submit": "Reservierung bestätigen"
+    }
+  },
+  "gallery": {
+    "title": "Galerie",
+    "subtitle": "Entdecken Sie Le Divino in Bildern",
+    "empty": "Fotos folgen in Kürze"
+  },
+  "contact": {
+    "title": "So finden Sie uns",
+    "subtitle": "Besuchen Sie uns",
+    "address": "Adresse",
+    "phone": "Telefon",
+    "email": "E-Mail",
+    "hours": "Öffnungszeiten",
+    "form_title": "Senden Sie uns eine Nachricht",
+    "form_name": "Ihr Name",
+    "form_email": "Ihre E-Mail",
+    "form_subject": "Betreff",
+    "form_message": "Ihre Nachricht",
+    "form_submit": "Senden"
+  },
+  "widget": {
+    "title": "Tisch reservieren",
+    "date": "Datum wählen",
+    "lunch": "Mittagessen",
+    "dinner": "Abendessen",
+    "cta": "Reservieren"
+  },
+  "footer": {
+    "hours": "Öffnungszeiten",
+    "contact": "Kontakt",
+    "follow": "Folgen Sie uns",
+    "rights": "Alle Rechte vorbehalten",
+    "legal": "Impressum"
+  }
+}

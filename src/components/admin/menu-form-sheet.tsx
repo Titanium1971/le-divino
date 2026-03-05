@@ -43,9 +43,10 @@ const LOCALES: { key: Locale; label: string }[] = [
   { key: "en", label: "EN" },
   { key: "it", label: "IT" },
   { key: "es", label: "ES" },
+  { key: "de", label: "DE" },
 ];
 
-const emptyI18n = (): I18nField => ({ fr: "", en: "", it: "", es: "" });
+const emptyI18n = (): I18nField => ({ fr: "", en: "", it: "", es: "", de: "" });
 
 type DishGroup = { category: Category; dishes: Dish[] };
 
@@ -207,18 +208,28 @@ export function MenuFormSheet({ open, onOpenChange, menu, dishGroups, onSaved }:
         throw new Error("Réponse de traduction invalide (champs manquants).");
       }
 
-      setName((prev) => ({
-        ...prev,
-        en: data.name.en || prev.en,
-        it: data.name.it || prev.it,
-        es: data.name.es || prev.es,
-      }));
-      setDescription((prev) => ({
-        ...prev,
-        en: data.description.en || prev.en,
-        it: data.description.it || prev.it,
-        es: data.description.es || prev.es,
-      }));
+      const newName: I18nField = {
+        ...name,
+        en: data.name.en || name.en,
+        it: data.name.it || name.it,
+        es: data.name.es || name.es,
+        de: data.name.de || name.de,
+      };
+      const newDesc: I18nField = {
+        ...description,
+        en: data.description.en || description.en,
+        it: data.description.it || description.it,
+        es: data.description.es || description.es,
+        de: data.description.de || description.de,
+      };
+
+      setName(newName);
+      setDescription(newDesc);
+
+      // Auto-save translations to DB when editing
+      if (isEdit && menu) {
+        await updateMenu(supabase, menu.id, { name: newName, description: newDesc });
+      }
     } catch (err) {
       setError(
         `Traduction échouée : ${err instanceof Error ? err.message : "erreur inconnue"}`,
@@ -302,7 +313,7 @@ export function MenuFormSheet({ open, onOpenChange, menu, dishGroups, onSaved }:
                 onClick={handleTranslate}
                 disabled={translating || !name.fr}
               >
-                {translating ? "Traduction..." : "Traduire FR → EN/IT/ES"}
+                {translating ? "Traduction..." : "Traduire FR → EN/IT/ES/DE"}
               </Button>
             </div>
 

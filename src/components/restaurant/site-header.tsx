@@ -41,11 +41,11 @@ export function SiteHeader() {
           : "bg-transparent"
       }`}
     >
-      <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6">
+      <div className="mx-auto flex h-24 max-w-7xl items-center justify-between px-6">
         {/* Logo */}
         <Link
           href="/"
-          className="text-lg font-light tracking-[0.25em] text-brand-cream uppercase"
+          className="text-xl font-normal tracking-[0.25em] text-brand-cream uppercase"
         >
           LE DIVINO
         </Link>
@@ -56,8 +56,8 @@ export function SiteHeader() {
             <Link
               key={key}
               href={getHref(key)}
-              className={`text-[11px] font-light tracking-[0.2em] uppercase transition-colors duration-300 hover:text-brand-gold ${
-                isActive(key) ? "text-brand-gold" : "text-brand-cream/90"
+              className={`text-[13px] font-normal tracking-[0.2em] uppercase transition-colors duration-300 hover:text-brand-gold ${
+                isActive(key) ? "text-brand-gold" : "text-brand-cream"
               }`}
             >
               {t(key)}
@@ -70,17 +70,17 @@ export function SiteHeader() {
           <LanguageSwitcher />
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="flex flex-col gap-1.5 md:hidden"
+            className="flex flex-col gap-2 md:hidden"
             aria-label="Menu"
           >
             <span
-              className={`h-px w-6 bg-brand-cream transition-all duration-300 ${
-                mobileOpen ? "translate-y-[3.5px] rotate-45" : ""
+              className={`h-[1.5px] w-7 bg-brand-cream transition-all duration-300 ${
+                mobileOpen ? "translate-y-[4.5px] rotate-45" : ""
               }`}
             />
             <span
-              className={`h-px w-6 bg-brand-cream transition-all duration-300 ${
-                mobileOpen ? "-translate-y-[3.5px] -rotate-45" : ""
+              className={`h-[1.5px] w-7 bg-brand-cream transition-all duration-300 ${
+                mobileOpen ? "-translate-y-[4.5px] -rotate-45" : ""
               }`}
             />
           </button>
@@ -95,8 +95,8 @@ export function SiteHeader() {
               <Link
                 key={key}
                 href={getHref(key)}
-                className={`text-sm font-light tracking-[0.2em] uppercase transition-colors hover:text-brand-gold ${
-                  isActive(key) ? "text-brand-gold" : "text-brand-cream/90"
+                className={`text-base font-normal tracking-[0.2em] uppercase transition-colors hover:text-brand-gold ${
+                  isActive(key) ? "text-brand-gold" : "text-brand-cream"
                 }`}
                 onClick={() => setMobileOpen(false)}
               >

@@ -43,6 +43,7 @@
     "vegetarian": "Vegetariano",
     "signature": "Firma del chef",
     "empty": "Carta en preparación",
+    "translationNotice": "Los nombres de los platos se muestran en francés — traducciones próximamente.",
     "categories": {
       "entrees": "Entrantes",
       "plats": "Platos principales",

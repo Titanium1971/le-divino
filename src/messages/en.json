@@ -43,6 +43,7 @@
     "vegetarian": "Vegetarian",
     "signature": "Chef's signature",
     "empty": "Menu coming soon",
+    "translationNotice": "Dish names are displayed in French — translations coming soon.",
     "categories": {
       "entrees": "Starters",
       "plats": "Main courses",

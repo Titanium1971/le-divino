@@ -1,9 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
-import Anthropic from "@anthropic-ai/sdk";
-
-const client = new Anthropic();
+import OpenAI from "openai";
 
 export async function POST(request: NextRequest) {
+  if (!process.env.OPENAI_API_KEY) {
+    console.error("Translation error: OPENAI_API_KEY is not set in .env.local");
+    return NextResponse.json(
+      { error: "OPENAI_API_KEY manquante. Ajoutez-la dans .env.local." },
+      { status: 500 },
+    );
+  }
+
+  const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+
   const { name, description } = await request.json();
 
   if (!name) {
@@ -11,7 +19,7 @@ export async function POST(request: NextRequest) {
   }
 
   const prompt = `Tu es un traducteur professionnel pour un restaurant français haut de gamme.
-Traduis le nom et la description de ce plat du français vers l'anglais, l'italien et l'espagnol.
+Traduis le nom et la description de ce plat du français vers l'anglais, l'italien, l'espagnol et l'allemand.
 Garde le ton gastronomique et élégant. Ne traduis pas les noms propres ou les appellations spécifiques.
 
 Nom du plat (FR) : ${name}
@@ -19,27 +27,26 @@ Description (FR) : ${description || ""}
 
 Réponds UNIQUEMENT avec un objet JSON valide, sans markdown ni backticks :
 {
-  "name": { "en": "…", "it": "…", "es": "…" },
-  "description": { "en": "…", "it": "…", "es": "…" }
+  "name": { "en": "…", "it": "…", "es": "…", "de": "…" },
+  "description": { "en": "…", "it": "…", "es": "…", "de": "…" }
 }`;
 
   try {
-    const message = await client.messages.create({
-      model: "claude-haiku-4-5-20251001",
+    const completion = await client.chat.completions.create({
+      model: "gpt-4o-mini",
       max_tokens: 512,
       messages: [{ role: "user", content: prompt }],
     });
 
-    const text =
-      message.content[0].type === "text" ? message.content[0].text : "";
-
+    const text = completion.choices[0]?.message?.content ?? "";
     const parsed = JSON.parse(text);
 
     return NextResponse.json(parsed);
   } catch (err) {
-    console.error("Translation error:", err);
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error("Translation error:", msg);
     return NextResponse.json(
-      { error: "Translation failed" },
+      { error: `Erreur traduction : ${msg}` },
       { status: 500 },
     );
   }

@@ -33,9 +33,10 @@ const LOCALES: { key: Locale; label: string }[] = [
   { key: "en", label: "EN" },
   { key: "it", label: "IT" },
   { key: "es", label: "ES" },
+  { key: "de", label: "DE" },
 ];
 
-const emptyI18n = (): I18nField => ({ fr: "", en: "", it: "", es: "" });
+const emptyI18n = (): I18nField => ({ fr: "", en: "", it: "", es: "", de: "" });
 
 type Props = {
   open: boolean;
@@ -111,29 +112,40 @@ export function EventFormSheet({ open, onOpenChange, event, onSaved }: Props) {
   async function handleTranslate() {
     if (!title.fr) return;
     setTranslating(true);
+    setError(null);
     try {
       const res = await fetch("/api/translate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name: title.fr, description: description.fr }),
       });
-      if (!res.ok) throw new Error("Translation failed");
       const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Translation failed");
 
-      setTitle((prev) => ({
-        ...prev,
-        en: data.name?.en || prev.en,
-        it: data.name?.it || prev.it,
-        es: data.name?.es || prev.es,
-      }));
-      setDescription((prev) => ({
-        ...prev,
-        en: data.description?.en || prev.en,
-        it: data.description?.it || prev.it,
-        es: data.description?.es || prev.es,
-      }));
-    } catch {
-      setError("Erreur lors de la traduction automatique.");
+      const newTitle: I18nField = {
+        ...title,
+        en: data.name?.en || title.en,
+        it: data.name?.it || title.it,
+        es: data.name?.es || title.es,
+        de: data.name?.de || title.de,
+      };
+      const newDesc: I18nField = {
+        ...description,
+        en: data.description?.en || description.en,
+        it: data.description?.it || description.it,
+        es: data.description?.es || description.es,
+        de: data.description?.de || description.de,
+      };
+
+      setTitle(newTitle);
+      setDescription(newDesc);
+
+      // Auto-save translations to DB when editing
+      if (isEdit && event) {
+        await updateEvent(supabase, event.id, { title: newTitle, description: newDesc });
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Erreur lors de la traduction automatique.");
     } finally {
       setTranslating(false);
     }
@@ -270,7 +282,7 @@ export function EventFormSheet({ open, onOpenChange, event, onSaved }: Props) {
                 onClick={handleTranslate}
                 disabled={translating || !title.fr}
               >
-                {translating ? "Traduction..." : "Traduire FR \u2192 EN/IT/ES"}
+                {translating ? "Traduction..." : "Traduire FR \u2192 EN/IT/ES/DE"}
               </Button>
             </div>
 

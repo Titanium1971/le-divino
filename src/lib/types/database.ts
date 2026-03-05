@@ -1,4 +1,4 @@
-export type Locale = "fr" | "en" | "it" | "es";
+export type Locale = "fr" | "en" | "it" | "es" | "de";
 
 export type I18nField = Record<Locale, string>;
 
@@ -144,6 +144,28 @@ export const EVENT_TYPES: { value: EventType; label: string }[] = [
   { value: "custom", label: "Autre" },
 ];
 
+// ── Gallery ──
+
+export type GalleryTag = "restaurant" | "dishes" | "events" | "team" | "ambiance";
+
+export type GalleryItem = {
+  id: string;
+  image_path: string;
+  caption: I18nField;
+  tag: GalleryTag;
+  sort_order: number;
+  published: boolean;
+  created_at: string;
+};
+
+export const GALLERY_TAGS: { value: GalleryTag; label: string }[] = [
+  { value: "restaurant", label: "Restaurant" },
+  { value: "dishes", label: "Plats" },
+  { value: "events", label: "Événements" },
+  { value: "team", label: "Équipe" },
+  { value: "ambiance", label: "Ambiance" },
+];
+
 export const ALLERGENS = [
   "Gluten",
   "Crustacés",
@@ -160,3 +182,41 @@ export const ALLERGENS = [
   "Lupin",
   "Mollusques",
 ] as const;
+
+// ── Screen Slides ──
+
+export type SlideType =
+  | "daily_special"
+  | "menu"
+  | "event"
+  | "gallery"
+  | "poster"
+  | "custom"
+  | "image"
+  | "dish";
+
+export type ScreenSlide = {
+  id: string;
+  type: SlideType;
+  title: string | null;
+  subtitle: string | null;
+  image_path: string | null;
+  reference_id: string | null;
+  duration_ms: number;
+  sort_order: number;
+  active: boolean;
+  schedule_start: string | null;
+  schedule_end: string | null;
+  content: Record<string, unknown>;
+  created_at: string;
+  updated_at: string;
+};
+
+export const SLIDE_TYPES: { value: SlideType; label: string }[] = [
+  { value: "daily_special", label: "Plat du jour" },
+  { value: "menu", label: "Formule / Menu" },
+  { value: "event", label: "Événement" },
+  { value: "gallery", label: "Photo galerie" },
+  { value: "poster", label: "Affiche" },
+  { value: "custom", label: "Texte libre" },
+];

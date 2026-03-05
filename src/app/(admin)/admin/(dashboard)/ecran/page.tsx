@@ -1,10 +1,14 @@
-export default function AdminScreenPage() {
+import { createClient } from "@/lib/supabase/server";
+import { getScreenSlides } from "@/lib/supabase/screen-slides";
+import { EcranManager } from "@/components/admin/ecran-manager";
+
+export default async function AdminScreenPage() {
+  const supabase = await createClient();
+  const slides = await getScreenSlides(supabase);
+
   return (
     <div>
-      <h1 className="text-2xl font-light tracking-wide">Écran 55&quot;</h1>
-      <p className="mt-2 text-sm text-muted-foreground">
-        Configurez les slides de l&apos;écran extérieur.
-      </p>
+      <EcranManager initialSlides={slides} />
     </div>
   );
 }

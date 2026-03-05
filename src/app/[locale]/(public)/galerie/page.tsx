@@ -1,23 +1,29 @@
 import Image from "next/image";
 import { setRequestLocale } from "next-intl/server";
 import { getTranslations } from "next-intl/server";
+import { createClient } from "@/lib/supabase/server";
+import { getPublishedGalleryItems, getGalleryImageUrl } from "@/lib/supabase/gallery";
+import type { Locale } from "@/lib/types/database";
 
 type Props = {
   params: Promise<{ locale: string }>;
 };
 
-const GALLERY_IMAGES = [
-  { src: "/images/salle-bord-eau.jpg", alt: "Salle au bord de l'eau", span: "md:col-span-2" },
-  { src: "/images/bar-divino.jpg", alt: "Le bar", span: "" },
-  { src: "/images/interieur-salle-bar.jpg", alt: "Intérieur et bar", span: "" },
-  { src: "/images/salle-bar-divino.jpg", alt: "Salle de restaurant", span: "md:col-span-2" },
-  { src: "/images/exterior-terrace.jpg", alt: "Terrasse extérieure", span: "md:col-span-3" },
-];
-
 export default async function GalleryPage({ params }: Props) {
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("gallery");
+
+  const supabase = await createClient();
+  const items = await getPublishedGalleryItems(supabase);
+
+  // Debug: log generated URLs server-side
+  if (items.length > 0) {
+    console.log("[GalleryPage] Published items URLs:");
+    items.forEach((item) => {
+      console.log(`  - ${item.id} | path="${item.image_path}" | url=${getGalleryImageUrl(supabase, item.image_path)}`);
+    });
+  }
 
   return (
     <>
@@ -37,27 +43,42 @@ export default async function GalleryPage({ params }: Props) {
       {/* Gallery grid */}
       <section className="bg-brand-cream py-16">
         <div className="mx-auto max-w-6xl px-6">
-          <div className="grid gap-3 md:grid-cols-3">
-            {GALLERY_IMAGES.map((img) => (
-              <div
-                key={img.src}
-                className={`group relative overflow-hidden ${img.span}`}
-              >
-                <div className="aspect-[4/3]">
-                  <Image
-                    src={img.src}
-                    alt={img.alt}
-                    fill
-                    className="object-cover transition-transform duration-700 group-hover:scale-105"
-                    sizes="(max-width: 768px) 100vw, 33vw"
-                    quality={80}
-                  />
-                </div>
-                {/* Subtle overlay on hover */}
-                <div className="pointer-events-none absolute inset-0 bg-brand-bordeaux/0 transition-colors duration-500 group-hover:bg-brand-bordeaux/10" />
-              </div>
-            ))}
-          </div>
+          {items.length === 0 ? (
+            <p className="text-center text-sm text-brand-dark/60">{t("empty")}</p>
+          ) : (
+            <div className="grid gap-3 md:grid-cols-3">
+              {items.map((item, index) => {
+                const span =
+                  index === 0
+                    ? "md:col-span-2"
+                    : index === items.length - 1 && items.length > 2
+                      ? "md:col-span-3"
+                      : "";
+                const captionText =
+                  item.caption?.[locale as Locale] || item.caption?.fr || "";
+
+                return (
+                  <div
+                    key={item.id}
+                    className={`group relative overflow-hidden ${span}`}
+                  >
+                    <div className="aspect-[4/3]">
+                      <Image
+                        src={getGalleryImageUrl(supabase, item.image_path)}
+                        alt={captionText}
+                        fill
+                        className="object-cover transition-transform duration-700 group-hover:scale-105"
+                        sizes="(max-width: 768px) 100vw, 33vw"
+                        unoptimized
+                      />
+                    </div>
+                    {/* Subtle overlay on hover */}
+                    <div className="pointer-events-none absolute inset-0 bg-brand-bordeaux/0 transition-colors duration-500 group-hover:bg-brand-bordeaux/10" />
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
       </section>
     </>
