@@ -295,6 +295,14 @@
   animation: gallery-line-glow 3s ease-in-out infinite;
 }
 
+/* ── Google Reviews card ── */
+.review-card {
+  background: rgba(107, 26, 42, 0.15);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(197, 165, 90, 0.15);
+}
+
 /* Collapsed floating button */
 .reservation-widget-btn {
   background: rgba(15, 10, 10, 0.6);

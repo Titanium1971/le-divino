@@ -3,6 +3,7 @@ import { setRequestLocale } from "next-intl/server";
 import { getTranslations } from "next-intl/server";
 import { HeroSection } from "@/components/restaurant/hero-section";
 import { ReservationWidget } from "@/components/restaurant/reservation-widget";
+import { GoogleReviews } from "@/components/restaurant/google-reviews";
 import { Link } from "@/i18n/navigation";
 
 type Props = {
@@ -93,6 +94,9 @@ export default async function HomePage({ params }: Props) {
           ))}
         </div>
       </section>
+
+      {/* ── Avis Google ── */}
+      <GoogleReviews />
 
       {/* ── Widget flottant réservation ── */}
       <ReservationWidget locale={locale} />

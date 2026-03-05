@@ -1,16 +1,28 @@
 import { restaurantConfig } from "@/restaurant.config";
 
 export function MapEmbed() {
+  const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+  const placeId = process.env.NEXT_PUBLIC_GOOGLE_PLACE_ID;
+
+  // Google Maps Embed with GBP card (reviews, photos, hours)
+  const googleSrc = apiKey && placeId
+    ? `https://www.google.com/maps/embed/v1/place?key=${apiKey}&q=place_id:${placeId}&language=fr`
+    : null;
+
+  // Fallback to OpenStreetMap if no Google API key
   const { lat, lng } = restaurantConfig.coordinates;
+  const osmSrc = `https://www.openstreetmap.org/export/embed.html?bbox=${lng - 0.003}%2C${lat - 0.002}%2C${lng + 0.003}%2C${lat + 0.002}&layer=mapnik&marker=${lat}%2C${lng}`;
 
   return (
     <div className="relative">
-      <div className="relative h-80 w-full bg-brand-dark/10 md:h-96">
+      <div className="relative h-80 w-full bg-brand-dark/10 md:h-[28rem]">
         <iframe
-          title="OpenStreetMap — Le Divino"
-          src={`https://www.openstreetmap.org/export/embed.html?bbox=${lng - 0.003}%2C${lat - 0.002}%2C${lng + 0.003}%2C${lat + 0.002}&layer=mapnik&marker=${lat}%2C${lng}`}
+          title="Google Maps — Le Divino"
+          src={googleSrc ?? osmSrc}
           className="absolute inset-0 h-full w-full border-0"
+          allowFullScreen
           loading="lazy"
+          referrerPolicy="no-referrer-when-downgrade"
         />
       </div>
       {/* Directions button */}
