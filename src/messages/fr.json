@@ -76,7 +76,15 @@
   "gallery": {
     "title": "Galerie",
     "subtitle": "Découvrez Le Divino en images",
-    "empty": "Les photos arrivent bientôt"
+    "empty": "Les photos arrivent bientôt",
+    "all": "Tout",
+    "tags": {
+      "restaurant": "Restaurant",
+      "dishes": "Plats",
+      "events": "Événements",
+      "team": "Équipe",
+      "ambiance": "Ambiance"
+    }
   },
   "contact": {
     "title": "Nous trouver",

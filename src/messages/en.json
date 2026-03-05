@@ -77,7 +77,15 @@
   "gallery": {
     "title": "Gallery",
     "subtitle": "Discover Le Divino in pictures",
-    "empty": "Photos coming soon"
+    "empty": "Photos coming soon",
+    "all": "All",
+    "tags": {
+      "restaurant": "Restaurant",
+      "dishes": "Dishes",
+      "events": "Events",
+      "team": "Team",
+      "ambiance": "Ambiance"
+    }
   },
   "contact": {
     "title": "Find us",
