@@ -64,16 +64,29 @@ export function SiteFooter() {
               {t("hours")}
             </h3>
             <ul className="mt-4 space-y-2">
-              {restaurantConfig.hours.map((h) => (
-                <li key={h.day} className="flex justify-between text-sm font-light">
-                  <span className="text-brand-cream/90">{dayNames[h.day]}</span>
-                  <span className="text-brand-cream/70">
-                    {h.open
-                      ? `${h.open}\u2013${h.close} / ${h.dinnerOpen}\u2013${h.dinnerClose}`
-                      : "Ferm\u00e9"}
-                  </span>
-                </li>
-              ))}
+              {restaurantConfig.hours.map((h) => {
+                const isWeekend = h.day === 5 || h.day === 6;
+                const isSunday = h.day === 7;
+                return (
+                  <li
+                    key={h.day}
+                    className={`flex justify-between text-sm font-light ${
+                      isWeekend
+                        ? "text-brand-gold"
+                        : isSunday
+                          ? "text-brand-cream"
+                          : ""
+                    }`}
+                  >
+                    <span className={isWeekend || isSunday ? "" : "text-brand-cream/90"}>
+                      {dayNames[h.day]}
+                    </span>
+                    <span className={isWeekend || isSunday ? "" : "text-brand-cream/70"}>
+                      {h.open ? `${h.open} – ${h.close}` : "Fermé"}
+                    </span>
+                  </li>
+                );
+              })}
             </ul>
           </div>
 
@@ -85,7 +98,7 @@ export function SiteFooter() {
             <div className="mt-4 space-y-3 text-sm font-light">
               <p>
                 <a
-                  href={`tel:${restaurantConfig.phone.replace(/\s/g, "")}`}
+                  href={`tel:${restaurantConfig.phoneIntl}`}
                   className="text-brand-cream/90 transition-colors hover:text-brand-gold"
                 >
                   {restaurantConfig.phone}

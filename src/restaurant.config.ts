@@ -6,7 +6,7 @@ export const restaurantConfig = {
 
   // Location
   address: {
-    street: "5 Place Jean Jaurès",
+    street: "5 place Jean Jaurès",
     city: "Agde",
     postalCode: "34300",
     country: "France",
@@ -14,31 +14,37 @@ export const restaurantConfig = {
   },
   coordinates: {
     lat: 43.3108,
-    lng: 3.4731,
+    lng: 3.4756,
   },
 
   // Contact
   phone: "04 48 17 78 75",
+  phoneIntl: "+33448177875",
   email: "contact@ledivino-agde.fr",
   website: "https://ledivino.fr",
 
   // Social
   social: {
-    instagram: "",
-    facebook: "",
+    instagram: "https://www.instagram.com/ledivinoagde/",
+    facebook: "https://www.facebook.com/profile.php?id=61586295202337",
     tripadvisor: "",
     google: "",
   },
 
+  // Google Maps directions URL
+  directionsUrl:
+    "https://www.google.com/maps/dir/?api=1&destination=5+place+Jean+Jaur%C3%A8s+34300+Agde",
+
   // Business hours (ISO day: 1=Monday, 7=Sunday)
+  // Single continuous opening: open → close
   hours: [
-    { day: 1 as const, open: null, close: null, dinnerOpen: null, dinnerClose: null },
-    { day: 2 as const, open: "12:00", close: "14:30", dinnerOpen: "19:00", dinnerClose: "22:30" },
-    { day: 3 as const, open: "12:00", close: "14:30", dinnerOpen: "19:00", dinnerClose: "22:30" },
-    { day: 4 as const, open: "12:00", close: "14:30", dinnerOpen: "19:00", dinnerClose: "22:30" },
-    { day: 5 as const, open: "12:00", close: "14:30", dinnerOpen: "19:00", dinnerClose: "22:30" },
-    { day: 6 as const, open: "12:00", close: "14:30", dinnerOpen: "19:00", dinnerClose: "23:00" },
-    { day: 7 as const, open: "12:00", close: "14:30", dinnerOpen: "19:00", dinnerClose: "22:30" },
+    { day: 1 as const, open: "09:00", close: "23:30" },
+    { day: 2 as const, open: "09:00", close: "23:30" },
+    { day: 3 as const, open: "09:00", close: "23:30" },
+    { day: 4 as const, open: "09:00", close: "23:30" },
+    { day: 5 as const, open: "09:00", close: "01:00" },
+    { day: 6 as const, open: "09:00", close: "01:00" },
+    { day: 7 as const, open: "09:00", close: "15:30" },
   ],
 
   // Reservation settings

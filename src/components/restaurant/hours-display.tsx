@@ -21,7 +21,7 @@ export function HoursDisplay() {
           <li key={h.day} className="flex justify-between">
             <span>{dayNames[h.day]}</span>
             <span className="text-muted-foreground">
-              {h.open ? `${h.open}–${h.close} / ${h.dinnerOpen}–${h.dinnerClose}` : "Fermé"}
+              {h.open ? `${h.open} – ${h.close}` : "Fermé"}
             </span>
           </li>
         ))}

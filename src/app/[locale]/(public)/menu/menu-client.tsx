@@ -10,11 +10,63 @@ type Props = {
   locale: string;
 };
 
+// Map French category names to i18n keys in menu.categories.*
+const CATEGORY_I18N_KEY: Record<string, string> = {
+  "Entrées": "entrees",
+  "Plats": "plats",
+  "Desserts": "desserts",
+  "Boissons": "boissons",
+};
+
+// Map French singular course names to i18n keys in menu.courses.*
+const COURSE_I18N_KEY: Record<string, string> = {
+  "entrée": "entree",
+  "entrées": "entree",
+  "plat": "plat",
+  "plats": "plat",
+  "dessert": "dessert",
+  "desserts": "dessert",
+  "boisson": "boisson",
+  "boissons": "boisson",
+};
+
 export function MenuClient({ grouped, menus, locale }: Props) {
   const t = useTranslations("menu");
   const loc = locale as Locale;
+
+  function categoryLabel(cat: Category): string {
+    const key = CATEGORY_I18N_KEY[cat.name];
+    if (key) return t(`categories.${key}`);
+    return cat.name; // fallback for custom categories
+  }
+
+  // Translate course labels like "Entrée (au choix)", "ou Dessert", "Plat"
+  function translateCourseLabel(label: string): string {
+    let text = label.trim();
+
+    // Extract prefix "ou " / "ou"
+    let prefix = "";
+    if (/^ou\s+/i.test(text)) {
+      prefix = t("or") + " ";
+      text = text.replace(/^ou\s+/i, "");
+    }
+
+    // Extract suffix "(au choix)"
+    let suffix = "";
+    if (/\(au choix\)/i.test(text)) {
+      suffix = " " + t("choice");
+      text = text.replace(/\s*\(au choix\)/i, "");
+    }
+
+    // Look up the remaining word in the course map
+    const key = COURSE_I18N_KEY[text.toLowerCase()];
+    const translated = key ? t(`courses.${key}`) : text;
+
+    return `${prefix}${translated}${suffix}`;
+  }
+
   const tabs = [
-    ...grouped.map((g) => ({ id: g.category.id, label: g.category.name })),
+    ...grouped.map((g) => ({ id: g.category.id, label: categoryLabel(g.category) })),
     ...(menus.length > 0 ? [{ id: "__formules__", label: t("formules") }] : []),
   ];
 
@@ -83,7 +135,7 @@ export function MenuClient({ grouped, menus, locale }: Props) {
                         key={i}
                         className="text-sm font-light text-brand-dark/70"
                       >
-                        &bull; {course.label}
+                        &bull; {translateCourseLabel(course.label)}
                       </li>
                     ))}
                   </ul>

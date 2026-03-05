@@ -49,7 +49,15 @@
       "plats": "Platos principales",
       "desserts": "Postres",
       "boissons": "Bebidas"
-    }
+    },
+    "courses": {
+      "entree": "Entrante",
+      "plat": "Plato",
+      "dessert": "Postre",
+      "boisson": "Bebida"
+    },
+    "choice": "(a elegir)",
+    "or": "o"
   },
   "reservation": {
     "title": "Reservar una mesa",

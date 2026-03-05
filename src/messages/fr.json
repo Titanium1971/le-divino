@@ -48,7 +48,15 @@
       "plats": "Plats",
       "desserts": "Desserts",
       "boissons": "Boissons"
-    }
+    },
+    "courses": {
+      "entree": "Entrée",
+      "plat": "Plat",
+      "dessert": "Dessert",
+      "boisson": "Boisson"
+    },
+    "choice": "(au choix)",
+    "or": "ou"
   },
   "reservation": {
     "title": "Réserver une table",

@@ -49,7 +49,15 @@
       "plats": "Piatti principali",
       "desserts": "Dolci",
       "boissons": "Bevande"
-    }
+    },
+    "courses": {
+      "entree": "Antipasto",
+      "plat": "Piatto",
+      "dessert": "Dolce",
+      "boisson": "Bevanda"
+    },
+    "choice": "(a scelta)",
+    "or": "o"
   },
   "reservation": {
     "title": "Prenota un tavolo",

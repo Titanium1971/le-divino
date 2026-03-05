@@ -49,7 +49,15 @@
       "plats": "Hauptgerichte",
       "desserts": "Desserts",
       "boissons": "Getränke"
-    }
+    },
+    "courses": {
+      "entree": "Vorspeise",
+      "plat": "Hauptgericht",
+      "dessert": "Dessert",
+      "boisson": "Getränk"
+    },
+    "choice": "(nach Wahl)",
+    "or": "oder"
   },
   "reservation": {
     "title": "Tisch reservieren",

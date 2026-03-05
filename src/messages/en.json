@@ -49,7 +49,15 @@
       "plats": "Main courses",
       "desserts": "Desserts",
       "boissons": "Drinks"
-    }
+    },
+    "courses": {
+      "entree": "Starter",
+      "plat": "Main course",
+      "dessert": "Dessert",
+      "boisson": "Drink"
+    },
+    "choice": "(choice)",
+    "or": "or"
   },
   "reservation": {
     "title": "Book a table",

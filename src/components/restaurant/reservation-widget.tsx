@@ -9,13 +9,15 @@ const DAY_NAMES_SHORT: Record<string, string[]> = {
   en: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
   it: ["dom", "lun", "mar", "mer", "gio", "ven", "sab"],
   es: ["dom", "lun", "mar", "mié", "jue", "vie", "sáb"],
+  de: ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"],
 };
 
 const LUNCH_SLOTS = ["12:00", "12:30", "13:00"];
 const DINNER_SLOTS = ["19:00", "19:30", "20:00", "20:30"];
 
-// Monday is closed (ISO day 1 = JS getDay() 1)
-const CLOSED_JS_DAY = 1;
+// JS getDay(): 0=Sunday, 1=Monday, ...
+// Sunday closes at 15:30 → no dinner slots
+const SUNDAY_JS_DAY = 0;
 
 function getNext7Days() {
   const days: Date[] = [];
@@ -23,9 +25,8 @@ function getNext7Days() {
   for (let i = 0; i < 10 && days.length < 7; i++) {
     const d = new Date(now);
     d.setDate(now.getDate() + i);
-    if (d.getDay() !== CLOSED_JS_DAY) {
-      days.push(d);
-    }
+    // All days are open now (no closed day)
+    days.push(d);
   }
   return days;
 }
@@ -43,6 +44,9 @@ export function ReservationWidget({ locale }: { locale: string }) {
 
   const days = useMemo(() => getNext7Days(), []);
   const dayNames = DAY_NAMES_SHORT[locale] ?? DAY_NAMES_SHORT.fr;
+
+  // Sunday: no dinner slots (closes at 15:30)
+  const isSunday = selectedDate?.getDay() === SUNDAY_JS_DAY;
 
   function handleBook() {
     if (!selectedDate || !selectedTime) return;
@@ -148,25 +152,35 @@ export function ReservationWidget({ locale }: { locale: string }) {
               ))}
             </div>
 
-            {/* Dinner */}
-            <p className="mt-3 text-[10px] font-normal tracking-[0.1em] uppercase text-brand-gold">
-              {t("dinner")}
-            </p>
-            <div className="mt-1.5 flex flex-wrap gap-1.5">
-              {DINNER_SLOTS.map((slot) => (
-                <button
-                  key={slot}
-                  onClick={() => setSelectedTime(slot)}
-                  className={`rounded-md px-3 py-1.5 text-xs font-light transition-all duration-200 ${
-                    selectedTime === slot
-                      ? "bg-brand-gold/20 text-brand-gold"
-                      : "text-brand-cream/70 hover:bg-brand-cream/5"
-                  }`}
-                >
-                  {slot}
-                </button>
-              ))}
-            </div>
+            {/* Dinner — hidden on Sunday (closes at 15:30) */}
+            {!isSunday && (
+              <>
+                <p className="mt-3 text-[10px] font-normal tracking-[0.1em] uppercase text-brand-gold">
+                  {t("dinner")}
+                </p>
+                <div className="mt-1.5 flex flex-wrap gap-1.5">
+                  {DINNER_SLOTS.map((slot) => (
+                    <button
+                      key={slot}
+                      onClick={() => setSelectedTime(slot)}
+                      className={`rounded-md px-3 py-1.5 text-xs font-light transition-all duration-200 ${
+                        selectedTime === slot
+                          ? "bg-brand-gold/20 text-brand-gold"
+                          : "text-brand-cream/70 hover:bg-brand-cream/5"
+                      }`}
+                    >
+                      {slot}
+                    </button>
+                  ))}
+                </div>
+              </>
+            )}
+
+            {isSunday && (
+              <p className="mt-3 text-[10px] font-light text-brand-cream/50">
+                Dimanche : fermeture à 15h30, pas de service le soir.
+              </p>
+            )}
           </div>
         )}
 
