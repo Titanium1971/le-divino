@@ -1,13 +1,20 @@
+import type { Metadata } from "next";
 import { setRequestLocale } from "next-intl/server";
 import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 import { getPublishedGalleryItems, getGalleryImageUrl } from "@/lib/supabase/gallery";
 import type { Locale } from "@/lib/types/database";
 import { GalleryClient } from "./gallery-client";
+import { generatePageMetadata, breadcrumbJsonLd } from "@/lib/seo/metadata";
 
 type Props = {
   params: Promise<{ locale: string }>;
 };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { locale } = await params;
+  return generatePageMetadata(locale, "gallery");
+}
 
 export default async function GalleryPage({ params }: Props) {
   const { locale } = await params;
@@ -24,8 +31,14 @@ export default async function GalleryPage({ params }: Props) {
     tag: item.tag,
   }));
 
+  const breadcrumb = breadcrumbJsonLd(locale, "gallery", t("title"));
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
+      />
       {/* Page header — dark background */}
       <section className="bg-brand-dark pt-32 pb-16">
         <div className="mx-auto max-w-4xl px-6 text-center">

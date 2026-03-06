@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Image from "next/image";
 import { setRequestLocale } from "next-intl/server";
 import { getTranslations } from "next-intl/server";
@@ -5,10 +6,16 @@ import { HeroSection } from "@/components/restaurant/hero-section";
 import { ReservationWidget } from "@/components/restaurant/reservation-widget";
 import { GoogleReviews } from "@/components/restaurant/google-reviews";
 import { Link } from "@/i18n/navigation";
+import { generatePageMetadata } from "@/lib/seo/metadata";
 
 type Props = {
   params: Promise<{ locale: string }>;
 };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { locale } = await params;
+  return generatePageMetadata(locale, "home");
+}
 
 const HIGHLIGHT_IMAGES: Record<string, string> = {
   cuisine: "/images/bar-divino.jpg",

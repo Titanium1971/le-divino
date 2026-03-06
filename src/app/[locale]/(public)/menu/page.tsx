@@ -1,13 +1,20 @@
+import type { Metadata } from "next";
 import { setRequestLocale } from "next-intl/server";
 import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 import { getDishesGrouped } from "@/lib/supabase/dishes";
 import { getMenus } from "@/lib/supabase/menus";
 import { MenuClient } from "./menu-client";
+import { generatePageMetadata, breadcrumbJsonLd } from "@/lib/seo/metadata";
 
 type Props = {
   params: Promise<{ locale: string }>;
 };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { locale } = await params;
+  return generatePageMetadata(locale, "menu");
+}
 
 export default async function MenuPage({ params }: Props) {
   const { locale } = await params;
@@ -30,8 +37,14 @@ export default async function MenuPage({ params }: Props) {
 
   const availableMenus = menus.filter((m) => m.available);
 
+  const breadcrumb = breadcrumbJsonLd(locale, "menu", t("title"));
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
+      />
       {/* Page header */}
       <section className="bg-brand-dark pt-32 pb-16">
         <div className="mx-auto max-w-4xl px-6 text-center">

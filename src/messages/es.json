@@ -111,6 +111,36 @@
   "reviews": {
     "googleReviews": "reseñas de Google"
   },
+  "seo": {
+    "home": {
+      "title": "Le Divino — Restaurante Agde | Cocina Francesa Tradicional",
+      "description": "Restaurante Le Divino en Agde: cocina tradicional francesa, productos frescos de temporada, ambiente elegante. Reserve su mesa.",
+      "keywords": "restaurante agde, cocina francesa, le divino, restaurante tradicional, agde francia"
+    },
+    "menu": {
+      "title": "Carta — Le Divino | Restaurante Agde",
+      "description": "Descubra la carta del restaurante Le Divino en Agde: entrantes, platos principales, postres y menús elaborados con productos frescos locales.",
+      "keywords": "carta restaurante agde, le divino menú, platos franceses, menús, especialidades agde"
+    },
+    "reservation": {
+      "title": "Reserva — Le Divino | Restaurante Agde",
+      "description": "Reserve su mesa en el restaurante Le Divino en Agde. Almuerzo o cena, elija su horario en línea.",
+      "keywords": "reserva restaurante agde, reservar mesa le divino, restaurante agde reserva"
+    },
+    "gallery": {
+      "title": "Galería de Fotos — Le Divino | Restaurante Agde",
+      "description": "Descubra Le Divino en imágenes: nuestra sala, nuestros platos, nuestro equipo y el ambiente de nuestro restaurante en Agde.",
+      "keywords": "fotos restaurante agde, galería le divino, ambiente restaurante, platos franceses fotos"
+    },
+    "contact": {
+      "title": "Contacto & Cómo Llegar — Le Divino | Restaurante Agde",
+      "description": "Contacte con Le Divino: 5 place Jean Jaurès, 34300 Agde. Horarios, teléfono, email e indicaciones.",
+      "keywords": "contacto le divino agde, dirección restaurante agde, horarios le divino, cómo llegar restaurante agde"
+    },
+    "breadcrumb": {
+      "home": "Inicio"
+    }
+  },
   "footer": {
     "hours": "Horarios",
     "contact": "Contacto",

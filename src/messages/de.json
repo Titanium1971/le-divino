@@ -111,6 +111,36 @@
   "reviews": {
     "googleReviews": "Google-Bewertungen"
   },
+  "seo": {
+    "home": {
+      "title": "Le Divino — Restaurant Agde | Traditionelle Französische Küche",
+      "description": "Restaurant Le Divino in Agde: traditionelle französische Küche, frische saisonale Produkte, elegantes Ambiente. Reservieren Sie Ihren Tisch.",
+      "keywords": "restaurant agde, französische küche, le divino, traditionelles restaurant, agde frankreich"
+    },
+    "menu": {
+      "title": "Speisekarte — Le Divino | Restaurant Agde",
+      "description": "Entdecken Sie die Speisekarte des Restaurants Le Divino in Agde: Vorspeisen, Hauptgerichte, Desserts und Menüs aus frischen lokalen Produkten.",
+      "keywords": "speisekarte restaurant agde, le divino menü, französische gerichte, menüs, spezialitäten agde"
+    },
+    "reservation": {
+      "title": "Reservierung — Le Divino | Restaurant Agde",
+      "description": "Reservieren Sie Ihren Tisch im Restaurant Le Divino in Agde. Mittag- oder Abendessen, wählen Sie Ihren Zeitraum online.",
+      "keywords": "reservierung restaurant agde, tisch reservieren le divino, restaurant agde reservierung"
+    },
+    "gallery": {
+      "title": "Fotogalerie — Le Divino | Restaurant Agde",
+      "description": "Entdecken Sie Le Divino in Bildern: unser Restaurant, unsere Gerichte, unser Team und die Atmosphäre in Agde.",
+      "keywords": "fotos restaurant agde, galerie le divino, restaurant atmosphäre, französische gerichte fotos"
+    },
+    "contact": {
+      "title": "Kontakt & Anfahrt — Le Divino | Restaurant Agde",
+      "description": "Kontaktieren Sie Le Divino: 5 place Jean Jaurès, 34300 Agde. Öffnungszeiten, Telefon, E-Mail und Anfahrt.",
+      "keywords": "kontakt le divino agde, adresse restaurant agde, öffnungszeiten le divino, anfahrt restaurant agde"
+    },
+    "breadcrumb": {
+      "home": "Startseite"
+    }
+  },
   "footer": {
     "hours": "Öffnungszeiten",
     "contact": "Kontakt",
