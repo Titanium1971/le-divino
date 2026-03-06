@@ -1,8 +1,10 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 export const revalidate = 3600; // cache for 1 hour
 
-export async function GET() {
+const SUPPORTED_LANGS = new Set(["fr", "en", "it", "es", "de"]);
+
+export async function GET(request: NextRequest) {
   const apiKey = process.env.GOOGLE_MAPS_API_KEY;
   const placeId = process.env.NEXT_PUBLIC_GOOGLE_PLACE_ID;
 
@@ -10,9 +12,12 @@ export async function GET() {
     return NextResponse.json({ error: "Google API not configured" }, { status: 500 });
   }
 
+  const langParam = request.nextUrl.searchParams.get("lang") ?? "fr";
+  const lang = SUPPORTED_LANGS.has(langParam) ? langParam : "fr";
+
   try {
     const res = await fetch(
-      `https://places.googleapis.com/v1/places/${placeId}?languageCode=fr`,
+      `https://places.googleapis.com/v1/places/${placeId}?languageCode=${lang}`,
       {
         headers: {
           "X-Goog-Api-Key": apiKey,

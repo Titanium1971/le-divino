@@ -107,6 +107,9 @@
     "dinner": "Dîner",
     "cta": "Réserver"
   },
+  "reviews": {
+    "googleReviews": "avis Google"
+  },
   "footer": {
     "hours": "Horaires",
     "contact": "Contact",

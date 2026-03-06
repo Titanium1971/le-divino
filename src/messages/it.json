@@ -108,6 +108,9 @@
     "dinner": "Cena",
     "cta": "Prenota"
   },
+  "reviews": {
+    "googleReviews": "recensioni Google"
+  },
   "footer": {
     "hours": "Orari",
     "contact": "Contatto",

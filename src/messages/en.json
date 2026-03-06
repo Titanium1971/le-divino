@@ -108,6 +108,9 @@
     "dinner": "Dinner",
     "cta": "Book"
   },
+  "reviews": {
+    "googleReviews": "Google reviews"
+  },
   "footer": {
     "hours": "Hours",
     "contact": "Contact",

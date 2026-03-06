@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import Image from "next/image";
+import { useLocale, useTranslations } from "next-intl";
 
 type Review = {
   author: string;
@@ -37,18 +38,20 @@ function Stars({ rating, size = 16 }: { rating: number; size?: number }) {
 }
 
 export function GoogleReviews() {
+  const locale = useLocale();
+  const t = useTranslations("reviews");
   const [data, setData] = useState<ReviewsData | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [fade, setFade] = useState(true);
 
   useEffect(() => {
-    fetch("/api/google-reviews")
+    fetch(`/api/google-reviews?lang=${locale}`)
       .then((r) => (r.ok ? r.json() : null))
       .then((d) => {
         if (d && d.reviews?.length) setData(d);
       })
       .catch(() => {});
-  }, []);
+  }, [locale]);
 
   // Auto-rotate reviews every 5s
   const reviewCount = data?.reviews.length ?? 0;
@@ -91,7 +94,7 @@ export function GoogleReviews() {
             <Stars rating={Math.round(data.rating ?? 0)} size={20} />
           </div>
           <p className="mt-2 text-xs font-light tracking-[0.15em] uppercase text-brand-cream/50">
-            {data.totalReviews} avis Google
+            {data.totalReviews} {t("googleReviews")}
           </p>
           <div className="mx-auto mt-4 h-px w-12 bg-brand-gold/40" />
         </div>

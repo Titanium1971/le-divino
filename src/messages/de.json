@@ -108,6 +108,9 @@
     "dinner": "Abendessen",
     "cta": "Reservieren"
   },
+  "reviews": {
+    "googleReviews": "Google-Bewertungen"
+  },
   "footer": {
     "hours": "Öffnungszeiten",
     "contact": "Kontakt",
