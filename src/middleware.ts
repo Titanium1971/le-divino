@@ -5,56 +5,49 @@ import { createServerClient } from "@supabase/ssr";
 
 const handleI18nRouting = createIntlMiddleware(routing);
 
-function createSupabaseMiddlewareClient(request: NextRequest) {
-  let response = NextResponse.next({ request });
-
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll() {
-          return request.cookies.getAll();
-        },
-        setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
-          response = NextResponse.next({ request });
-          cookiesToSet.forEach(({ name, value, options }) =>
-            response.cookies.set(name, value, options),
-          );
-        },
-      },
-    },
-  );
-
-  return { supabase, response: () => response };
-}
-
 export default async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // ── Admin routes: auth gate ──
   if (pathname.startsWith("/admin")) {
-    const { supabase, response } = createSupabaseMiddlewareClient(request);
+    let response = NextResponse.next({ request });
+
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          getAll() {
+            return request.cookies.getAll();
+          },
+          setAll(cookiesToSet) {
+            cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
+            response = NextResponse.next({ request });
+            cookiesToSet.forEach(({ name, value, options }) =>
+              response.cookies.set(name, value, options),
+            );
+          },
+        },
+      },
+    );
+
     const {
       data: { user },
     } = await supabase.auth.getUser();
 
-    // Not authenticated → redirect to login (unless already on login page)
     if (!user && pathname !== "/admin/login") {
       const url = request.nextUrl.clone();
       url.pathname = "/admin/login";
       return NextResponse.redirect(url);
     }
 
-    // Already authenticated → redirect away from login page
     if (user && pathname === "/admin/login") {
       const url = request.nextUrl.clone();
       url.pathname = "/admin";
       return NextResponse.redirect(url);
     }
 
-    return response();
+    return response;
   }
 
   // ── Ecran & API: no i18n, no auth ──
@@ -62,17 +55,31 @@ export default async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // ── Public routes: Supabase session refresh + i18n ──
-  const { supabase, response: supabaseResponse } = createSupabaseMiddlewareClient(request);
-  await supabase.auth.getUser();
-
+  // ── Public routes: i18n first (before any request mutation) ──
   const i18nResponse = handleI18nRouting(request);
 
-  supabaseResponse()
-    .cookies.getAll()
-    .forEach((cookie) => {
-      i18nResponse.cookies.set(cookie.name, cookie.value);
-    });
+  // Refresh Supabase session and copy auth cookies onto the i18n response
+  try {
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          getAll() {
+            return request.cookies.getAll();
+          },
+          setAll(cookiesToSet) {
+            cookiesToSet.forEach(({ name, value, options }) =>
+              i18nResponse.cookies.set(name, value, options),
+            );
+          },
+        },
+      },
+    );
+    await supabase.auth.getUser();
+  } catch {
+    // Session refresh is best-effort for public routes
+  }
 
   return i18nResponse;
 }
