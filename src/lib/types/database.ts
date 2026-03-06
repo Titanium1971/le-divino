@@ -155,6 +155,8 @@ export type GalleryItem = {
   tag: GalleryTag;
   sort_order: number;
   published: boolean;
+  is_featured: boolean;
+  show_on_screen: boolean;
   created_at: string;
 };
 

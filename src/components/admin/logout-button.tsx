@@ -16,7 +16,7 @@ export function LogoutButton() {
   return (
     <button
       onClick={handleLogout}
-      className="mt-2 w-full rounded-md px-3 py-1.5 text-left text-xs font-light text-[#f5f0eb]/50 transition-colors hover:bg-[#f5f0eb]/5 hover:text-[#f5f0eb]"
+      className="admin-focus mt-2 w-full rounded-md px-3 py-1.5 text-left text-xs font-light text-[#FAF6F0]/40 transition-colors duration-200 hover:bg-[#C5A55A]/8 hover:text-[#FAF6F0]/70"
     >
       Se déconnecter
     </button>

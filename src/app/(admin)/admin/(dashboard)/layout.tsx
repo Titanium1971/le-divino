@@ -13,9 +13,9 @@ export default async function DashboardLayout({ children }: { children: React.Re
   }
 
   return (
-    <div className="flex min-h-screen">
+    <div className="admin-theme flex min-h-screen">
       <AdminSidebar userEmail={user.email ?? ""} />
-      <main className="flex-1 overflow-y-auto p-8">{children}</main>
+      <main className="admin-scrollbar flex-1 overflow-y-auto bg-[#F5EFE8] p-8">{children}</main>
     </div>
   );
 }

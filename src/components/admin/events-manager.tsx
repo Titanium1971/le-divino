@@ -22,12 +22,12 @@ import {
 import { EventFormSheet } from "./event-form-sheet";
 
 const TYPE_CONFIG: Record<EventType, { label: string; className: string }> = {
-  karaoke:   { label: "Karaoké",       className: "bg-purple-500/15 text-purple-600 border-purple-500/20" },
-  concert:   { label: "Concert",       className: "bg-blue-500/15 text-blue-600 border-blue-500/20" },
-  private:   { label: "Soirée privée", className: "bg-amber-500/15 text-amber-600 border-amber-500/20" },
-  holiday:   { label: "Jour férié",    className: "bg-red-500/15 text-red-600 border-red-500/20" },
-  animation: { label: "Animation",     className: "bg-green-500/15 text-green-600 border-green-500/20" },
-  custom:    { label: "Autre",         className: "bg-gray-500/15 text-gray-500 border-gray-500/20" },
+  karaoke:   { label: "Karaoké",       className: "bg-purple-100 text-purple-700 border-purple-200" },
+  concert:   { label: "Concert",       className: "bg-blue-100 text-blue-700 border-blue-200" },
+  private:   { label: "Soirée privée", className: "bg-amber-100 text-amber-700 border-amber-200" },
+  holiday:   { label: "Jour férié",    className: "bg-red-100 text-red-700 border-red-200" },
+  animation: { label: "Animation",     className: "bg-green-100 text-green-700 border-green-200" },
+  custom:    { label: "Autre",         className: "bg-gray-100 text-gray-500 border-gray-200" },
 };
 
 type Props = {

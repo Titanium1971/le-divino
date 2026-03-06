@@ -29,11 +29,11 @@ import {
 } from "@/components/ui/alert-dialog";
 
 const STATUS_CONFIG: Record<ReservationStatus, { label: string; className: string }> = {
-  pending: { label: "En attente", className: "bg-orange-500/15 text-orange-600 border-orange-500/20" },
-  confirmed: { label: "Confirmée", className: "bg-green-500/15 text-green-600 border-green-500/20" },
-  cancelled: { label: "Annulée", className: "bg-red-500/15 text-red-600 border-red-500/20" },
-  completed: { label: "Terminée", className: "bg-gray-500/15 text-gray-500 border-gray-500/20" },
-  no_show: { label: "No-show", className: "bg-slate-500/15 text-slate-500 border-slate-500/20" },
+  pending: { label: "En attente", className: "bg-orange-100 text-orange-700 border-orange-200" },
+  confirmed: { label: "Confirmée", className: "bg-green-100 text-green-700 border-green-200" },
+  cancelled: { label: "Annulée", className: "bg-red-100 text-red-700 border-red-200" },
+  completed: { label: "Terminée", className: "bg-gray-100 text-gray-500 border-gray-200" },
+  no_show: { label: "No-show", className: "bg-slate-100 text-slate-500 border-slate-200" },
 };
 
 type Props = {

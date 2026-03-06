@@ -75,10 +75,10 @@ export default async function AdminDashboard() {
 
   return (
     <div>
-      <h1 className="text-2xl font-light tracking-wide text-[#f5f0eb]">
+      <h1 className="text-2xl font-semibold tracking-wide text-[#2D1219]">
         Tableau de bord
       </h1>
-      <p className="mt-1 text-sm text-[#f5f0eb]/50">
+      <p className="mt-1 text-sm text-[#8C7B72]">
         {new Date().toLocaleDateString("fr-FR", {
           weekday: "long",
           day: "numeric",

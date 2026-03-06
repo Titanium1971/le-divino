@@ -36,23 +36,23 @@ export function LoginForm() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#1a0a0a]">
+    <div className="flex min-h-screen items-center justify-center bg-[#1A0A0E]">
       <div className="w-full max-w-sm space-y-8 px-6">
         {/* Logo / Title */}
         <div className="text-center">
-          <h1 className="text-3xl font-extralight tracking-[0.3em] text-[#f5f0eb]">
+          <h1 className="text-3xl font-extralight tracking-[0.3em] text-[#FAF6F0]">
             LE DIVINO
           </h1>
-          <div className="mx-auto mt-3 h-px w-16 bg-[#c5962c]" />
-          <p className="mt-3 text-sm font-light tracking-wider text-[#f5f0eb]/50">
+          <div className="mx-auto mt-3 h-px w-16 bg-[#C5A55A]" />
+          <p className="mt-3 text-sm font-light tracking-wider text-[#FAF6F0]/50">
             Administration
           </p>
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-5">
+        <form onSubmit={handleSubmit} className="admin-card space-y-5 p-6">
           <div className="space-y-2">
-            <Label htmlFor="email" className="text-xs font-light tracking-wider text-[#f5f0eb]/70">
+            <Label htmlFor="email" className="text-xs font-medium tracking-wider text-[#FAF6F0]/60">
               Email
             </Label>
             <Input
@@ -62,7 +62,7 @@ export function LoginForm() {
               onChange={(e) => setEmail(e.target.value)}
               required
               autoComplete="email"
-              className="border-[#f5f0eb]/10 bg-[#f5f0eb]/5 text-[#f5f0eb] placeholder:text-[#f5f0eb]/30 focus-visible:ring-[#c5962c]/50"
+              className="border-[#C5A55A]/15 bg-[#1A0A0E]/50 text-[#FAF6F0] placeholder:text-[#FAF6F0]/25 focus-visible:ring-[#C5A55A]/50"
               placeholder="admin@ledivino-agde.fr"
             />
           </div>
@@ -70,7 +70,7 @@ export function LoginForm() {
           <div className="space-y-2">
             <Label
               htmlFor="password"
-              className="text-xs font-light tracking-wider text-[#f5f0eb]/70"
+              className="text-xs font-medium tracking-wider text-[#FAF6F0]/60"
             >
               Mot de passe
             </Label>
@@ -81,7 +81,7 @@ export function LoginForm() {
               onChange={(e) => setPassword(e.target.value)}
               required
               autoComplete="current-password"
-              className="border-[#f5f0eb]/10 bg-[#f5f0eb]/5 text-[#f5f0eb] placeholder:text-[#f5f0eb]/30 focus-visible:ring-[#c5962c]/50"
+              className="border-[#C5A55A]/15 bg-[#1A0A0E]/50 text-[#FAF6F0] placeholder:text-[#FAF6F0]/25 focus-visible:ring-[#C5A55A]/50"
               placeholder="••••••••"
             />
           </div>
@@ -93,13 +93,13 @@ export function LoginForm() {
           <Button
             type="submit"
             disabled={loading}
-            className="w-full bg-[#6b1a1a] text-[#f5f0eb] hover:bg-[#8b2a2a] disabled:opacity-50"
+            className="admin-btn w-full bg-[#C5A55A] text-[#1A0A0E] font-semibold hover:bg-[#d4b368] disabled:opacity-50"
           >
             {loading ? "Connexion..." : "Se connecter"}
           </Button>
         </form>
 
-        <p className="text-center text-xs text-[#f5f0eb]/30">
+        <p className="text-center text-xs text-[#FAF6F0]/25">
           Accès réservé au personnel autorisé
         </p>
       </div>

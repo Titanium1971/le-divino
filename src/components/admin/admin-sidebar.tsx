@@ -23,12 +23,14 @@ export function AdminSidebar({ userEmail }: AdminSidebarProps) {
   const pathname = usePathname();
 
   return (
-    <aside className="flex w-64 shrink-0 flex-col border-r bg-[#1a0a0a] text-[#f5f0eb]">
+    <aside className="admin-scrollbar flex w-64 shrink-0 flex-col border-r border-[#C5A55A]/15 bg-[#1A0A0E]">
       {/* Brand */}
-      <div className="border-b border-[#f5f0eb]/10 px-6 py-5">
-        <Link href="/admin" className="block">
-          <p className="text-lg font-light tracking-[0.2em]">LE DIVINO</p>
-          <p className="mt-0.5 text-[10px] font-light tracking-wider text-[#c5962c]">
+      <div className="border-b border-[#C5A55A]/10 px-6 py-5">
+        <Link href="/admin" className="group block admin-focus rounded-md">
+          <p className="text-lg font-light tracking-[0.2em] text-[#FAF6F0] transition-colors duration-200 group-hover:text-[#C5A55A]">
+            LE DIVINO
+          </p>
+          <p className="mt-0.5 text-[10px] font-light tracking-wider text-[#C5A55A]">
             ADMINISTRATION
           </p>
         </Link>
@@ -47,13 +49,15 @@ export function AdminSidebar({ userEmail }: AdminSidebarProps) {
               <li key={item.href}>
                 <Link
                   href={item.href}
-                  className={`flex items-center gap-3 rounded-md px-3 py-2 text-sm font-light transition-colors ${
+                  className={`admin-nav-link admin-focus flex items-center gap-3 rounded-md px-3 py-2 text-sm font-light ${
                     isActive
-                      ? "bg-[#6b1a1a] text-[#f5f0eb]"
-                      : "text-[#f5f0eb]/60 hover:bg-[#f5f0eb]/5 hover:text-[#f5f0eb]"
+                      ? "admin-nav-active font-medium"
+                      : "text-[#FAF6F0]/60"
                   }`}
                 >
-                  <span className="w-4 text-center text-xs">{item.icon}</span>
+                  <span className={`w-4 text-center text-xs transition-colors duration-200 ${isActive ? "text-[#C5A55A]" : ""}`}>
+                    {item.icon}
+                  </span>
                   {item.label}
                 </Link>
               </li>
@@ -63,8 +67,8 @@ export function AdminSidebar({ userEmail }: AdminSidebarProps) {
       </nav>
 
       {/* User / Logout */}
-      <div className="border-t border-[#f5f0eb]/10 px-4 py-4">
-        <p className="truncate text-xs text-[#f5f0eb]/40">{userEmail}</p>
+      <div className="border-t border-[#C5A55A]/10 px-4 py-4">
+        <p className="truncate text-xs text-[#FAF6F0]/40">{userEmail}</p>
         <LogoutButton />
       </div>
     </aside>
