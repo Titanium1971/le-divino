@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    { "source": "/menu", "destination": "/fr/menu" },
+    { "source": "/galerie", "destination": "/fr/galerie" },
+    { "source": "/reservation", "destination": "/fr/reservation" },
+    { "source": "/contact", "destination": "/fr/contact" }
+  ]
+}

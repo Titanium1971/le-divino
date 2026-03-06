@@ -24,6 +24,24 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async rewrites() {
+    return {
+      beforeFiles: [
+        // Fallback for Vercel Edge: rewrite unprefixed public paths to /fr/…
+        // Runs after middleware — only applies if the middleware rewrite was lost
+        {
+          source: "/:path(menu|galerie|reservation|contact)",
+          destination: "/fr/:path",
+        },
+        {
+          source: "/",
+          destination: "/fr",
+        },
+      ],
+      afterFiles: [],
+      fallback: [],
+    };
+  },
 };
 
 export default withNextIntl(nextConfig);
