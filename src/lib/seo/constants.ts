@@ -53,6 +53,22 @@ export const RESTAURANT_JSON_LD = {
   sameAs: [c.social.instagram, c.social.facebook].filter(Boolean),
   acceptsReservations: "True",
   menu: `${SITE_URL}/menu`,
+  logo: `${SITE_URL}/images/logo-divino.jpg`,
+  potentialAction: {
+    "@type": "ReserveAction",
+    target: {
+      "@type": "EntryPoint",
+      urlTemplate: `${SITE_URL}/reservation`,
+      actionPlatform: [
+        "http://schema.org/DesktopWebPlatform",
+        "http://schema.org/MobileWebPlatform",
+      ],
+    },
+    result: {
+      "@type": "FoodEstablishmentReservation",
+      name: "Réservation Le Divino",
+    },
+  },
 };
 
 export const PUBLIC_PAGES = [

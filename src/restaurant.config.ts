@@ -59,7 +59,7 @@ export const restaurantConfig = {
   seo: {
     cuisineType: "FrenchCuisine",
     priceRange: "$$",
-    servesCuisine: ["French", "Traditional"],
+    servesCuisine: ["French", "Mediterranean", "Traditional"],
   },
 
   // Theme

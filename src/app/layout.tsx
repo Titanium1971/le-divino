@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Raleway } from "next/font/google";
-import { SITE_URL, PUBLIC_PAGES, LOCALES, DEFAULT_LOCALE } from "@/lib/seo/constants";
+import { SITE_URL, LOCALES, DEFAULT_LOCALE, RESTAURANT_JSON_LD } from "@/lib/seo/constants";
 import "./globals.css";
 
 const raleway = Raleway({
@@ -28,6 +28,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fr" suppressHydrationWarning>
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(RESTAURANT_JSON_LD) }}
+        />
+      </head>
       <body className={`${raleway.variable} font-sans antialiased`}>{children}</body>
     </html>
   );
