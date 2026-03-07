@@ -1,6 +1,6 @@
 import { restaurantConfig } from "@/restaurant.config";
 
-export const SITE_URL = "https://le-divino.vercel.app";
+export const SITE_URL = "https://www.ledivino-agde.fr";
 
 const c = restaurantConfig;
 
@@ -56,11 +56,11 @@ export const RESTAURANT_JSON_LD = {
 };
 
 export const PUBLIC_PAGES = [
-  { path: "", priority: 1.0 },
-  { path: "menu", priority: 0.9 },
-  { path: "reservation", priority: 0.8 },
-  { path: "galerie", priority: 0.7 },
-  { path: "contact", priority: 0.7 },
+  { path: "", priority: 1.0, changeFrequency: "weekly" as const },
+  { path: "menu", priority: 0.9, changeFrequency: "weekly" as const },
+  { path: "reservation", priority: 0.8, changeFrequency: "monthly" as const },
+  { path: "galerie", priority: 0.7, changeFrequency: "weekly" as const },
+  { path: "contact", priority: 0.7, changeFrequency: "yearly" as const },
 ] as const;
 
 export const LOCALES = ["fr", "en", "it", "es", "de"] as const;
