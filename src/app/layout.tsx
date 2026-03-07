@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Raleway } from "next/font/google";
+import { SITE_URL, PUBLIC_PAGES, LOCALES, DEFAULT_LOCALE } from "@/lib/seo/constants";
 import "./globals.css";
 
 const raleway = Raleway({
@@ -11,6 +12,13 @@ const raleway = Raleway({
 export const metadata: Metadata = {
   title: "Le Divino — Restaurant | Agde",
   description: "Restaurant de cuisine traditionnelle française au cœur d'Agde.",
+  alternates: {
+    canonical: SITE_URL,
+    languages: Object.fromEntries([
+      ...LOCALES.map((l) => [l, l === DEFAULT_LOCALE ? SITE_URL : `${SITE_URL}/${l}`]),
+      ["x-default", SITE_URL],
+    ]),
+  },
 };
 
 export default function RootLayout({
@@ -19,7 +27,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html suppressHydrationWarning>
+    <html lang="fr" suppressHydrationWarning>
       <body className={`${raleway.variable} font-sans antialiased`}>{children}</body>
     </html>
   );
