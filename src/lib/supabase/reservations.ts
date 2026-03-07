@@ -50,6 +50,38 @@ export async function getTodayReservationsCount(
   return count ?? 0;
 }
 
+export async function createReservation(
+  supabase: SupabaseClient,
+  data: {
+    name: string;
+    email?: string;
+    phone?: string;
+    date: string;
+    time: string;
+    guests: number;
+    message?: string;
+    status?: ReservationStatus;
+  },
+): Promise<Reservation> {
+  const { data: row, error } = await supabase
+    .from("reservations")
+    .insert({
+      name: data.name,
+      email: data.email ?? "",
+      phone: data.phone ?? "",
+      date: data.date,
+      time: data.time,
+      guests: data.guests,
+      message: data.message ?? null,
+      status: data.status ?? "pending",
+    })
+    .select()
+    .single();
+
+  if (error) throw error;
+  return row as Reservation;
+}
+
 export async function updateReservationStatus(
   supabase: SupabaseClient,
   id: string,

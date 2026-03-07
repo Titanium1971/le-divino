@@ -31,6 +31,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { ReservationDetailSheet } from "./reservation-detail-sheet";
+import { ReservationFormSheet } from "./reservation-form-sheet";
 
 const STATUS_CONFIG: Record<ReservationStatus, { label: string; className: string }> = {
   pending: { label: "En attente", className: "bg-orange-100 text-orange-700 border-orange-200" },
@@ -85,10 +86,16 @@ export function ReservationsManager({ initialReservations, todayCount }: Props) 
   // Cancel dialog
   const [cancelTarget, setCancelTarget] = useState<Reservation | null>(null);
 
+  // Form sheet
+  const [formSheetOpen, setFormSheetOpen] = useState(false);
+
   // Calendar state
   const [weekStart, setWeekStart] = useState(() => getMonday(new Date()));
   const [calendarReservations, setCalendarReservations] = useState<Reservation[]>([]);
   const [calendarLoaded, setCalendarLoaded] = useState(false);
+  const [calendarView, setCalendarView] = useState<"day" | "week" | "list">("week");
+  const [selectedDay, setSelectedDay] = useState(() => new Date());
+  const [dayReservations, setDayReservations] = useState<Reservation[]>([]);
 
   // ── Fetch helpers ──
 
@@ -113,6 +120,14 @@ export function ReservationsManager({ initialReservations, todayCount }: Props) 
     [supabase],
   );
 
+  const fetchDay = useCallback(
+    async (day: Date) => {
+      const data = await getReservations(supabase, { date: formatDateISO(day) });
+      setDayReservations(data);
+    },
+    [supabase],
+  );
+
   async function refresh() {
     await fetchList(filterDate, filterStatus);
     // Update today count
@@ -121,7 +136,11 @@ export function ReservationsManager({ initialReservations, todayCount }: Props) 
     setTodayCountState(todayRes.length);
     // Also refresh calendar if loaded
     if (calendarLoaded) {
-      await fetchCalendar(weekStart);
+      if (calendarView === "day") {
+        await fetchDay(selectedDay);
+      } else {
+        await fetchCalendar(weekStart);
+      }
     }
   }
 
@@ -163,13 +182,51 @@ export function ReservationsManager({ initialReservations, todayCount }: Props) 
     setSheetOpen(true);
   }
 
+  // ── Add reservation ──
+
+  function handleAdd() {
+    setFormSheetOpen(true);
+  }
+
+  async function handleFormSaved() {
+    setFormSheetOpen(false);
+    await refresh();
+  }
+
   // ── Calendar navigation ──
 
   async function handleTabChange(tab: string) {
     if (tab === "calendar" && !calendarLoaded) {
       setCalendarLoaded(true);
+      if (calendarView === "day") {
+        await fetchDay(selectedDay);
+      } else {
+        await fetchCalendar(weekStart);
+      }
+    }
+  }
+
+  async function handleCalendarViewChange(view: "day" | "week" | "list") {
+    setCalendarView(view);
+    if (view === "day") {
+      await fetchDay(selectedDay);
+    } else {
       await fetchCalendar(weekStart);
     }
+  }
+
+  async function handlePrevDay() {
+    const newDay = new Date(selectedDay);
+    newDay.setDate(newDay.getDate() - 1);
+    setSelectedDay(newDay);
+    await fetchDay(newDay);
+  }
+
+  async function handleNextDay() {
+    const newDay = new Date(selectedDay);
+    newDay.setDate(newDay.getDate() + 1);
+    setSelectedDay(newDay);
+    await fetchDay(newDay);
   }
 
   async function handlePrevWeek() {
@@ -204,6 +261,7 @@ export function ReservationsManager({ initialReservations, todayCount }: Props) 
           <h1 className="text-2xl font-light tracking-wide">Gestion des réservations</h1>
           <Badge variant="secondary">{todayCountState} aujourd&apos;hui</Badge>
         </div>
+        <Button onClick={handleAdd}>+ Nouvelle réservation</Button>
       </div>
 
       <Separator className="my-6" />
@@ -274,65 +332,195 @@ export function ReservationsManager({ initialReservations, todayCount }: Props) 
         {/* ── Calendar tab ── */}
         <TabsContent value="calendar">
           <div className="space-y-4">
-            {/* Week navigation */}
-            <div className="flex items-center justify-between">
-              <Button variant="outline" size="sm" onClick={handlePrevWeek}>
-                ← Semaine précédente
-              </Button>
-              <span className="text-sm font-medium">
-                {formatDateISO(weekStart)} — {formatDateISO((() => {
-                  const end = new Date(weekStart);
-                  end.setDate(end.getDate() + 6);
-                  return end;
-                })())}
-              </span>
-              <Button variant="outline" size="sm" onClick={handleNextWeek}>
-                Semaine suivante →
-              </Button>
+            {/* View switch */}
+            <div className="flex items-center gap-1 rounded-lg border p-1 w-fit">
+              {(["day", "week", "list"] as const).map((v) => (
+                <button
+                  key={v}
+                  onClick={() => handleCalendarViewChange(v)}
+                  className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
+                    calendarView === v
+                      ? "bg-primary text-primary-foreground"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  {v === "day" ? "Jour" : v === "week" ? "Semaine" : "Liste"}
+                </button>
+              ))}
             </div>
 
-            {/* Week grid */}
-            <div className="grid grid-cols-7 gap-2">
-              {getWeekDays().map((day, i) => {
-                const dayStr = formatDateISO(day);
-                const dayReservations = calendarReservations.filter((r) => r.date === dayStr);
-                const isToday = dayStr === new Date().toISOString().split("T")[0];
+            {/* ── Day view ── */}
+            {calendarView === "day" && (
+              <>
+                <div className="flex items-center justify-between">
+                  <Button variant="outline" size="sm" onClick={handlePrevDay}>
+                    ← Jour précédent
+                  </Button>
+                  <span className="text-sm font-medium">
+                    {selectedDay.toLocaleDateString("fr-FR", {
+                      weekday: "long",
+                      day: "numeric",
+                      month: "long",
+                      year: "numeric",
+                    })}
+                  </span>
+                  <Button variant="outline" size="sm" onClick={handleNextDay}>
+                    Jour suivant →
+                  </Button>
+                </div>
 
-                return (
-                  <div
-                    key={dayStr}
-                    className={`min-h-[140px] rounded-lg border p-2 ${
-                      isToday ? "border-primary/40 bg-primary/5" : ""
-                    }`}
-                  >
-                    <div className="mb-2 text-center">
-                      <p className="text-xs text-muted-foreground">{getDayNames()[i]}</p>
-                      <p className={`text-sm font-medium ${isToday ? "text-primary" : ""}`}>
-                        {day.getDate()}
-                      </p>
-                    </div>
-                    <div className="space-y-1">
-                      {dayReservations.map((r) => (
-                        <button
-                          key={r.id}
-                          onClick={() => handleRowClick(r)}
-                          className={`w-full rounded p-1.5 text-left text-xs transition-opacity hover:opacity-80 ${
-                            STATUS_CONFIG[r.status].className
-                          }`}
-                        >
-                          <p className="font-medium">{r.time}</p>
-                          <p className="truncate">{r.name}</p>
-                          <p className="text-[10px] opacity-70">{r.guests} pers.</p>
-                        </button>
-                      ))}
-                    </div>
+                {dayReservations.length === 0 ? (
+                  <p className="py-12 text-center text-sm text-muted-foreground">
+                    Aucune réservation ce jour.
+                  </p>
+                ) : (
+                  <div className="space-y-2">
+                    {dayReservations.map((r) => (
+                      <ReservationRow
+                        key={r.id}
+                        reservation={r}
+                        onClick={() => handleRowClick(r)}
+                        onConfirm={() => handleQuickConfirm(r)}
+                        onCancel={() => setCancelTarget(r)}
+                        onComplete={() => handleQuickComplete(r)}
+                      />
+                    ))}
                   </div>
-                );
-              })}
-            </div>
+                )}
+              </>
+            )}
+
+            {/* ── Week view ── */}
+            {calendarView === "week" && (
+              <>
+                <div className="flex items-center justify-between">
+                  <Button variant="outline" size="sm" onClick={handlePrevWeek}>
+                    ← Semaine précédente
+                  </Button>
+                  <span className="text-sm font-medium">
+                    {formatDateISO(weekStart)} — {formatDateISO((() => {
+                      const end = new Date(weekStart);
+                      end.setDate(end.getDate() + 6);
+                      return end;
+                    })())}
+                  </span>
+                  <Button variant="outline" size="sm" onClick={handleNextWeek}>
+                    Semaine suivante →
+                  </Button>
+                </div>
+
+                <div className="grid grid-cols-7 gap-2">
+                  {getWeekDays().map((day, i) => {
+                    const dayStr = formatDateISO(day);
+                    const dayRes = calendarReservations.filter((r) => r.date === dayStr);
+                    const isToday = dayStr === new Date().toISOString().split("T")[0];
+
+                    return (
+                      <div
+                        key={dayStr}
+                        className={`min-h-[140px] rounded-lg border p-2 ${
+                          isToday ? "border-primary/40 bg-primary/5" : ""
+                        }`}
+                      >
+                        <div className="mb-2 text-center">
+                          <p className="text-xs text-muted-foreground">{getDayNames()[i]}</p>
+                          <p className={`text-sm font-medium ${isToday ? "text-primary" : ""}`}>
+                            {day.getDate()}
+                          </p>
+                        </div>
+                        <div className="space-y-1">
+                          {dayRes.map((r) => (
+                            <button
+                              key={r.id}
+                              onClick={() => handleRowClick(r)}
+                              className={`w-full rounded p-1.5 text-left text-xs transition-opacity hover:opacity-80 ${
+                                STATUS_CONFIG[r.status].className
+                              }`}
+                            >
+                              <p className="font-medium">{r.time}</p>
+                              <p className="truncate">{r.name}</p>
+                              <p className="text-[10px] opacity-70">{r.guests} pers.</p>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </>
+            )}
+
+            {/* ── List view ── */}
+            {calendarView === "list" && (
+              <>
+                <div className="flex items-center justify-between">
+                  <Button variant="outline" size="sm" onClick={handlePrevWeek}>
+                    ← Semaine précédente
+                  </Button>
+                  <span className="text-sm font-medium">
+                    {formatDateISO(weekStart)} — {formatDateISO((() => {
+                      const end = new Date(weekStart);
+                      end.setDate(end.getDate() + 6);
+                      return end;
+                    })())}
+                  </span>
+                  <Button variant="outline" size="sm" onClick={handleNextWeek}>
+                    Semaine suivante →
+                  </Button>
+                </div>
+
+                {calendarReservations.length === 0 ? (
+                  <p className="py-12 text-center text-sm text-muted-foreground">
+                    Aucune réservation cette semaine.
+                  </p>
+                ) : (
+                  <div className="space-y-6">
+                    {getWeekDays().map((day) => {
+                      const dayStr = formatDateISO(day);
+                      const dayRes = calendarReservations.filter((r) => r.date === dayStr);
+                      if (dayRes.length === 0) return null;
+
+                      return (
+                        <div key={dayStr}>
+                          <h3 className="mb-2 text-sm font-semibold text-muted-foreground">
+                            {day.toLocaleDateString("fr-FR", {
+                              weekday: "long",
+                              day: "numeric",
+                              month: "long",
+                            })}
+                            <span className="ml-2 text-xs font-normal">
+                              ({dayRes.length} réservation{dayRes.length > 1 ? "s" : ""})
+                            </span>
+                          </h3>
+                          <div className="space-y-2">
+                            {dayRes.map((r) => (
+                              <ReservationRow
+                                key={r.id}
+                                reservation={r}
+                                onClick={() => handleRowClick(r)}
+                                onConfirm={() => handleQuickConfirm(r)}
+                                onCancel={() => setCancelTarget(r)}
+                                onComplete={() => handleQuickComplete(r)}
+                              />
+                            ))}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </>
+            )}
           </div>
         </TabsContent>
       </Tabs>
+
+      {/* Form sheet */}
+      <ReservationFormSheet
+        open={formSheetOpen}
+        onOpenChange={setFormSheetOpen}
+        onSaved={handleFormSaved}
+      />
 
       {/* Detail sheet */}
       <ReservationDetailSheet
