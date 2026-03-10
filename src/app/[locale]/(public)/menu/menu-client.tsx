@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { useTranslations } from "next-intl";
 import type { Category, Dish, Menu, Locale } from "@/lib/types/database";
 
@@ -71,6 +71,35 @@ export function MenuClient({ grouped, menus, locale }: Props) {
   ];
 
   const [activeTab, setActiveTab] = useState(tabs[0]?.id ?? "");
+  const [contentKey, setContentKey] = useState(0);
+  const tabsRef = useRef<(HTMLButtonElement | null)[]>([]);
+  const navRef = useRef<HTMLDivElement>(null);
+  const [underlineStyle, setUnderlineStyle] = useState({ left: 0, width: 0 });
+
+  const updateUnderline = useCallback(() => {
+    const idx = tabs.findIndex((tab) => tab.id === activeTab);
+    const el = tabsRef.current[idx];
+    const nav = navRef.current;
+    if (el && nav) {
+      const navRect = nav.getBoundingClientRect();
+      const elRect = el.getBoundingClientRect();
+      setUnderlineStyle({
+        left: elRect.left - navRect.left,
+        width: elRect.width,
+      });
+    }
+  }, [activeTab, tabs]);
+
+  useEffect(() => {
+    updateUnderline();
+    window.addEventListener("resize", updateUnderline);
+    return () => window.removeEventListener("resize", updateUnderline);
+  }, [updateUnderline]);
+
+  function handleTabChange(id: string) {
+    setActiveTab(id);
+    setContentKey((k) => k + 1);
+  }
 
   // Detect if translations are missing for current locale
   const allDishes = grouped.flatMap((g) => g.dishes);
@@ -88,24 +117,30 @@ export function MenuClient({ grouped, menus, locale }: Props) {
       )}
 
       {/* Tabs */}
-      <div className="flex flex-wrap justify-center gap-2 border-b border-brand-dark/10 pb-4">
-        {tabs.map((tab) => (
+      <div ref={navRef} className="relative flex flex-wrap justify-center gap-2 border-b border-brand-dark/10 pb-4">
+        {tabs.map((tab, i) => (
           <button
             key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
-            className={`px-5 py-2.5 text-xs font-normal tracking-[0.15em] uppercase transition-all duration-300 ${
+            ref={(el) => { tabsRef.current[i] = el; }}
+            onClick={() => handleTabChange(tab.id)}
+            className={`cursor-pointer px-5 py-2.5 text-xs tracking-[0.15em] uppercase transition-all duration-300 ${
               activeTab === tab.id
-                ? "border-b-2 border-brand-gold text-brand-bordeaux"
-                : "text-brand-dark/70 hover:text-brand-bordeaux"
+                ? "font-semibold text-brand-gold"
+                : "font-normal text-brand-dark/70 hover:-translate-y-0.5 hover:text-brand-gold/80"
             }`}
           >
             {tab.label}
           </button>
         ))}
+        {/* Sliding underline */}
+        <span
+          className="absolute bottom-0 h-0.5 bg-brand-gold transition-all duration-300 ease-in-out"
+          style={{ left: underlineStyle.left, width: underlineStyle.width }}
+        />
       </div>
 
       {/* Content */}
-      <div className="mt-12">
+      <div key={contentKey} className="mt-12 animate-fade-in-up">
         {activeTab === "__formules__" ? (
           <div className="space-y-10">
             {menus.map((menu) => (

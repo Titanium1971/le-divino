@@ -182,6 +182,22 @@
   animation: hero-fade-in 1.2s ease-out 1.2s both;
 }
 
+/* ── Menu tab content fade-in ── */
+@keyframes menu-fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: menu-fade-in-up 0.4s ease-out both;
+}
+
 /* ── Reservation Widget ── */
 @keyframes widget-slide-in {
   from {
