@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import type { Category, Dish, Menu, Locale } from "@/lib/types/database";
 
@@ -76,25 +76,25 @@ export function MenuClient({ grouped, menus, locale }: Props) {
   const navRef = useRef<HTMLDivElement>(null);
   const [underlineStyle, setUnderlineStyle] = useState({ left: 0, width: 0 });
 
-  const updateUnderline = useCallback(() => {
-    const idx = tabs.findIndex((tab) => tab.id === activeTab);
-    const el = tabsRef.current[idx];
-    const nav = navRef.current;
-    if (el && nav) {
-      const navRect = nav.getBoundingClientRect();
-      const elRect = el.getBoundingClientRect();
-      setUnderlineStyle({
-        left: elRect.left - navRect.left,
-        width: elRect.width,
-      });
-    }
-  }, [activeTab, tabs]);
-
   useEffect(() => {
+    function updateUnderline() {
+      const idx = tabs.findIndex((tab) => tab.id === activeTab);
+      const el = tabsRef.current[idx];
+      const nav = navRef.current;
+      if (el && nav) {
+        const navRect = nav.getBoundingClientRect();
+        const elRect = el.getBoundingClientRect();
+        setUnderlineStyle({
+          left: elRect.left - navRect.left,
+          width: elRect.width,
+        });
+      }
+    }
     updateUnderline();
     window.addEventListener("resize", updateUnderline);
     return () => window.removeEventListener("resize", updateUnderline);
-  }, [updateUnderline]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeTab]);
 
   function handleTabChange(id: string) {
     setActiveTab(id);
