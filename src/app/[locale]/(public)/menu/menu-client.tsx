@@ -134,7 +134,7 @@ export function MenuClient({ grouped, menus, locale }: Props) {
         ))}
         {/* Sliding underline */}
         <span
-          className="absolute bottom-0 h-0.5 bg-brand-gold transition-all duration-300 ease-in-out"
+          className="pointer-events-none absolute bottom-0 h-0.5 bg-brand-gold transition-all duration-300 ease-in-out"
           style={{ left: underlineStyle.left, width: underlineStyle.width }}
         />
       </div>
