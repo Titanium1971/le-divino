@@ -108,7 +108,7 @@ export function MenuClient({ grouped, menus, locale }: Props) {
     allDishes.some((d) => d.name[loc]?.trim());
 
   return (
-    <>
+    <div className="isolate">
       {/* Translation notice for non-FR locales */}
       {!hasTranslations && (
         <div className="mb-8 rounded border border-brand-gold/30 bg-brand-gold/5 px-5 py-3 text-center text-sm font-light text-brand-dark/70">
@@ -222,6 +222,6 @@ export function MenuClient({ grouped, menus, locale }: Props) {
           </div>
         )}
       </div>
-    </>
+    </div>
   );
 }

@@ -5,7 +5,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
   return (
     <>
       <SiteHeader />
-      <main className="relative z-0 min-h-screen">{children}</main>
+      <main className="min-h-screen">{children}</main>
       <SiteFooter />
     </>
   );
