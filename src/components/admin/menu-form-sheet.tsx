@@ -2,9 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { createMenu, updateMenu } from "@/lib/supabase/menus";
-import type { Menu, MenuFormData, MenuType } from "@/lib/types/database";
+import { createMenu, updateMenu, addDishToMenu, removeDishFromMenu } from "@/lib/supabase/menus";
+import type { Menu, MenuFormData, MenuType, MenuDish } from "@/lib/types/database";
 import { MENU_TYPES } from "@/lib/types/database";
+import type { DishGroup } from "@/lib/supabase/dishes";
 import {
   Sheet,
   SheetContent,
@@ -17,6 +18,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
+import { Badge } from "@/components/ui/badge";
 import {
   Select,
   SelectContent,
@@ -25,15 +27,18 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
 
 type Props = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   menu: Menu | null;
+  menuDishes: MenuDish[];
+  dishGroups: DishGroup[];
   onSaved: () => Promise<void>;
 };
 
-export function MenuFormSheet({ open, onOpenChange, menu, onSaved }: Props) {
+export function MenuFormSheet({ open, onOpenChange, menu, menuDishes, dishGroups, onSaved }: Props) {
   const supabase = createClient();
   const isEdit = !!menu;
 
@@ -42,6 +47,7 @@ export function MenuFormSheet({ open, onOpenChange, menu, onSaved }: Props) {
   const [price, setPrice] = useState("");
   const [type, setType] = useState<MenuType>("entree_plat");
   const [active, setActive] = useState(true);
+  const [selectedDishIds, setSelectedDishIds] = useState<Set<string>>(new Set());
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -52,20 +58,40 @@ export function MenuFormSheet({ open, onOpenChange, menu, onSaved }: Props) {
       setPrice(String(Number(menu.price)));
       setType(menu.type);
       setActive(menu.active);
+      setSelectedDishIds(new Set(menuDishes.map((md) => md.dish_id)));
     } else {
       setNameFr("");
       setDescFr("");
       setPrice("");
       setType("entree_plat");
       setActive(true);
+      setSelectedDishIds(new Set());
     }
     setError(null);
-  }, [menu, open]);
+  }, [menu, menuDishes, open]);
+
+  function toggleDish(dishId: string) {
+    setSelectedDishIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(dishId)) {
+        next.delete(dishId);
+      } else {
+        next.add(dishId);
+      }
+      return next;
+    });
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!nameFr || !price) {
       setError("Nom et prix sont obligatoires.");
+      return;
+    }
+
+    const parsedPrice = parseFloat(price);
+    if (isNaN(parsedPrice)) {
+      setError("Le prix doit être un nombre valide.");
       return;
     }
 
@@ -76,16 +102,29 @@ export function MenuFormSheet({ open, onOpenChange, menu, onSaved }: Props) {
       const formData: MenuFormData = {
         name_fr: nameFr,
         description_fr: descFr || null,
-        price: parseFloat(price),
+        price: parsedPrice,
         type,
         active,
       };
 
+      let menuId: string;
       if (isEdit) {
         await updateMenu(supabase, menu.id, formData);
+        menuId = menu.id;
       } else {
-        await createMenu(supabase, formData);
+        const created = await createMenu(supabase, formData);
+        menuId = created.id;
       }
+
+      // Sync menu_dishes
+      const previousIds = new Set(menuDishes.map((md) => md.dish_id));
+      const toAdd = [...selectedDishIds].filter((id) => !previousIds.has(id));
+      const toRemove = [...previousIds].filter((id) => !selectedDishIds.has(id));
+
+      await Promise.all([
+        ...toAdd.map((dishId) => addDishToMenu(supabase, menuId, dishId)),
+        ...toRemove.map((dishId) => removeDishFromMenu(supabase, menuId, dishId)),
+      ]);
 
       await onSaved();
     } catch (err) {
@@ -95,6 +134,11 @@ export function MenuFormSheet({ open, onOpenChange, menu, onSaved }: Props) {
     }
   }
 
+  // Count selected dishes per category
+  function countSelected(group: DishGroup): number {
+    return group.dishes.filter((d) => selectedDishIds.has(d.id)).length;
+  }
+
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent className="w-full sm:max-w-lg">
@@ -102,8 +146,8 @@ export function MenuFormSheet({ open, onOpenChange, menu, onSaved }: Props) {
           <SheetTitle>{isEdit ? "Modifier le menu" : "Ajouter un menu"}</SheetTitle>
           <SheetDescription>
             {isEdit
-              ? "Modifiez les informations du menu."
-              : "Remplissez les informations du nouveau menu."}
+              ? "Modifiez les informations et les plats du menu."
+              : "Remplissez les informations et sélectionnez les plats."}
           </SheetDescription>
         </SheetHeader>
 
@@ -115,7 +159,7 @@ export function MenuFormSheet({ open, onOpenChange, menu, onSaved }: Props) {
                 id="menu-name"
                 value={nameFr}
                 onChange={(e) => setNameFr(e.target.value)}
-                placeholder="Ex : Formule Entrée + Plat"
+                placeholder="Ex : Menu du Marché"
                 required
               />
             </div>
@@ -165,6 +209,62 @@ export function MenuFormSheet({ open, onOpenChange, menu, onSaved }: Props) {
             <div className="flex items-center justify-between">
               <Label htmlFor="menu-active">Actif</Label>
               <Switch id="menu-active" checked={active} onCheckedChange={setActive} />
+            </div>
+
+            <Separator />
+
+            {/* Dish selection */}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <Label className="text-base">Plats inclus dans ce menu</Label>
+                <Badge variant="secondary">
+                  {selectedDishIds.size} sélectionné{selectedDishIds.size !== 1 ? "s" : ""}
+                </Badge>
+              </div>
+
+              {dishGroups.map((group) => {
+                const count = countSelected(group);
+                return (
+                  <div key={group.category} className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <h4 className="text-sm font-medium">{group.label}</h4>
+                      {count > 0 && (
+                        <Badge variant="default" className="text-[10px]">
+                          {count}
+                        </Badge>
+                      )}
+                    </div>
+                    <div className="space-y-1">
+                      {group.dishes.map((dish) => {
+                        const checked = selectedDishIds.has(dish.id);
+                        return (
+                          <label
+                            key={dish.id}
+                            className={`flex cursor-pointer items-center gap-3 rounded-md border px-3 py-2 transition-colors ${
+                              checked
+                                ? "border-primary/30 bg-primary/5"
+                                : "border-transparent hover:bg-muted/50"
+                            }`}
+                          >
+                            <input
+                              type="checkbox"
+                              checked={checked}
+                              onChange={() => toggleDish(dish.id)}
+                              className="h-4 w-4 rounded border-gray-300 text-primary accent-primary"
+                            />
+                            <span className="flex-1 text-sm">{dish.name_fr}</span>
+                            {Number(dish.price) > 0 && (
+                              <span className="text-xs text-muted-foreground">
+                                {Number(dish.price).toFixed(2)} €
+                              </span>
+                            )}
+                          </label>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
 
             {error && <p className="text-sm text-destructive">{error}</p>}

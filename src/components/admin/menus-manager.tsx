@@ -2,9 +2,11 @@
 
 import { useState, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { getMenus, deleteMenu, updateMenu } from "@/lib/supabase/menus";
-import type { Menu } from "@/lib/types/database";
+import { getMenus, deleteMenu, updateMenu, getMenuDishes } from "@/lib/supabase/menus";
+import type { Menu, MenuDish } from "@/lib/types/database";
 import { MENU_TYPES } from "@/lib/types/database";
+import type { DishGroup } from "@/lib/supabase/dishes";
+import { getDishesGrouped } from "@/lib/supabase/dishes";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
@@ -23,28 +25,62 @@ import { MenuFormSheet } from "./menu-form-sheet";
 
 type Props = {
   initialMenus: Menu[];
+  dishGroups: DishGroup[];
 };
 
-export function MenusManager({ initialMenus }: Props) {
+export function MenusManager({ initialMenus, dishGroups: initialDishGroups }: Props) {
   const supabase = createClient();
   const [menus, setMenus] = useState<Menu[]>(initialMenus);
+  const [dishGroups, setDishGroups] = useState<DishGroup[]>(initialDishGroups);
   const [sheetOpen, setSheetOpen] = useState(false);
   const [editingMenu, setEditingMenu] = useState<Menu | null>(null);
+  const [editingMenuDishes, setEditingMenuDishes] = useState<MenuDish[]>([]);
   const [deleteTarget, setDeleteTarget] = useState<Menu | null>(null);
   const [deleting, setDeleting] = useState(false);
+  const [menuDishCounts, setMenuDishCounts] = useState<Record<string, number>>({});
 
   const refresh = useCallback(async () => {
-    const data = await getMenus(supabase);
+    const [data, groups] = await Promise.all([
+      getMenus(supabase),
+      getDishesGrouped(supabase),
+    ]);
     setMenus(data);
+    setDishGroups(
+      groups
+        .map((g) => ({ ...g, dishes: g.dishes.filter((d) => d.available) }))
+        .filter((g) => g.dishes.length > 0),
+    );
+    // Refresh dish counts for all menus
+    const counts: Record<string, number> = {};
+    for (const m of data) {
+      const md = await getMenuDishes(supabase, m.id);
+      counts[m.id] = md.length;
+    }
+    setMenuDishCounts(counts);
   }, [supabase]);
+
+  // Load dish counts on mount
+  useState(() => {
+    (async () => {
+      const counts: Record<string, number> = {};
+      for (const m of initialMenus) {
+        const md = await getMenuDishes(supabase, m.id);
+        counts[m.id] = md.length;
+      }
+      setMenuDishCounts(counts);
+    })();
+  });
 
   function handleAdd() {
     setEditingMenu(null);
+    setEditingMenuDishes([]);
     setSheetOpen(true);
   }
 
-  function handleEdit(menu: Menu) {
+  async function handleEdit(menu: Menu) {
+    const md = await getMenuDishes(supabase, menu.id);
     setEditingMenu(menu);
+    setEditingMenuDishes(md);
     setSheetOpen(true);
   }
 
@@ -72,7 +108,7 @@ export function MenusManager({ initialMenus }: Props) {
         <div>
           <h1 className="text-2xl font-light tracking-wide">Gestion des menus</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            {menus.length} formule{menus.length !== 1 ? "s" : ""}
+            {menus.length} menu{menus.length !== 1 ? "s" : ""}
           </p>
         </div>
         <Button onClick={handleAdd}>+ Ajouter un menu</Button>
@@ -87,6 +123,7 @@ export function MenusManager({ initialMenus }: Props) {
         <div className="space-y-2">
           {menus.map((menu) => {
             const typeLabel = MENU_TYPES.find((t) => t.value === menu.type)?.label;
+            const dishCount = menuDishCounts[menu.id] ?? 0;
             return (
               <div
                 key={menu.id}
@@ -102,6 +139,9 @@ export function MenusManager({ initialMenus }: Props) {
                         {typeLabel}
                       </Badge>
                     )}
+                    <Badge variant="outline" className="shrink-0 text-[10px]">
+                      {dishCount} plat{dishCount !== 1 ? "s" : ""}
+                    </Badge>
                   </div>
                   <p className="truncate text-xs text-muted-foreground">
                     {menu.description_fr}
@@ -142,6 +182,8 @@ export function MenusManager({ initialMenus }: Props) {
         open={sheetOpen}
         onOpenChange={setSheetOpen}
         menu={editingMenu}
+        menuDishes={editingMenuDishes}
+        dishGroups={dishGroups}
         onSaved={async () => {
           setSheetOpen(false);
           await refresh();
