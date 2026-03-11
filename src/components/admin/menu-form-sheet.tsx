@@ -43,6 +43,10 @@ export function MenuFormSheet({ open, onOpenChange, menu, menuDishes, dishGroups
   const isEdit = !!menu;
 
   const [nameFr, setNameFr] = useState("");
+  const [nameEn, setNameEn] = useState("");
+  const [nameIt, setNameIt] = useState("");
+  const [nameEs, setNameEs] = useState("");
+  const [nameDe, setNameDe] = useState("");
   const [descFr, setDescFr] = useState("");
   const [descEn, setDescEn] = useState("");
   const [descIt, setDescIt] = useState("");
@@ -59,6 +63,10 @@ export function MenuFormSheet({ open, onOpenChange, menu, menuDishes, dishGroups
   useEffect(() => {
     if (menu) {
       setNameFr(menu.name_fr ?? "");
+      setNameEn(menu.name_en ?? "");
+      setNameIt(menu.name_it ?? "");
+      setNameEs(menu.name_es ?? "");
+      setNameDe(menu.name_de ?? "");
       setDescFr(menu.description_fr ?? "");
       setDescEn(menu.description_en ?? "");
       setDescIt(menu.description_it ?? "");
@@ -70,6 +78,10 @@ export function MenuFormSheet({ open, onOpenChange, menu, menuDishes, dishGroups
       setSelectedDishIds(new Set(menuDishes.map((md) => md.dish_id)));
     } else {
       setNameFr("");
+      setNameEn("");
+      setNameIt("");
+      setNameEs("");
+      setNameDe("");
       setDescFr("");
       setDescEn("");
       setDescIt("");
@@ -96,7 +108,7 @@ export function MenuFormSheet({ open, onOpenChange, menu, menuDishes, dishGroups
   }
 
   async function handleTranslate() {
-    if (!descFr) return;
+    if (!nameFr) return;
     setTranslating(true);
     setError(null);
     try {
@@ -108,6 +120,10 @@ export function MenuFormSheet({ open, onOpenChange, menu, menuDishes, dishGroups
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Translation failed");
 
+      setNameEn(data.name?.en || nameEn);
+      setNameIt(data.name?.it || nameIt);
+      setNameEs(data.name?.es || nameEs);
+      setNameDe(data.name?.de || nameDe);
       setDescEn(data.description?.en || descEn);
       setDescIt(data.description?.it || descIt);
       setDescEs(data.description?.es || descEs);
@@ -138,6 +154,10 @@ export function MenuFormSheet({ open, onOpenChange, menu, menuDishes, dishGroups
     try {
       const formData: MenuFormData = {
         name_fr: nameFr,
+        name_en: nameEn.trim() || null,
+        name_it: nameIt.trim() || null,
+        name_es: nameEs.trim() || null,
+        name_de: nameDe.trim() || null,
         description_fr: descFr.trim() || null,
         description_en: descEn.trim() || null,
         description_it: descIt.trim() || null,
@@ -195,7 +215,7 @@ export function MenuFormSheet({ open, onOpenChange, menu, menuDishes, dishGroups
         <ScrollArea className="h-[calc(100vh-10rem)] px-4">
           <form id="menu-form" onSubmit={handleSubmit} className="space-y-6 pb-8 pt-4">
             <div className="space-y-2">
-              <Label htmlFor="menu-name">Nom</Label>
+              <Label htmlFor="menu-name">Nom (FR)</Label>
               <Input
                 id="menu-name"
                 value={nameFr}
@@ -203,6 +223,12 @@ export function MenuFormSheet({ open, onOpenChange, menu, menuDishes, dishGroups
                 placeholder="Ex : Menu du Marché"
                 required
               />
+              <div className="grid grid-cols-4 gap-2">
+                <Input value={nameEn} onChange={(e) => setNameEn(e.target.value)} placeholder="EN" />
+                <Input value={nameIt} onChange={(e) => setNameIt(e.target.value)} placeholder="IT" />
+                <Input value={nameEs} onChange={(e) => setNameEs(e.target.value)} placeholder="ES" />
+                <Input value={nameDe} onChange={(e) => setNameDe(e.target.value)} placeholder="DE" />
+              </div>
             </div>
 
             <div className="space-y-2">

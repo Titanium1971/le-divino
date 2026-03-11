@@ -39,6 +39,12 @@ export function MenusClient({ menus, locale }: Props) {
     return (dish[locField] as string | null) || dish.description_fr;
   }
 
+  function getMenuName(menu: Menu): string {
+    if (loc === "fr") return menu.name_fr;
+    const locField = `name_${loc}` as keyof Menu;
+    return (menu[locField] as string | null) || menu.name_fr;
+  }
+
   function getMenuDescription(menu: Menu): string | null {
     if (loc === "fr") return menu.description_fr;
     const locField = `description_${loc}` as keyof Menu;
@@ -74,7 +80,7 @@ export function MenusClient({ menus, locale }: Props) {
             >
               <div className="min-w-0 flex-1">
                 <h2 className="text-lg font-normal tracking-[0.1em] text-brand-bordeaux">
-                  {menu.name_fr}
+                  {getMenuName(menu)}
                 </h2>
                 {getMenuDescription(menu) && (
                   <p className="mt-1 text-sm font-light text-brand-dark/70">

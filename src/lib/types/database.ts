@@ -63,6 +63,10 @@ export type MenuType = "entree_plat" | "plat_dessert" | "entree_plat_dessert";
 export type Menu = {
   id: string;
   name_fr: string;
+  name_en: string | null;
+  name_it: string | null;
+  name_es: string | null;
+  name_de: string | null;
   description_fr: string | null;
   description_en: string | null;
   description_it: string | null;
@@ -76,6 +80,10 @@ export type Menu = {
 
 export type MenuFormData = {
   name_fr: string;
+  name_en?: string | null;
+  name_it?: string | null;
+  name_es?: string | null;
+  name_de?: string | null;
   description_fr?: string | null;
   description_en?: string | null;
   description_it?: string | null;

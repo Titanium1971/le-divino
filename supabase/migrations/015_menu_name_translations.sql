@@ -1,0 +1,4 @@
+ALTER TABLE menus ADD COLUMN IF NOT EXISTS name_en text;
+ALTER TABLE menus ADD COLUMN IF NOT EXISTS name_it text;
+ALTER TABLE menus ADD COLUMN IF NOT EXISTS name_es text;
+ALTER TABLE menus ADD COLUMN IF NOT EXISTS name_de text;
