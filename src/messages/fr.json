@@ -6,6 +6,7 @@
   "nav": {
     "home": "Accueil",
     "menu": "La Carte",
+    "menus": "Menus",
     "reservation": "Réservation",
     "gallery": "Galerie",
     "contact": "Contact"
@@ -66,6 +67,16 @@
     "todayDesserts": "Les desserts maison",
     "todayPlatsNote": "Servis avec gratin dauphinois et légumes frais du marché",
     "todayEmpty": "Menu du jour sur demande"
+  },
+  "menus": {
+    "title": "Nos Menus",
+    "subtitle": "Découvrez nos formules",
+    "empty": "Aucun menu disponible pour le moment",
+    "todayEntrees": "En entrées",
+    "todayPlats": "En plats",
+    "todayDesserts": "Les desserts maison",
+    "platsNote": "Servis avec gratin dauphinois et légumes frais du marché",
+    "noDishesFallback": "Menu du jour sur demande — contactez-nous"
   },
   "reservation": {
     "title": "Réserver une table",
@@ -129,6 +140,11 @@
       "title": "La Carte — Le Divino | Restaurant Agde",
       "description": "Découvrez la carte du restaurant Le Divino à Agde : entrées, plats, desserts et formules élaborés avec des produits frais et locaux.",
       "keywords": "carte restaurant agde, menu le divino, plats français, formules, spécialités agde"
+    },
+    "menus": {
+      "title": "Nos Menus — Le Divino | Restaurant Agde",
+      "description": "Découvrez les menus du restaurant Le Divino à Agde : formules du marché, menus du jour avec entrées, plats et desserts maison.",
+      "keywords": "menus restaurant agde, formules le divino, menu du jour agde, menu du marché"
     },
     "reservation": {
       "title": "Réservation — Le Divino | Restaurant Agde",

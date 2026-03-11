@@ -74,6 +74,7 @@ export const RESTAURANT_JSON_LD = {
 export const PUBLIC_PAGES = [
   { path: "", priority: 1.0, changeFrequency: "weekly" as const },
   { path: "menu", priority: 0.9, changeFrequency: "weekly" as const },
+  { path: "menus", priority: 0.85, changeFrequency: "daily" as const },
   { path: "reservation", priority: 0.8, changeFrequency: "monthly" as const },
   { path: "galerie", priority: 0.7, changeFrequency: "weekly" as const },
   { path: "contact", priority: 0.7, changeFrequency: "yearly" as const },

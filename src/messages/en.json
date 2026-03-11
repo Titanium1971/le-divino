@@ -6,6 +6,7 @@
   "nav": {
     "home": "Home",
     "menu": "Menu",
+    "menus": "Set Menus",
     "reservation": "Reservation",
     "gallery": "Gallery",
     "contact": "Contact"
@@ -67,6 +68,16 @@
     "todayDesserts": "Homemade desserts",
     "todayPlatsNote": "Served with gratin dauphinois and fresh market vegetables",
     "todayEmpty": "Daily menu available upon request"
+  },
+  "menus": {
+    "title": "Our Menus",
+    "subtitle": "Discover our set menus",
+    "empty": "No menus available at the moment",
+    "todayEntrees": "Starters",
+    "todayPlats": "Main courses",
+    "todayDesserts": "Homemade desserts",
+    "platsNote": "Served with gratin dauphinois and fresh market vegetables",
+    "noDishesFallback": "Daily menu available upon request — contact us"
   },
   "reservation": {
     "title": "Book a table",
@@ -130,6 +141,11 @@
       "title": "Menu — Le Divino | Restaurant Agde",
       "description": "Explore Le Divino's menu in Agde: starters, main courses, desserts and set menus crafted with fresh local produce.",
       "keywords": "menu restaurant agde, le divino menu, french dishes, set menus, agde restaurant menu"
+    },
+    "menus": {
+      "title": "Set Menus — Le Divino | Restaurant Agde",
+      "description": "Discover Le Divino's set menus in Agde: daily market menus with starters, main courses and homemade desserts.",
+      "keywords": "set menus restaurant agde, le divino set menus, daily menu agde, market menu"
     },
     "reservation": {
       "title": "Reservation — Le Divino | Restaurant Agde",

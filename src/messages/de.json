@@ -6,6 +6,7 @@
   "nav": {
     "home": "Startseite",
     "menu": "Speisekarte",
+    "menus": "Menüs",
     "reservation": "Reservierung",
     "gallery": "Galerie",
     "contact": "Kontakt"
@@ -67,6 +68,16 @@
     "todayDesserts": "Hausgemachte Desserts",
     "todayPlatsNote": "Serviert mit Kartoffelgratin und frischem Marktgemüse",
     "todayEmpty": "Tagesmenü auf Anfrage"
+  },
+  "menus": {
+    "title": "Unsere Menüs",
+    "subtitle": "Entdecken Sie unsere Menüs",
+    "empty": "Derzeit keine Menüs verfügbar",
+    "todayEntrees": "Vorspeisen",
+    "todayPlats": "Hauptgerichte",
+    "todayDesserts": "Hausgemachte Desserts",
+    "platsNote": "Serviert mit Kartoffelgratin und frischem Marktgemüse",
+    "noDishesFallback": "Tagesmenü auf Anfrage — kontaktieren Sie uns"
   },
   "reservation": {
     "title": "Tisch reservieren",
@@ -130,6 +141,11 @@
       "title": "Speisekarte — Le Divino | Restaurant Agde",
       "description": "Entdecken Sie die Speisekarte des Restaurants Le Divino in Agde: Vorspeisen, Hauptgerichte, Desserts und Menüs aus frischen lokalen Produkten.",
       "keywords": "speisekarte restaurant agde, le divino menü, französische gerichte, menüs, spezialitäten agde"
+    },
+    "menus": {
+      "title": "Menüs — Le Divino | Restaurant Agde",
+      "description": "Entdecken Sie die Menüs des Restaurants Le Divino in Agde: Tagesmenüs mit Vorspeisen, Hauptgerichten und hausgemachten Desserts.",
+      "keywords": "menüs restaurant agde, le divino menüs, tagesmenü agde, marktmenü"
     },
     "reservation": {
       "title": "Reservierung — Le Divino | Restaurant Agde",

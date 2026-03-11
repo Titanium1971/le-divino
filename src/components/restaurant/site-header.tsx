@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
 import { LanguageSwitcher } from "./language-switcher";
 
-const NAV_ITEMS = ["home", "menu", "reservation", "gallery", "contact"] as const;
+const NAV_ITEMS = ["home", "menu", "menus", "reservation", "gallery", "contact"] as const;
 
 function getHref(key: string) {
   if (key === "home") return "/";

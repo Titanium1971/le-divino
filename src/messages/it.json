@@ -6,6 +6,7 @@
   "nav": {
     "home": "Home",
     "menu": "Menu",
+    "menus": "Menu Fissi",
     "reservation": "Prenotazione",
     "gallery": "Galleria",
     "contact": "Contatto"
@@ -67,6 +68,16 @@
     "todayDesserts": "Dolci della casa",
     "todayPlatsNote": "Serviti con gratin dauphinois e verdure fresche di stagione",
     "todayEmpty": "Menu del giorno su richiesta"
+  },
+  "menus": {
+    "title": "I Nostri Menu",
+    "subtitle": "Scoprite i nostri menu fissi",
+    "empty": "Nessun menu disponibile al momento",
+    "todayEntrees": "Antipasti",
+    "todayPlats": "Piatti principali",
+    "todayDesserts": "Dolci della casa",
+    "platsNote": "Serviti con gratin dauphinois e verdure fresche di stagione",
+    "noDishesFallback": "Menu del giorno su richiesta — contattateci"
   },
   "reservation": {
     "title": "Prenota un tavolo",
@@ -130,6 +141,11 @@
       "title": "Menu — Le Divino | Ristorante Agde",
       "description": "Scopri il menu del ristorante Le Divino ad Agde: antipasti, piatti principali, dolci e menu fissi con prodotti freschi locali.",
       "keywords": "menu ristorante agde, le divino menu, piatti francesi, menu fissi, specialità agde"
+    },
+    "menus": {
+      "title": "Menu Fissi — Le Divino | Ristorante Agde",
+      "description": "Scopri i menu fissi del ristorante Le Divino ad Agde: menu del mercato con antipasti, piatti principali e dolci della casa.",
+      "keywords": "menu fissi ristorante agde, le divino menu fissi, menu del giorno agde"
     },
     "reservation": {
       "title": "Prenotazione — Le Divino | Ristorante Agde",
