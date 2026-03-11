@@ -151,7 +151,7 @@ export function SiteFooter() {
       {/* Bottom bar */}
       <div className="border-t border-brand-cream/20">
         <div className="mx-auto max-w-6xl px-6 py-6">
-          <p className="text-center text-[11px] font-light tracking-wider text-brand-cream/60">
+          <p className="text-center text-[11px] font-light tracking-wider text-brand-cream/60" suppressHydrationWarning>
             &copy; {new Date().getFullYear()} {restaurantConfig.name}. {t("rights")}.
           </p>
         </div>

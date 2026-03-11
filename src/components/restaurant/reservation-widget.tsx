@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 
@@ -42,7 +42,10 @@ export function ReservationWidget({ locale }: { locale: string }) {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
 
-  const days = useMemo(() => getNext7Days(), []);
+  const [days, setDays] = useState<Date[]>([]);
+  useEffect(() => {
+    setDays(getNext7Days());
+  }, []);
   const dayNames = DAY_NAMES_SHORT[locale] ?? DAY_NAMES_SHORT.fr;
 
   // Sunday: no dinner slots (closes at 15:30)
