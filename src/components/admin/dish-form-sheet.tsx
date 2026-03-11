@@ -232,6 +232,8 @@ export function DishFormSheet({ open, onOpenChange, dish, onSaved, onRefresh }: 
         available,
       };
 
+      console.log("Payload envoyé:", JSON.stringify(formData, null, 2));
+
       let saved: Dish;
       if (isEdit) {
         saved = await updateDish(supabase, dish.id, formData);
@@ -246,7 +248,7 @@ export function DishFormSheet({ open, onOpenChange, dish, onSaved, onRefresh }: 
 
       await onSaved();
     } catch (err) {
-      console.error("Dish save error:", err);
+      console.error("Dish save error:", JSON.stringify(err, null, 2));
       setError(err instanceof Error ? err.message : "Erreur lors de la sauvegarde.");
     } finally {
       setSaving(false);
