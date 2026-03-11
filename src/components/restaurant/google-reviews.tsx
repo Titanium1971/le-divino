@@ -163,7 +163,7 @@ export function GoogleReviews() {
                         setFade(true);
                       }, 300);
                     }}
-                    className={`h-1.5 rounded-full transition-all duration-300 ${
+                    className={`box-content h-1.5 rounded-full p-3 bg-clip-content transition-all duration-300 ${
                       i === activeIndex
                         ? "w-6 bg-brand-gold"
                         : "w-1.5 bg-brand-cream/20 hover:bg-brand-cream/40"

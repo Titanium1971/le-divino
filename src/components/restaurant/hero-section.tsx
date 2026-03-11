@@ -16,8 +16,8 @@ export function HeroSection() {
         fill
         priority
         className="object-cover"
-        sizes="100vw"
-        quality={85}
+        sizes="(max-width: 768px) 100vw, (max-width: 1280px) 100vw, 1280px"
+        quality={80}
       />
 
       {/* Dark bordeaux overlay */}

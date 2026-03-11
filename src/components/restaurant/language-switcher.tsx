@@ -25,6 +25,17 @@ export function LanguageSwitcher() {
     <select
       value={locale}
       onChange={(e) => onChange(e.target.value)}
+      aria-label={
+        locale === "en"
+          ? "Choose language"
+          : locale === "it"
+            ? "Scegli la lingua"
+            : locale === "es"
+              ? "Elegir idioma"
+              : locale === "de"
+                ? "Sprache wählen"
+                : "Choisir la langue"
+      }
       className="appearance-none rounded-none border border-brand-cream/40 bg-transparent px-3 py-1.5 text-[11px] font-light tracking-[0.15em] text-brand-cream transition-colors hover:border-brand-gold hover:text-brand-gold focus:outline-none"
     >
       {routing.locales.map((loc) => (
