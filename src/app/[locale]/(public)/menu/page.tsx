@@ -8,6 +8,8 @@ import type { Dish } from "@/lib/types/database";
 import { MenuClient } from "./menu-client";
 import { generatePageMetadata, breadcrumbJsonLd } from "@/lib/seo/metadata";
 
+export const dynamic = "force-dynamic";
+
 type Props = {
   params: Promise<{ locale: string }>;
 };

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
 import {
@@ -47,11 +47,26 @@ export function DishesManager({ initialGroups }: Props) {
   const [generatingId, setGeneratingId] = useState<string | null>(null);
   const [lightboxUrl, setLightboxUrl] = useState<string | null>(null);
   const [imageTimestamps, setImageTimestamps] = useState<Record<string, number>>({});
+  const [todayDishIds, setTodayDishIds] = useState<Set<string>>(new Set());
+
+  // Fetch today's dish IDs from menu_dishes
+  const refreshToday = useCallback(async () => {
+    const { data } = await supabase
+      .from("menu_dishes")
+      .select("dish_id")
+      .eq("available_today", true);
+    setTodayDishIds(new Set((data ?? []).map((r) => r.dish_id)));
+  }, [supabase]);
+
+  useEffect(() => {
+    refreshToday();
+  }, [refreshToday]);
 
   const refresh = useCallback(async () => {
     const data = await getDishesGrouped(supabase);
     setGroups(data);
-  }, [supabase]);
+    await refreshToday();
+  }, [supabase, refreshToday]);
 
   function handleAdd() {
     setEditingDish(null);
@@ -69,6 +84,59 @@ export function DishesManager({ initialGroups }: Props) {
       .update({ available: !dish.available })
       .eq("id", dish.id);
     await refresh();
+  }
+
+  async function handleToggleToday(dish: Dish) {
+    const isCurrentlyToday = todayDishIds.has(dish.id);
+
+    if (isCurrentlyToday) {
+      // Set available_today = false on all menu_dishes for this dish
+      await supabase
+        .from("menu_dishes")
+        .update({ available_today: false })
+        .eq("dish_id", dish.id);
+    } else {
+      // Check if any menu_dishes row exists for this dish
+      const { data: existing } = await supabase
+        .from("menu_dishes")
+        .select("id")
+        .eq("dish_id", dish.id);
+
+      if (existing && existing.length > 0) {
+        // Update all existing rows
+        await supabase
+          .from("menu_dishes")
+          .update({ available_today: true })
+          .eq("dish_id", dish.id);
+      } else {
+        // Insert into all active menus
+        const { data: menus } = await supabase
+          .from("menus")
+          .select("id")
+          .eq("active", true);
+
+        if (menus && menus.length > 0) {
+          await supabase.from("menu_dishes").insert(
+            menus.map((m) => ({
+              menu_id: m.id,
+              dish_id: dish.id,
+              available_today: true,
+            })),
+          );
+        }
+      }
+    }
+
+    // Optimistic update
+    setTodayDishIds((prev) => {
+      const next = new Set(prev);
+      if (isCurrentlyToday) {
+        next.delete(dish.id);
+      } else {
+        next.add(dish.id);
+      }
+      return next;
+    });
   }
 
   async function handleDelete() {
@@ -167,9 +235,11 @@ export function DishesManager({ initialGroups }: Props) {
                 key={dish.id}
                 dish={dish}
                 imageTs={imageTimestamps[dish.id]}
+                isToday={todayDishIds.has(dish.id)}
                 onEdit={() => handleEdit(dish)}
                 onDelete={() => setDeleteTarget(dish)}
                 onToggle={() => handleToggleAvailable(dish)}
+                onToggleToday={() => handleToggleToday(dish)}
                 onGenerateImage={() => handleGenerateImage(dish)}
                 onClickImage={(url) => setLightboxUrl(url)}
                 generating={generatingId === dish.id}
@@ -250,19 +320,22 @@ export function DishesManager({ initialGroups }: Props) {
 type DishRowProps = {
   dish: Dish;
   imageTs?: number;
+  isToday: boolean;
   onEdit: () => void;
   onDelete: () => void;
   onToggle: () => void;
+  onToggleToday: () => void;
   onGenerateImage: () => void;
   onClickImage: (url: string) => void;
   generating: boolean;
   getImageUrl: (path: string) => string;
 };
 
-function DishRow({ dish, onEdit, onDelete, onToggle, onGenerateImage, onClickImage, generating, getImageUrl, imageTs }: DishRowProps) {
+function DishRow({ dish, onEdit, onDelete, onToggle, onToggleToday, onGenerateImage, onClickImage, generating, getImageUrl, imageTs, isToday }: DishRowProps) {
   const sourceLabel = DISH_SOURCES.find((s) => s.value === dish.source)?.label;
   const rawUrl = dish.image_path ? getImageUrl(dish.image_path) : null;
   const imageUrl = rawUrl && imageTs ? `${rawUrl}?t=${imageTs}` : rawUrl;
+  const isMarche = dish.source === "marche";
 
   return (
     <div
@@ -307,6 +380,11 @@ function DishRow({ dish, onEdit, onDelete, onToggle, onGenerateImage, onClickIma
               {sourceLabel}
             </Badge>
           )}
+          {isMarche && isToday && (
+            <Badge variant="default" className="shrink-0 text-[10px] bg-green-600">
+              Menu du jour
+            </Badge>
+          )}
         </div>
         <p className="truncate text-xs text-muted-foreground">{dish.description_fr}</p>
       </div>
@@ -315,6 +393,18 @@ function DishRow({ dish, onEdit, onDelete, onToggle, onGenerateImage, onClickIma
       <p className="shrink-0 text-sm font-medium">
         {Number(dish.price) > 0 ? `${Number(dish.price).toFixed(2)} €` : "—"}
       </p>
+
+      {/* Today toggle (only for marché dishes) */}
+      {isMarche && (
+        <div className="flex shrink-0 flex-col items-center gap-0.5">
+          <span className="text-[10px] text-muted-foreground">Jour</span>
+          <Switch
+            checked={isToday}
+            onCheckedChange={onToggleToday}
+            aria-label="Disponible au menu du jour"
+          />
+        </div>
+      )}
 
       {/* Available toggle */}
       <Switch checked={dish.available} onCheckedChange={onToggle} aria-label="Disponible" />
