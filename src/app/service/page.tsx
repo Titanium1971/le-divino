@@ -2,10 +2,11 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
-import type { Category, Dish } from "@/lib/types/database";
+import type { Dish, DishCategory } from "@/lib/types/database";
+import { DISH_CATEGORIES } from "@/lib/types/database";
 import { Button } from "@/components/ui/button";
 
-type DishGroup = { category: Category; dishes: Dish[] };
+type DishGroup = { category: DishCategory; label: string; dishes: Dish[] };
 
 export default function ServicePage() {
   const [authenticated, setAuthenticated] = useState(false);
@@ -128,21 +129,21 @@ function KitchenDashboard({ onLock }: { onLock: () => void }) {
   const [loading, setLoading] = useState(true);
 
   const fetchDishes = useCallback(async () => {
-    const [catRes, dishRes] = await Promise.all([
-      supabase.from("categories").select("*").eq("visible", true).order("sort_order"),
-      supabase.from("dishes").select("*").order("sort_order"),
-    ]);
+    const { data, error } = await supabase
+      .from("dishes")
+      .select("*")
+      .order("sort_order");
 
-    if (catRes.error || dishRes.error) return;
+    if (error) return;
 
-    const categories = (catRes.data ?? []) as Category[];
-    const dishes = (dishRes.data ?? []) as Dish[];
+    const dishes = (data ?? []) as Dish[];
 
     setGroups(
-      categories.map((category) => ({
-        category,
-        dishes: dishes.filter((d) => d.category_id === category.id),
-      })),
+      DISH_CATEGORIES.map(({ value, label }) => ({
+        category: value,
+        label,
+        dishes: dishes.filter((d) => d.category === value),
+      })).filter((g) => g.dishes.length > 0),
     );
     setLoading(false);
   }, [supabase]);
@@ -174,7 +175,6 @@ function KitchenDashboard({ onLock }: { onLock: () => void }) {
       .from("dishes")
       .update({ available: !dish.available })
       .eq("id", dish.id);
-    // Realtime will trigger refresh, but also update locally for instant feedback
     setGroups((prev) =>
       prev.map((g) => ({
         ...g,
@@ -204,10 +204,10 @@ function KitchenDashboard({ onLock }: { onLock: () => void }) {
       </div>
 
       {/* Dish toggles grouped by category */}
-      {groups.map(({ category, dishes }) => (
-        <section key={category.id} className="mb-6">
+      {groups.map(({ category, label, dishes }) => (
+        <section key={category} className="mb-6">
           <h2 className="sticky top-0 z-10 mb-2 bg-background py-2 text-base font-medium tracking-wide border-b">
-            {category.name}
+            {label}
           </h2>
           <div className="space-y-1">
             {dishes.map((dish) => (
@@ -222,7 +222,7 @@ function KitchenDashboard({ onLock }: { onLock: () => void }) {
                 }`}
                 style={{ minHeight: 48 }}
               >
-                <span className="text-sm font-medium">{dish.name.fr}</span>
+                <span className="text-sm font-medium">{dish.name_fr}</span>
                 <span
                   className={`shrink-0 rounded-full px-3 py-1 text-xs font-medium ${
                     dish.available

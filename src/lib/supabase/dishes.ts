@@ -1,93 +1,35 @@
 import { SupabaseClient } from "@supabase/supabase-js";
-import type { Category, CategoryFormData, Dish, DishFormData } from "@/lib/types/database";
+import type { Dish, DishCategory, DishFormData } from "@/lib/types/database";
+import { DISH_CATEGORIES } from "@/lib/types/database";
 
-export async function getCategories(supabase: SupabaseClient): Promise<Category[]> {
-  const { data, error } = await supabase
-    .from("categories")
-    .select("*")
-    .eq("visible", true)
-    .order("sort_order");
-
-  if (error) throw error;
-  return data ?? [];
-}
-
-export async function getAllCategories(supabase: SupabaseClient): Promise<Category[]> {
-  const { data, error } = await supabase
-    .from("categories")
-    .select("*")
-    .order("sort_order");
-
-  if (error) throw error;
-  return data ?? [];
-}
-
-export async function createCategory(
-  supabase: SupabaseClient,
-  data: CategoryFormData,
-): Promise<Category> {
-  const { data: cat, error } = await supabase
-    .from("categories")
-    .insert(data)
-    .select()
-    .single();
-
-  if (error) throw error;
-  return cat as Category;
-}
-
-export async function updateCategory(
-  supabase: SupabaseClient,
-  id: string,
-  data: Partial<CategoryFormData>,
-): Promise<Category> {
-  const { data: cat, error } = await supabase
-    .from("categories")
-    .update(data)
-    .eq("id", id)
-    .select()
-    .single();
-
-  if (error) throw error;
-  return cat as Category;
-}
-
-export async function deleteCategory(supabase: SupabaseClient, id: string): Promise<void> {
-  const { error } = await supabase.from("categories").delete().eq("id", id);
-  if (error) throw error;
-}
-
-export async function updateCategorySortOrders(
-  supabase: SupabaseClient,
-  updates: { id: string; sort_order: number }[],
-): Promise<void> {
-  for (const { id, sort_order } of updates) {
-    const { error } = await supabase
-      .from("categories")
-      .update({ sort_order })
-      .eq("id", id);
-    if (error) throw error;
-  }
-}
+export type DishGroup = { category: DishCategory; label: string; dishes: Dish[] };
 
 export async function getDishesGrouped(
   supabase: SupabaseClient,
-): Promise<{ category: Category; dishes: Dish[] }[]> {
-  const [categoriesRes, dishesRes] = await Promise.all([
-    supabase.from("categories").select("*").eq("visible", true).order("sort_order"),
-    supabase.from("dishes").select("*").order("sort_order"),
-  ]);
+): Promise<DishGroup[]> {
+  const { data, error } = await supabase
+    .from("dishes")
+    .select("*")
+    .order("sort_order");
 
-  if (categoriesRes.error) throw categoriesRes.error;
-  if (dishesRes.error) throw dishesRes.error;
+  if (error) throw error;
+  const dishes = (data ?? []) as Dish[];
 
-  const categories = (categoriesRes.data ?? []) as Category[];
-  const dishes = (dishesRes.data ?? []) as Dish[];
+  return DISH_CATEGORIES.map(({ value, label }) => ({
+    category: value,
+    label,
+    dishes: dishes.filter((d) => d.category === value),
+  })).filter((g) => g.dishes.length > 0);
+}
 
-  return categories.map((category) => ({
-    category,
-    dishes: dishes.filter((d) => d.category_id === category.id),
-  }));
+export async function getAllDishes(supabase: SupabaseClient): Promise<Dish[]> {
+  const { data, error } = await supabase
+    .from("dishes")
+    .select("*")
+    .order("sort_order");
+
+  if (error) throw error;
+  return (data ?? []) as Dish[];
 }
 
 export async function createDish(

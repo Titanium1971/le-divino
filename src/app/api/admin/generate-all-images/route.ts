@@ -22,7 +22,7 @@ export async function POST() {
   // Get all dishes without images
   const { data: dishes, error } = await supabase
     .from("dishes")
-    .select("id, name, description, image_path")
+    .select("id, name_fr, description_fr, image_path")
     .is("image_path", null)
     .order("sort_order");
 
@@ -35,8 +35,8 @@ export async function POST() {
   const results: { id: string; name: string; status: string }[] = [];
 
   for (const dish of dishes) {
-    const dishName = dish.name?.fr || "French dish";
-    const dishDesc = dish.description?.fr || "";
+    const dishName = dish.name_fr || "French dish";
+    const dishDesc = dish.description_fr || "";
     const subject = dishDesc ? `${dishName} - ${dishDesc}` : dishName;
 
     try {

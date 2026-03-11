@@ -27,15 +27,15 @@ export default async function MenuPage({ params }: Props) {
     getMenus(supabase),
   ]);
 
-  // Only keep categories that have available dishes
+  // Only keep groups with available dishes, and only "carte" dishes for public menu
   const filteredGrouped = grouped
     .map((g) => ({
-      category: g.category,
-      dishes: g.dishes.filter((d) => d.available),
+      ...g,
+      dishes: g.dishes.filter((d) => d.available && d.source === "carte"),
     }))
     .filter((g) => g.dishes.length > 0);
 
-  const availableMenus = menus.filter((m) => m.available);
+  const activeMenus = menus.filter((m) => m.active);
 
   const breadcrumb = breadcrumbJsonLd(locale, "menu", t("title"));
 
@@ -61,12 +61,12 @@ export default async function MenuPage({ params }: Props) {
       {/* Menu content */}
       <section className="bg-brand-cream py-16">
         <div className="mx-auto max-w-4xl px-6">
-          {filteredGrouped.length === 0 && availableMenus.length === 0 ? (
+          {filteredGrouped.length === 0 && activeMenus.length === 0 ? (
             <p className="text-center text-brand-dark/70 font-light">{t("empty")}</p>
           ) : (
             <MenuClient
               grouped={filteredGrouped}
-              menus={availableMenus}
+              menus={activeMenus}
               locale={locale}
             />
           )}

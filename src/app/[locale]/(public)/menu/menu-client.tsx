@@ -2,71 +2,48 @@
 
 import { useState, useRef, useEffect } from "react";
 import { useTranslations } from "next-intl";
-import type { Category, Dish, Menu, Locale } from "@/lib/types/database";
+import type { Dish, Menu, DishCategory, Locale } from "@/lib/types/database";
+import { DISH_CATEGORIES } from "@/lib/types/database";
+
+type DishGroup = { category: DishCategory; label: string; dishes: Dish[] };
 
 type Props = {
-  grouped: { category: Category; dishes: Dish[] }[];
+  grouped: DishGroup[];
   menus: Menu[];
   locale: string;
 };
 
-// Map French category names to i18n keys in menu.categories.*
-const CATEGORY_I18N_KEY: Record<string, string> = {
-  "Entrées": "entrees",
-  "Plats": "plats",
-  "Desserts": "desserts",
-  "Boissons": "boissons",
-};
-
-// Map French singular course names to i18n keys in menu.courses.*
-const COURSE_I18N_KEY: Record<string, string> = {
-  "entrée": "entree",
-  "entrées": "entree",
-  "plat": "plat",
-  "plats": "plat",
-  "dessert": "dessert",
-  "desserts": "dessert",
-  "boisson": "boisson",
-  "boissons": "boisson",
+// Map category values to i18n keys
+const CATEGORY_I18N_KEY: Record<DishCategory, string> = {
+  entree: "entrees",
+  plat: "plats",
+  dessert: "desserts",
 };
 
 export function MenuClient({ grouped, menus, locale }: Props) {
   const t = useTranslations("menu");
   const loc = locale as Locale;
 
-  function categoryLabel(cat: Category): string {
-    const key = CATEGORY_I18N_KEY[cat.name];
+  function categoryLabel(cat: DishCategory): string {
+    const key = CATEGORY_I18N_KEY[cat];
     if (key) return t(`categories.${key}`);
-    return cat.name; // fallback for custom categories
+    return DISH_CATEGORIES.find((c) => c.value === cat)?.label ?? cat;
   }
 
-  // Translate course labels like "Entrée (au choix)", "ou Dessert", "Plat"
-  function translateCourseLabel(label: string): string {
-    let text = label.trim();
+  function getDishName(dish: Dish): string {
+    if (loc === "fr") return dish.name_fr;
+    const locField = `name_${loc}` as keyof Dish;
+    return (dish[locField] as string | null) || dish.name_fr;
+  }
 
-    // Extract prefix "ou " / "ou"
-    let prefix = "";
-    if (/^ou\s+/i.test(text)) {
-      prefix = t("or") + " ";
-      text = text.replace(/^ou\s+/i, "");
-    }
-
-    // Extract suffix "(au choix)"
-    let suffix = "";
-    if (/\(au choix\)/i.test(text)) {
-      suffix = " " + t("choice");
-      text = text.replace(/\s*\(au choix\)/i, "");
-    }
-
-    // Look up the remaining word in the course map
-    const key = COURSE_I18N_KEY[text.toLowerCase()];
-    const translated = key ? t(`courses.${key}`) : text;
-
-    return `${prefix}${translated}${suffix}`;
+  function getDishDescription(dish: Dish): string | null {
+    if (loc === "fr") return dish.description_fr;
+    const locField = `description_${loc}` as keyof Dish;
+    return (dish[locField] as string | null) || dish.description_fr;
   }
 
   const tabs = [
-    ...grouped.map((g) => ({ id: g.category.id, label: categoryLabel(g.category) })),
+    ...grouped.map((g) => ({ id: g.category, label: categoryLabel(g.category) })),
     ...(menus.length > 0 ? [{ id: "__formules__", label: t("formules") }] : []),
   ];
 
@@ -101,16 +78,16 @@ export function MenuClient({ grouped, menus, locale }: Props) {
     setContentKey((k) => k + 1);
   }
 
-  // Detect if translations are missing for current locale
+  // Detect if translations are available
   const allDishes = grouped.flatMap((g) => g.dishes);
   const hasTranslations =
-    loc === "fr" ||
-    allDishes.some((d) => d.name[loc]?.trim());
+    locale === "fr" ||
+    allDishes.some((d) => getDishName(d) !== d.name_fr);
 
   return (
     <div className="isolate">
       {/* Translation notice for non-FR locales */}
-      {!hasTranslations && (
+      {!hasTranslations && locale !== "fr" && (
         <div className="mb-8 rounded border border-brand-gold/30 bg-brand-gold/5 px-5 py-3 text-center text-sm font-light text-brand-dark/70">
           {t("translationNotice")}
         </div>
@@ -151,72 +128,45 @@ export function MenuClient({ grouped, menus, locale }: Props) {
                 <div className="flex items-start justify-between gap-4">
                   <div>
                     <h3 className="text-lg font-normal tracking-[0.1em] text-brand-bordeaux">
-                      {menu.name[loc] || menu.name.fr}
+                      {menu.name_fr}
                     </h3>
-                    {(menu.description[loc] || menu.description.fr) && (
+                    {menu.description_fr && (
                       <p className="mt-2 text-sm font-light text-brand-dark/80">
-                        {menu.description[loc] || menu.description.fr}
+                        {menu.description_fr}
                       </p>
                     )}
                   </div>
                   <span className="shrink-0 text-lg font-semibold text-brand-gold">
-                    {menu.price.toFixed(2)} &euro;
+                    {Number(menu.price).toFixed(2)} &euro;
                   </span>
                 </div>
-                {menu.courses.length > 0 && (
-                  <ul className="mt-4 space-y-1.5 border-t border-brand-dark/5 pt-4">
-                    {menu.courses.map((course, i) => (
-                      <li
-                        key={i}
-                        className="text-sm font-light text-brand-dark/70"
-                      >
-                        &bull; {translateCourseLabel(course.label)}
-                      </li>
-                    ))}
-                  </ul>
-                )}
               </div>
             ))}
           </div>
         ) : (
           <div className="space-y-6">
             {grouped
-              .find((g) => g.category.id === activeTab)
+              .find((g) => g.category === activeTab)
               ?.dishes.map((dish) => (
                 <div
                   key={dish.id}
                   className="flex items-start justify-between gap-4 border-b border-brand-dark/5 pb-6"
                 >
                   <div className="flex-1">
-                    <div className="flex items-center gap-3">
-                      <h3 className="text-base font-normal text-brand-dark">
-                        {dish.name[loc] || dish.name.fr}
-                      </h3>
-                      {dish.is_signature && (
-                        <span className="text-[10px] font-normal tracking-[0.1em] uppercase text-brand-gold">
-                          {t("signature")}
-                        </span>
-                      )}
-                      {dish.is_vegetarian && (
-                        <span className="text-[10px] font-normal tracking-[0.1em] uppercase text-green-700">
-                          {t("vegetarian")}
-                        </span>
-                      )}
-                    </div>
-                    {(dish.description[loc] || dish.description.fr) && (
+                    <h3 className="text-base font-normal text-brand-dark">
+                      {getDishName(dish)}
+                    </h3>
+                    {getDishDescription(dish) && (
                       <p className="mt-1.5 text-sm font-light text-brand-dark/70">
-                        {dish.description[loc] || dish.description.fr}
-                      </p>
-                    )}
-                    {dish.allergens.length > 0 && (
-                      <p className="mt-1 text-[10px] font-light text-brand-dark/50">
-                        {t("allergens")} : {dish.allergens.join(", ")}
+                        {getDishDescription(dish)}
                       </p>
                     )}
                   </div>
-                  <span className="shrink-0 text-lg font-semibold text-brand-gold">
-                    {dish.price.toFixed(2)} &euro;
-                  </span>
+                  {Number(dish.price) > 0 && (
+                    <span className="shrink-0 text-lg font-semibold text-brand-gold">
+                      {Number(dish.price).toFixed(2)} &euro;
+                    </span>
+                  )}
                 </div>
               ))}
           </div>

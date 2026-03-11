@@ -9,8 +9,9 @@ import {
   deleteDishImage,
   getDishImageUrl,
 } from "@/lib/supabase/dishes";
-import type { Category, Dish, MenuType } from "@/lib/types/database";
-import { MENU_TYPES } from "@/lib/types/database";
+import type { DishGroup } from "@/lib/supabase/dishes";
+import type { Dish, DishSource } from "@/lib/types/database";
+import { DISH_SOURCES } from "@/lib/types/database";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
@@ -30,24 +31,19 @@ import {
   DialogContent,
 } from "@/components/ui/dialog";
 import { DishFormSheet } from "./dish-form-sheet";
-import { CategoriesSheet } from "./categories-sheet";
-
-type DishGroup = { category: Category; dishes: Dish[] };
 
 type Props = {
   initialGroups: DishGroup[];
-  categories: Category[];
 };
 
-export function DishesManager({ initialGroups, categories }: Props) {
+export function DishesManager({ initialGroups }: Props) {
   const supabase = createClient();
   const [groups, setGroups] = useState<DishGroup[]>(initialGroups);
   const [sheetOpen, setSheetOpen] = useState(false);
   const [editingDish, setEditingDish] = useState<Dish | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<Dish | null>(null);
   const [deleting, setDeleting] = useState(false);
-  const [categoriesOpen, setCategoriesOpen] = useState(false);
-  const [menuFilter, setMenuFilter] = useState<MenuType | "all">("all");
+  const [sourceFilter, setSourceFilter] = useState<DishSource | "all">("all");
   const [generatingId, setGeneratingId] = useState<string | null>(null);
   const [lightboxUrl, setLightboxUrl] = useState<string | null>(null);
   const [imageTimestamps, setImageTimestamps] = useState<Record<string, number>>({});
@@ -112,14 +108,14 @@ export function DishesManager({ initialGroups, categories }: Props) {
     }
   }
 
-  // Filter dishes by menu_type
+  // Filter dishes by source
   const filteredGroups = groups
     .map((g) => ({
       ...g,
       dishes:
-        menuFilter === "all"
+        sourceFilter === "all"
           ? g.dishes
-          : g.dishes.filter((d) => d.menu_type === menuFilter),
+          : g.dishes.filter((d) => d.source === sourceFilter),
     }))
     .filter((g) => g.dishes.length > 0);
 
@@ -135,31 +131,26 @@ export function DishesManager({ initialGroups, categories }: Props) {
             {totalDishes} plat{totalDishes !== 1 ? "s" : ""}
           </p>
         </div>
-        <div className="flex gap-2">
-          <Button variant="outline" onClick={() => setCategoriesOpen(true)}>
-            Catégories
-          </Button>
-          <Button onClick={handleAdd}>+ Ajouter un plat</Button>
-        </div>
+        <Button onClick={handleAdd}>+ Ajouter un plat</Button>
       </div>
 
-      {/* Menu type filter */}
+      {/* Source filter */}
       <div className="mt-4 flex gap-2">
         <Button
-          variant={menuFilter === "all" ? "default" : "outline"}
+          variant={sourceFilter === "all" ? "default" : "outline"}
           size="sm"
-          onClick={() => setMenuFilter("all")}
+          onClick={() => setSourceFilter("all")}
         >
           Tout
         </Button>
-        {MENU_TYPES.map((mt) => (
+        {DISH_SOURCES.map((s) => (
           <Button
-            key={mt.value}
-            variant={menuFilter === mt.value ? "default" : "outline"}
+            key={s.value}
+            variant={sourceFilter === s.value ? "default" : "outline"}
             size="sm"
-            onClick={() => setMenuFilter(mt.value)}
+            onClick={() => setSourceFilter(s.value)}
           >
-            {mt.label}
+            {s.label}
           </Button>
         ))}
       </div>
@@ -167,15 +158,14 @@ export function DishesManager({ initialGroups, categories }: Props) {
       <Separator className="my-6" />
 
       {/* Dish list grouped by category */}
-      {filteredGroups.map(({ category, dishes }) => (
-        <section key={category.id} className="mb-8">
-          <h2 className="mb-4 text-lg font-medium tracking-wide">{category.name}</h2>
+      {filteredGroups.map(({ category, label, dishes }) => (
+        <section key={category} className="mb-8">
+          <h2 className="mb-4 text-lg font-medium tracking-wide">{label}</h2>
           <div className="space-y-2">
             {dishes.map((dish) => (
               <DishRow
                 key={dish.id}
                 dish={dish}
-                supabaseUrl={process.env.NEXT_PUBLIC_SUPABASE_URL!}
                 imageTs={imageTimestamps[dish.id]}
                 onEdit={() => handleEdit(dish)}
                 onDelete={() => setDeleteTarget(dish)}
@@ -201,7 +191,6 @@ export function DishesManager({ initialGroups, categories }: Props) {
         open={sheetOpen}
         onOpenChange={setSheetOpen}
         dish={editingDish}
-        categories={categories}
         onSaved={async () => {
           setSheetOpen(false);
           await refresh();
@@ -212,15 +201,6 @@ export function DishesManager({ initialGroups, categories }: Props) {
           }
           await refresh();
         }}
-      />
-
-      {/* Categories Sheet */}
-      <CategoriesSheet
-        open={categoriesOpen}
-        onOpenChange={setCategoriesOpen}
-        initialCategories={categories}
-        dishGroups={groups}
-        onCategoriesChanged={refresh}
       />
 
       {/* Image Lightbox */}
@@ -245,7 +225,7 @@ export function DishesManager({ initialGroups, categories }: Props) {
           <AlertDialogHeader>
             <AlertDialogTitle>Supprimer ce plat ?</AlertDialogTitle>
             <AlertDialogDescription>
-              «&nbsp;{deleteTarget?.name?.fr}&nbsp;» sera supprimé définitivement. Cette action est
+              «&nbsp;{deleteTarget?.name_fr}&nbsp;» sera supprimé définitivement. Cette action est
               irréversible.
             </AlertDialogDescription>
           </AlertDialogHeader>
@@ -269,7 +249,6 @@ export function DishesManager({ initialGroups, categories }: Props) {
 
 type DishRowProps = {
   dish: Dish;
-  supabaseUrl: string;
   imageTs?: number;
   onEdit: () => void;
   onDelete: () => void;
@@ -281,7 +260,7 @@ type DishRowProps = {
 };
 
 function DishRow({ dish, onEdit, onDelete, onToggle, onGenerateImage, onClickImage, generating, getImageUrl, imageTs }: DishRowProps) {
-  const menuLabel = MENU_TYPES.find((mt) => mt.value === dish.menu_type)?.label;
+  const sourceLabel = DISH_SOURCES.find((s) => s.value === dish.source)?.label;
   const rawUrl = dish.image_path ? getImageUrl(dish.image_path) : null;
   const imageUrl = rawUrl && imageTs ? `${rawUrl}?t=${imageTs}` : rawUrl;
 
@@ -291,7 +270,7 @@ function DishRow({ dish, onEdit, onDelete, onToggle, onGenerateImage, onClickIma
         !dish.available ? "opacity-50" : ""
       }`}
     >
-      {/* Thumbnail — clickable to open lightbox */}
+      {/* Thumbnail */}
       <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-md bg-muted">
         {imageUrl ? (
           <button
@@ -300,7 +279,7 @@ function DishRow({ dish, onEdit, onDelete, onToggle, onGenerateImage, onClickIma
           >
             <Image
               src={imageUrl}
-              alt={dish.name.fr}
+              alt={dish.name_fr}
               fill
               className="object-cover"
               sizes="48px"
@@ -322,19 +301,14 @@ function DishRow({ dish, onEdit, onDelete, onToggle, onGenerateImage, onClickIma
       {/* Info */}
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">
-          <p className="truncate text-sm font-medium">{dish.name.fr}</p>
-          {dish.is_signature && (
-            <Badge variant="secondary" className="shrink-0 text-[10px]">
-              Signature
-            </Badge>
-          )}
-          {menuLabel && (
+          <p className="truncate text-sm font-medium">{dish.name_fr}</p>
+          {sourceLabel && (
             <Badge variant="outline" className="shrink-0 text-[10px]">
-              {menuLabel}
+              {sourceLabel}
             </Badge>
           )}
         </div>
-        <p className="truncate text-xs text-muted-foreground">{dish.description?.fr}</p>
+        <p className="truncate text-xs text-muted-foreground">{dish.description_fr}</p>
       </div>
 
       {/* Price */}
@@ -354,7 +328,7 @@ function DishRow({ dish, onEdit, onDelete, onToggle, onGenerateImage, onClickIma
           disabled={generating}
           title="Régénérer la photo avec DALL-E"
         >
-          {generating ? "Génération..." : "📷 IA"}
+          {generating ? "Génération..." : "IA"}
         </Button>
         <Button variant="ghost" size="sm" onClick={onEdit}>
           Modifier

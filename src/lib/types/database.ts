@@ -2,92 +2,91 @@ export type Locale = "fr" | "en" | "it" | "es" | "de";
 
 export type I18nField = Record<Locale, string>;
 
-export type Category = {
-  id: string;
-  name: string;
-  slug: string;
-  description: string | null;
-  sort_order: number;
-  visible: boolean;
-  created_at: string;
-  updated_at: string;
-};
+// ── Dishes (flat i18n columns) ──
 
-export type MenuType = "carte" | "marche" | "express";
+export type DishCategory = "entree" | "plat" | "dessert";
+export type DishSource = "carte" | "marche";
 
 export type Dish = {
   id: string;
-  category_id: string;
-  menu_type: MenuType;
-  name: I18nField;
-  description: I18nField;
+  name_fr: string;
+  name_en: string | null;
+  name_it: string | null;
+  name_es: string | null;
+  description_fr: string | null;
+  description_en: string | null;
+  description_it: string | null;
+  description_es: string | null;
+  category: DishCategory;
+  source: DishSource;
   price: number;
   image_path: string | null;
-  allergens: string[];
-  is_vegetarian: boolean;
-  is_signature: boolean;
   available: boolean;
   sort_order: number;
   created_at: string;
-  updated_at: string;
-};
-
-export type DishWithCategory = Dish & {
-  categories: Pick<Category, "id" | "name" | "slug">;
 };
 
 export type DishFormData = {
-  category_id: string;
-  menu_type: MenuType;
-  name: I18nField;
-  description: I18nField;
+  name_fr: string;
+  name_en?: string | null;
+  name_it?: string | null;
+  name_es?: string | null;
+  description_fr?: string | null;
+  description_en?: string | null;
+  description_it?: string | null;
+  description_es?: string | null;
+  category: DishCategory;
+  source: DishSource;
   price: number;
-  allergens: string[];
-  is_vegetarian: boolean;
-  is_signature: boolean;
   available: boolean;
 };
 
-export const MENU_TYPES: { value: MenuType; label: string }[] = [
+export const DISH_CATEGORIES: { value: DishCategory; label: string }[] = [
+  { value: "entree", label: "Entrées" },
+  { value: "plat", label: "Plats" },
+  { value: "dessert", label: "Desserts" },
+];
+
+export const DISH_SOURCES: { value: DishSource; label: string }[] = [
   { value: "carte", label: "La Carte" },
   { value: "marche", label: "Menu du Marché" },
-  { value: "express", label: "Formule Express" },
 ];
 
 // ── Menus / Formules ──
 
-export type MenuCourse = {
-  label: string;
-  dish_ids: string[];
-};
+export type MenuType = "entree_plat" | "plat_dessert" | "entree_plat_dessert";
 
 export type Menu = {
   id: string;
-  name: I18nField;
-  description: I18nField;
+  name_fr: string;
+  description_fr: string | null;
   price: number;
-  courses: MenuCourse[];
-  available: boolean;
-  sort_order: number;
+  type: MenuType;
+  active: boolean;
   created_at: string;
-  updated_at: string;
 };
 
 export type MenuFormData = {
-  name: I18nField;
-  description: I18nField;
+  name_fr: string;
+  description_fr?: string | null;
   price: number;
-  courses: MenuCourse[];
-  available: boolean;
+  type: MenuType;
+  active?: boolean;
 };
 
-// ── Categories form ──
+export const MENU_TYPES: { value: MenuType; label: string }[] = [
+  { value: "entree_plat", label: "Entrée + Plat" },
+  { value: "plat_dessert", label: "Plat + Dessert" },
+  { value: "entree_plat_dessert", label: "Entrée + Plat + Dessert" },
+];
 
-export type CategoryFormData = {
-  name: string;
-  slug: string;
-  description: string;
-  visible: boolean;
+// ── Menu ↔ Dish junction ──
+
+export type MenuDish = {
+  id: string;
+  menu_id: string;
+  dish_id: string;
+  available_today: boolean;
 };
 
 // ── Reservations ──

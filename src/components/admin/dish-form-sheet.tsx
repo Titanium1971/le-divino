@@ -4,8 +4,8 @@ import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
 import { createDish, updateDish, uploadDishImage, deleteDishImage, getDishImageUrl } from "@/lib/supabase/dishes";
-import type { Category, Dish, DishFormData, I18nField, Locale, MenuType } from "@/lib/types/database";
-import { ALLERGENS, MENU_TYPES } from "@/lib/types/database";
+import type { Dish, DishFormData, DishCategory, DishSource } from "@/lib/types/database";
+import { DISH_CATEGORIES, DISH_SOURCES } from "@/lib/types/database";
 import {
   Sheet,
   SheetContent,
@@ -13,13 +13,11 @@ import {
   SheetTitle,
   SheetDescription,
 } from "@/components/ui/sheet";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
-import { Badge } from "@/components/ui/badge";
 import {
   Select,
   SelectContent,
@@ -29,43 +27,35 @@ import {
 } from "@/components/ui/select";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
-const LOCALES: { key: Locale; label: string }[] = [
-  { key: "fr", label: "FR" },
-  { key: "en", label: "EN" },
-  { key: "it", label: "IT" },
-  { key: "es", label: "ES" },
-  { key: "de", label: "DE" },
-];
-
-const emptyI18n = (): I18nField => ({ fr: "", en: "", it: "", es: "", de: "" });
-
 type Props = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   dish: Dish | null;
-  categories: Category[];
   onSaved: () => Promise<void>;
   onRefresh?: (dishId?: string) => Promise<void>;
 };
 
-export function DishFormSheet({ open, onOpenChange, dish, categories, onSaved, onRefresh }: Props) {
+export function DishFormSheet({ open, onOpenChange, dish, onSaved, onRefresh }: Props) {
   const supabase = createClient();
   const fileRef = useRef<HTMLInputElement>(null);
   const isEdit = !!dish;
 
   // Form state
-  const [name, setName] = useState<I18nField>(emptyI18n());
-  const [description, setDescription] = useState<I18nField>(emptyI18n());
-  const [categoryId, setCategoryId] = useState("");
-  const [menuType, setMenuType] = useState<MenuType>("carte");
+  const [nameFr, setNameFr] = useState("");
+  const [nameEn, setNameEn] = useState("");
+  const [nameIt, setNameIt] = useState("");
+  const [nameEs, setNameEs] = useState("");
+  const [descFr, setDescFr] = useState("");
+  const [descEn, setDescEn] = useState("");
+  const [descIt, setDescIt] = useState("");
+  const [descEs, setDescEs] = useState("");
+  const [category, setCategory] = useState<DishCategory>("plat");
+  const [source, setSource] = useState<DishSource>("carte");
   const [price, setPrice] = useState("");
-  const [allergens, setAllergens] = useState<string[]>([]);
-  const [isVegetarian, setIsVegetarian] = useState(false);
-  const [isSignature, setIsSignature] = useState(false);
   const [available, setAvailable] = useState(true);
   const [imageFile, setImageFile] = useState<File | null>(null);
-  const [localPreview, setLocalPreview] = useState<string | null>(null); // blob: from file input
-  const [remoteUrl, setRemoteUrl] = useState<string | null>(null);       // Supabase/DALL-E URL
+  const [localPreview, setLocalPreview] = useState<string | null>(null);
+  const [remoteUrl, setRemoteUrl] = useState<string | null>(null);
   const [imageKey, setImageKey] = useState(0);
   const [saving, setSaving] = useState(false);
   const [translating, setTranslating] = useState(false);
@@ -73,34 +63,39 @@ export function DishFormSheet({ open, onOpenChange, dish, categories, onSaved, o
   const [deletingImage, setDeletingImage] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Priority: local file preview > remote URL (DALL-E or Supabase)
   const displayImage = localPreview ?? remoteUrl;
 
   // Reset form when dish changes
   useEffect(() => {
     if (dish) {
-      setName(dish.name ?? emptyI18n());
-      setDescription(dish.description ?? emptyI18n());
-      setCategoryId(dish.category_id);
-      setMenuType(dish.menu_type ?? "carte");
+      setNameFr(dish.name_fr ?? "");
+      setNameEn(dish.name_en ?? "");
+      setNameIt(dish.name_it ?? "");
+      setNameEs(dish.name_es ?? "");
+      setDescFr(dish.description_fr ?? "");
+      setDescEn(dish.description_en ?? "");
+      setDescIt(dish.description_it ?? "");
+      setDescEs(dish.description_es ?? "");
+      setCategory(dish.category);
+      setSource(dish.source);
       setPrice(String(Number(dish.price)));
-      setAllergens(dish.allergens ?? []);
-      setIsVegetarian(dish.is_vegetarian);
-      setIsSignature(dish.is_signature);
       setAvailable(dish.available);
       setImageFile(null);
       setLocalPreview(null);
       setRemoteUrl(dish.image_path ? getDishImageUrl(supabase, dish.image_path) : null);
       setImageKey(0);
     } else {
-      setName(emptyI18n());
-      setDescription(emptyI18n());
-      setCategoryId(categories[0]?.id ?? "");
-      setMenuType("carte");
+      setNameFr("");
+      setNameEn("");
+      setNameIt("");
+      setNameEs("");
+      setDescFr("");
+      setDescEn("");
+      setDescIt("");
+      setDescEs("");
+      setCategory("plat");
+      setSource("carte");
       setPrice("");
-      setAllergens([]);
-      setIsVegetarian(false);
-      setIsSignature(false);
       setAvailable(true);
       setImageFile(null);
       setLocalPreview(null);
@@ -108,21 +103,7 @@ export function DishFormSheet({ open, onOpenChange, dish, categories, onSaved, o
       setImageKey(0);
     }
     setError(null);
-  }, [dish, open, categories, supabase]);
-
-  function updateI18n(
-    setter: React.Dispatch<React.SetStateAction<I18nField>>,
-    locale: Locale,
-    value: string,
-  ) {
-    setter((prev) => ({ ...prev, [locale]: value }));
-  }
-
-  function toggleAllergen(allergen: string) {
-    setAllergens((prev) =>
-      prev.includes(allergen) ? prev.filter((a) => a !== allergen) : [...prev, allergen],
-    );
-  }
+  }, [dish, open, supabase]);
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -132,39 +113,35 @@ export function DishFormSheet({ open, onOpenChange, dish, categories, onSaved, o
   }
 
   async function handleTranslate() {
-    if (!name.fr) return;
+    if (!nameFr) return;
     setTranslating(true);
     setError(null);
     try {
       const res = await fetch("/api/translate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: name.fr, description: description.fr }),
+        body: JSON.stringify({ name: nameFr, description: descFr }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Translation failed");
 
-      const newName: I18nField = {
-        ...name,
-        en: data.name?.en || name.en,
-        it: data.name?.it || name.it,
-        es: data.name?.es || name.es,
-        de: data.name?.de || name.de,
-      };
-      const newDesc: I18nField = {
-        ...description,
-        en: data.description?.en || description.en,
-        it: data.description?.it || description.it,
-        es: data.description?.es || description.es,
-        de: data.description?.de || description.de,
-      };
+      setNameEn(data.name?.en || nameEn);
+      setNameIt(data.name?.it || nameIt);
+      setNameEs(data.name?.es || nameEs);
+      setDescEn(data.description?.en || descEn);
+      setDescIt(data.description?.it || descIt);
+      setDescEs(data.description?.es || descEs);
 
-      setName(newName);
-      setDescription(newDesc);
-
-      // Auto-save translations to DB when editing an existing dish
+      // Auto-save translations when editing
       if (isEdit && dish) {
-        await updateDish(supabase, dish.id, { name: newName, description: newDesc });
+        await updateDish(supabase, dish.id, {
+          name_en: data.name?.en || nameEn,
+          name_it: data.name?.it || nameIt,
+          name_es: data.name?.es || nameEs,
+          description_en: data.description?.en || descEn,
+          description_it: data.description?.it || descIt,
+          description_es: data.description?.es || descEs,
+        });
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erreur lors de la traduction automatique.");
@@ -185,12 +162,10 @@ export function DishFormSheet({ open, onOpenChange, dish, categories, onSaved, o
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Erreur génération IA");
-      // DALL-E URL becomes the source of truth — clear any local file
       setLocalPreview(null);
       setImageFile(null);
       setRemoteUrl(data.publicUrl);
       setImageKey((k) => k + 1);
-      // Refresh the list without closing the sheet
       if (onRefresh) await onRefresh(dish.id);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erreur génération IA");
@@ -210,7 +185,6 @@ export function DishFormSheet({ open, onOpenChange, dish, categories, onSaved, o
       setRemoteUrl(null);
       setImageFile(null);
       setImageKey((k) => k + 1);
-      // Refresh the list without closing the sheet
       if (onRefresh) await onRefresh(dish.id);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erreur suppression photo");
@@ -221,8 +195,8 @@ export function DishFormSheet({ open, onOpenChange, dish, categories, onSaved, o
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!name.fr || !categoryId || !price) {
-      setError("Nom (FR), catégorie et prix sont obligatoires.");
+    if (!nameFr || !price) {
+      setError("Nom (FR) et prix sont obligatoires.");
       return;
     }
 
@@ -231,14 +205,17 @@ export function DishFormSheet({ open, onOpenChange, dish, categories, onSaved, o
 
     try {
       const formData: DishFormData = {
-        category_id: categoryId,
-        menu_type: menuType,
-        name,
-        description,
+        name_fr: nameFr,
+        name_en: nameEn || null,
+        name_it: nameIt || null,
+        name_es: nameEs || null,
+        description_fr: descFr || null,
+        description_en: descEn || null,
+        description_it: descIt || null,
+        description_es: descEs || null,
+        category,
+        source,
         price: parseFloat(price),
-        allergens,
-        is_vegetarian: isVegetarian,
-        is_signature: isSignature,
         available,
       };
 
@@ -249,7 +226,6 @@ export function DishFormSheet({ open, onOpenChange, dish, categories, onSaved, o
         saved = await createDish(supabase, formData);
       }
 
-      // Upload image if selected
       if (imageFile) {
         const path = await uploadDishImage(supabase, imageFile, saved.id);
         await updateDish(supabase, saved.id, { image_path: path });
@@ -277,18 +253,18 @@ export function DishFormSheet({ open, onOpenChange, dish, categories, onSaved, o
 
         <ScrollArea className="h-[calc(100vh-10rem)] px-4">
           <form id="dish-form" onSubmit={handleSubmit} className="space-y-6 pb-8 pt-4">
-            {/* ── Menu Type, Category & Price ── */}
+            {/* ── Source, Category & Price ── */}
             <div className="grid grid-cols-3 gap-4">
               <div className="space-y-2">
-                <Label>Menu</Label>
-                <Select value={menuType} onValueChange={(v) => setMenuType(v as MenuType)}>
+                <Label>Source</Label>
+                <Select value={source} onValueChange={(v) => setSource(v as DishSource)}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Type..." />
+                    <SelectValue placeholder="Source..." />
                   </SelectTrigger>
                   <SelectContent>
-                    {MENU_TYPES.map((mt) => (
-                      <SelectItem key={mt.value} value={mt.value}>
-                        {mt.label}
+                    {DISH_SOURCES.map((s) => (
+                      <SelectItem key={s.value} value={s.value}>
+                        {s.label}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -296,14 +272,14 @@ export function DishFormSheet({ open, onOpenChange, dish, categories, onSaved, o
               </div>
               <div className="space-y-2">
                 <Label>Catégorie</Label>
-                <Select value={categoryId} onValueChange={setCategoryId}>
+                <Select value={category} onValueChange={(v) => setCategory(v as DishCategory)}>
                   <SelectTrigger>
                     <SelectValue placeholder="Choisir..." />
                   </SelectTrigger>
                   <SelectContent>
-                    {categories.map((cat) => (
-                      <SelectItem key={cat.id} value={cat.id}>
-                        {cat.name}
+                    {DISH_CATEGORIES.map((cat) => (
+                      <SelectItem key={cat.value} value={cat.value}>
+                        {cat.label}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -334,58 +310,32 @@ export function DishFormSheet({ open, onOpenChange, dish, categories, onSaved, o
                 variant="outline"
                 size="sm"
                 onClick={handleTranslate}
-                disabled={translating || !name.fr}
+                disabled={translating || !nameFr}
               >
-                {translating ? "Traduction..." : "Traduire FR → EN/IT/ES/DE"}
+                {translating ? "Traduction..." : "Traduire FR → EN/IT/ES"}
               </Button>
             </div>
 
-            {/* ── Name i18n ── */}
-            <div className="space-y-2">
+            {/* ── Name fields ── */}
+            <div className="space-y-3">
               <Label>Nom du plat</Label>
-              <Tabs defaultValue="fr">
-                <TabsList className="w-full">
-                  {LOCALES.map((l) => (
-                    <TabsTrigger key={l.key} value={l.key} className="flex-1">
-                      {l.label}
-                    </TabsTrigger>
-                  ))}
-                </TabsList>
-                {LOCALES.map((l) => (
-                  <TabsContent key={l.key} value={l.key}>
-                    <Input
-                      value={name[l.key]}
-                      onChange={(e) => updateI18n(setName, l.key, e.target.value)}
-                      placeholder={`Nom (${l.label})`}
-                      required={l.key === "fr"}
-                    />
-                  </TabsContent>
-                ))}
-              </Tabs>
+              <Input value={nameFr} onChange={(e) => setNameFr(e.target.value)} placeholder="Nom (FR)" required />
+              <div className="grid grid-cols-3 gap-2">
+                <Input value={nameEn} onChange={(e) => setNameEn(e.target.value)} placeholder="EN" />
+                <Input value={nameIt} onChange={(e) => setNameIt(e.target.value)} placeholder="IT" />
+                <Input value={nameEs} onChange={(e) => setNameEs(e.target.value)} placeholder="ES" />
+              </div>
             </div>
 
-            {/* ── Description i18n ── */}
-            <div className="space-y-2">
+            {/* ── Description fields ── */}
+            <div className="space-y-3">
               <Label>Description</Label>
-              <Tabs defaultValue="fr">
-                <TabsList className="w-full">
-                  {LOCALES.map((l) => (
-                    <TabsTrigger key={l.key} value={l.key} className="flex-1">
-                      {l.label}
-                    </TabsTrigger>
-                  ))}
-                </TabsList>
-                {LOCALES.map((l) => (
-                  <TabsContent key={l.key} value={l.key}>
-                    <Textarea
-                      value={description[l.key]}
-                      onChange={(e) => updateI18n(setDescription, l.key, e.target.value)}
-                      placeholder={`Description (${l.label})`}
-                      rows={3}
-                    />
-                  </TabsContent>
-                ))}
-              </Tabs>
+              <Textarea value={descFr} onChange={(e) => setDescFr(e.target.value)} placeholder="Description (FR)" rows={3} />
+              <div className="grid grid-cols-3 gap-2">
+                <Textarea value={descEn} onChange={(e) => setDescEn(e.target.value)} placeholder="EN" rows={2} />
+                <Textarea value={descIt} onChange={(e) => setDescIt(e.target.value)} placeholder="IT" rows={2} />
+                <Textarea value={descEs} onChange={(e) => setDescEs(e.target.value)} placeholder="ES" rows={2} />
+              </div>
             </div>
 
             {/* ── Photo ── */}
@@ -429,7 +379,7 @@ export function DishFormSheet({ open, onOpenChange, dish, categories, onSaved, o
                       onClick={handleGenerateAI}
                       disabled={generatingAI}
                     >
-                      {generatingAI ? "Génération IA..." : "📷 Générer avec DALL-E"}
+                      {generatingAI ? "Génération IA..." : "Générer avec DALL-E"}
                     </Button>
                   )}
                   {isEdit && displayImage && (
@@ -448,45 +398,10 @@ export function DishFormSheet({ open, onOpenChange, dish, categories, onSaved, o
               </div>
             </div>
 
-            {/* ── Allergens ── */}
-            <div className="space-y-2">
-              <Label>Allergènes</Label>
-              <div className="flex flex-wrap gap-2">
-                {ALLERGENS.map((allergen) => (
-                  <Badge
-                    key={allergen}
-                    variant={allergens.includes(allergen) ? "default" : "outline"}
-                    className="cursor-pointer select-none"
-                    onClick={() => toggleAllergen(allergen)}
-                  >
-                    {allergen}
-                  </Badge>
-                ))}
-              </div>
-            </div>
-
-            {/* ── Toggles ── */}
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <Label htmlFor="vegetarian">Végétarien</Label>
-                <Switch
-                  id="vegetarian"
-                  checked={isVegetarian}
-                  onCheckedChange={setIsVegetarian}
-                />
-              </div>
-              <div className="flex items-center justify-between">
-                <Label htmlFor="signature">Plat signature</Label>
-                <Switch
-                  id="signature"
-                  checked={isSignature}
-                  onCheckedChange={setIsSignature}
-                />
-              </div>
-              <div className="flex items-center justify-between">
-                <Label htmlFor="available">Disponible</Label>
-                <Switch id="available" checked={available} onCheckedChange={setAvailable} />
-              </div>
+            {/* ── Available toggle ── */}
+            <div className="flex items-center justify-between">
+              <Label htmlFor="available">Disponible</Label>
+              <Switch id="available" checked={available} onCheckedChange={setAvailable} />
             </div>
 
             {/* ── Error ── */}

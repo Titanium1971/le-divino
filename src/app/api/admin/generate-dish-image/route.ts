@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
   // Get dish from DB
   const { data: dish, error: fetchError } = await supabase
     .from("dishes")
-    .select("id, name, description, image_path")
+    .select("id, name_fr, description_fr, image_path")
     .eq("id", dishId)
     .single();
 
@@ -29,8 +29,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Dish not found" }, { status: 404 });
   }
 
-  const dishName = dish.name?.fr || "French dish";
-  const dishDesc = dish.description?.fr || "";
+  const dishName = dish.name_fr || "French dish";
+  const dishDesc = dish.description_fr || "";
   const subject = dishDesc ? `${dishName} - ${dishDesc}` : dishName;
 
   try {
