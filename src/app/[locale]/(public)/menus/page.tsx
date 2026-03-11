@@ -33,21 +33,19 @@ export default async function MenusPage({ params }: Props) {
     .select(`
       *,
       menu_dishes(
-        available_today,
         dishes(*)
       )
     `)
     .eq("active", true);
 
   const menusWithDishes: MenuWithDishes[] = (data ?? []).map((menu) => {
-    const todayDishes = (menu.menu_dishes ?? [])
-      .filter((md: { available_today: boolean }) => md.available_today)
+    const dishes = (menu.menu_dishes ?? [])
       .map((md: { dishes: Dish }) => md.dishes)
       .filter(Boolean) as Dish[];
 
     // Deduplicate by dish id
     const seen = new Set<string>();
-    const uniqueDishes = todayDishes.filter((d) => {
+    const uniqueDishes = dishes.filter((d) => {
       if (seen.has(d.id)) return false;
       seen.add(d.id);
       return true;

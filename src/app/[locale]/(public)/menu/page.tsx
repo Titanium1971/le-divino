@@ -2,10 +2,7 @@ import type { Metadata } from "next";
 import { setRequestLocale } from "next-intl/server";
 import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
-import { getDishesGrouped } from "@/lib/supabase/dishes";
-import { getMenus } from "@/lib/supabase/menus";
-import type { Dish } from "@/lib/types/database";
-import { getDishImageUrl } from "@/lib/supabase/dishes";
+import { getDishesGrouped, getDishImageUrl } from "@/lib/supabase/dishes";
 import { MenuClient } from "./menu-client";
 import { generatePageMetadata, breadcrumbJsonLd } from "@/lib/seo/metadata";
 
@@ -26,25 +23,7 @@ export default async function MenuPage({ params }: Props) {
   const t = await getTranslations("menu");
 
   const supabase = await createClient();
-  const [grouped, menus, todayRes] = await Promise.all([
-    getDishesGrouped(supabase),
-    getMenus(supabase),
-    supabase
-      .from("menu_dishes")
-      .select("dish_id, dishes(*)")
-      .eq("available_today", true),
-  ]);
-
-  // Deduplicate by dish_id (a dish can be linked to multiple menus)
-  const seen = new Set<string>();
-  const todayDishes = (todayRes.data ?? [])
-    .filter((md) => {
-      if (seen.has(md.dish_id)) return false;
-      seen.add(md.dish_id);
-      return true;
-    })
-    .map((md) => md.dishes as unknown as Dish)
-    .filter(Boolean);
+  const grouped = await getDishesGrouped(supabase);
 
   // Only keep groups with available dishes, and only "carte" dishes for public menu
   const filteredGrouped = grouped
@@ -54,13 +33,10 @@ export default async function MenuPage({ params }: Props) {
     }))
     .filter((g) => g.dishes.length > 0);
 
-  const activeMenus = menus.filter((m) => m.active);
-
   // Build image URL map for all dishes that have images
-  const allDishes = [...filteredGrouped.flatMap((g) => g.dishes), ...todayDishes];
   const imageUrls: Record<string, string> = {};
-  for (const dish of allDishes) {
-    if (dish.image_path && !imageUrls[dish.id]) {
+  for (const dish of filteredGrouped.flatMap((g) => g.dishes)) {
+    if (dish.image_path) {
       imageUrls[dish.id] = getDishImageUrl(supabase, dish.image_path);
     }
   }
@@ -89,13 +65,11 @@ export default async function MenuPage({ params }: Props) {
       {/* Menu content */}
       <section className="bg-brand-cream py-16">
         <div className="mx-auto max-w-4xl px-6">
-          {filteredGrouped.length === 0 && activeMenus.length === 0 ? (
+          {filteredGrouped.length === 0 ? (
             <p className="text-center text-brand-dark/70 font-light">{t("empty")}</p>
           ) : (
             <MenuClient
               grouped={filteredGrouped}
-              menus={activeMenus}
-              todayDishes={todayDishes}
               locale={locale}
               imageUrls={imageUrls}
             />

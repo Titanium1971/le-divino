@@ -90,7 +90,6 @@ export type MenuDish = {
   id: string;
   menu_id: string;
   dish_id: string;
-  available_today: boolean;
 };
 
 // ── Reservations ──

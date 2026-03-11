@@ -100,14 +100,3 @@ export async function removeDishFromMenu(
   if (error) throw error;
 }
 
-export async function toggleAvailableToday(
-  supabase: SupabaseClient,
-  id: string,
-  availableToday: boolean,
-): Promise<void> {
-  const { error } = await supabase
-    .from("menu_dishes")
-    .update({ available_today: availableToday })
-    .eq("id", id);
-  if (error) throw error;
-}
