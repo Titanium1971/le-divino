@@ -143,14 +143,14 @@ export function DishFormSheet({ open, onOpenChange, dish, onSaved, onRefresh }: 
       // Auto-save translations when editing
       if (isEdit && dish) {
         await updateDish(supabase, dish.id, {
-          name_en: data.name?.en || nameEn,
-          name_it: data.name?.it || nameIt,
-          name_es: data.name?.es || nameEs,
-          name_de: data.name?.de || nameDe,
-          description_en: data.description?.en || descEn,
-          description_it: data.description?.it || descIt,
-          description_es: data.description?.es || descEs,
-          description_de: data.description?.de || descDe,
+          name_en: (data.name?.en || nameEn)?.trim() || null,
+          name_it: (data.name?.it || nameIt)?.trim() || null,
+          name_es: (data.name?.es || nameEs)?.trim() || null,
+          name_de: (data.name?.de || nameDe)?.trim() || null,
+          description_en: (data.description?.en || descEn)?.trim() || null,
+          description_it: (data.description?.it || descIt)?.trim() || null,
+          description_es: (data.description?.es || descEs)?.trim() || null,
+          description_de: (data.description?.de || descDe)?.trim() || null,
         });
       }
     } catch (err) {
@@ -216,16 +216,16 @@ export function DishFormSheet({ open, onOpenChange, dish, onSaved, onRefresh }: 
 
     try {
       const formData: DishFormData = {
-        name_fr: nameFr,
-        name_en: nameEn || null,
-        name_it: nameIt || null,
-        name_es: nameEs || null,
-        name_de: nameDe || null,
-        description_fr: descFr || null,
-        description_en: descEn || null,
-        description_it: descIt || null,
-        description_es: descEs || null,
-        description_de: descDe || null,
+        name_fr: nameFr.trim(),
+        name_en: nameEn.trim() || null,
+        name_it: nameIt.trim() || null,
+        name_es: nameEs.trim() || null,
+        name_de: nameDe.trim() || null,
+        description_fr: descFr.trim() || null,
+        description_en: descEn.trim() || null,
+        description_it: descIt.trim() || null,
+        description_es: descEs.trim() || null,
+        description_de: descDe.trim() || null,
         category,
         source,
         price: parsedPrice,
