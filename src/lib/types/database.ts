@@ -13,9 +13,12 @@ export type Category = {
   updated_at: string;
 };
 
+export type MenuType = "carte" | "marche" | "express";
+
 export type Dish = {
   id: string;
   category_id: string;
+  menu_type: MenuType;
   name: I18nField;
   description: I18nField;
   price: number;
@@ -35,6 +38,7 @@ export type DishWithCategory = Dish & {
 
 export type DishFormData = {
   category_id: string;
+  menu_type: MenuType;
   name: I18nField;
   description: I18nField;
   price: number;
@@ -43,6 +47,12 @@ export type DishFormData = {
   is_signature: boolean;
   available: boolean;
 };
+
+export const MENU_TYPES: { value: MenuType; label: string }[] = [
+  { value: "carte", label: "La Carte" },
+  { value: "marche", label: "Menu du Marché" },
+  { value: "express", label: "Formule Express" },
+];
 
 // ── Menus / Formules ──
 

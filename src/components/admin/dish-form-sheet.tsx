@@ -4,8 +4,8 @@ import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
 import { createDish, updateDish, uploadDishImage, getDishImageUrl } from "@/lib/supabase/dishes";
-import type { Category, Dish, DishFormData, I18nField, Locale } from "@/lib/types/database";
-import { ALLERGENS } from "@/lib/types/database";
+import type { Category, Dish, DishFormData, I18nField, Locale, MenuType } from "@/lib/types/database";
+import { ALLERGENS, MENU_TYPES } from "@/lib/types/database";
 import {
   Sheet,
   SheetContent,
@@ -56,6 +56,7 @@ export function DishFormSheet({ open, onOpenChange, dish, categories, onSaved }:
   const [name, setName] = useState<I18nField>(emptyI18n());
   const [description, setDescription] = useState<I18nField>(emptyI18n());
   const [categoryId, setCategoryId] = useState("");
+  const [menuType, setMenuType] = useState<MenuType>("carte");
   const [price, setPrice] = useState("");
   const [allergens, setAllergens] = useState<string[]>([]);
   const [isVegetarian, setIsVegetarian] = useState(false);
@@ -73,6 +74,7 @@ export function DishFormSheet({ open, onOpenChange, dish, categories, onSaved }:
       setName(dish.name ?? emptyI18n());
       setDescription(dish.description ?? emptyI18n());
       setCategoryId(dish.category_id);
+      setMenuType(dish.menu_type ?? "carte");
       setPrice(String(Number(dish.price)));
       setAllergens(dish.allergens ?? []);
       setIsVegetarian(dish.is_vegetarian);
@@ -84,6 +86,7 @@ export function DishFormSheet({ open, onOpenChange, dish, categories, onSaved }:
       setName(emptyI18n());
       setDescription(emptyI18n());
       setCategoryId(categories[0]?.id ?? "");
+      setMenuType("carte");
       setPrice("");
       setAllergens([]);
       setIsVegetarian(false);
@@ -171,6 +174,7 @@ export function DishFormSheet({ open, onOpenChange, dish, categories, onSaved }:
     try {
       const formData: DishFormData = {
         category_id: categoryId,
+        menu_type: menuType,
         name,
         description,
         price: parseFloat(price),
@@ -215,8 +219,23 @@ export function DishFormSheet({ open, onOpenChange, dish, categories, onSaved }:
 
         <ScrollArea className="h-[calc(100vh-10rem)] px-4">
           <form id="dish-form" onSubmit={handleSubmit} className="space-y-6 pb-8 pt-4">
-            {/* ── Category & Price ── */}
-            <div className="grid grid-cols-2 gap-4">
+            {/* ── Menu Type, Category & Price ── */}
+            <div className="grid grid-cols-3 gap-4">
+              <div className="space-y-2">
+                <Label>Menu</Label>
+                <Select value={menuType} onValueChange={(v) => setMenuType(v as MenuType)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Type..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {MENU_TYPES.map((mt) => (
+                      <SelectItem key={mt.value} value={mt.value}>
+                        {mt.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
               <div className="space-y-2">
                 <Label>Catégorie</Label>
                 <Select value={categoryId} onValueChange={setCategoryId}>

@@ -9,7 +9,8 @@ import {
   deleteDishImage,
   getDishImageUrl,
 } from "@/lib/supabase/dishes";
-import type { Category, Dish } from "@/lib/types/database";
+import type { Category, Dish, MenuType } from "@/lib/types/database";
+import { MENU_TYPES } from "@/lib/types/database";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
@@ -42,6 +43,8 @@ export function DishesManager({ initialGroups, categories }: Props) {
   const [deleteTarget, setDeleteTarget] = useState<Dish | null>(null);
   const [deleting, setDeleting] = useState(false);
   const [categoriesOpen, setCategoriesOpen] = useState(false);
+  const [menuFilter, setMenuFilter] = useState<MenuType | "all">("all");
+  const [generatingId, setGeneratingId] = useState<string | null>(null);
 
   const refresh = useCallback(async () => {
     const data = await getDishesGrouped(supabase);
@@ -81,7 +84,39 @@ export function DishesManager({ initialGroups, categories }: Props) {
     }
   }
 
-  const totalDishes = groups.reduce((sum, g) => sum + g.dishes.length, 0);
+  async function handleGenerateImage(dish: Dish) {
+    setGeneratingId(dish.id);
+    try {
+      const res = await fetch("/api/admin/generate-dish-image", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ dishId: dish.id }),
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        alert(`Erreur : ${err.error}`);
+        return;
+      }
+      await refresh();
+    } catch {
+      alert("Erreur lors de la génération de l'image");
+    } finally {
+      setGeneratingId(null);
+    }
+  }
+
+  // Filter dishes by menu_type
+  const filteredGroups = groups
+    .map((g) => ({
+      ...g,
+      dishes:
+        menuFilter === "all"
+          ? g.dishes
+          : g.dishes.filter((d) => d.menu_type === menuFilter),
+    }))
+    .filter((g) => g.dishes.length > 0);
+
+  const totalDishes = filteredGroups.reduce((sum, g) => sum + g.dishes.length, 0);
 
   return (
     <div>
@@ -90,43 +125,67 @@ export function DishesManager({ initialGroups, categories }: Props) {
         <div>
           <h1 className="text-2xl font-light tracking-wide">Gestion des plats</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            {totalDishes} plat{totalDishes !== 1 ? "s" : ""} dans {groups.length} catégorie
-            {groups.length !== 1 ? "s" : ""}
+            {totalDishes} plat{totalDishes !== 1 ? "s" : ""}
           </p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" onClick={() => setCategoriesOpen(true)}>
-            Gérer les catégories
+            Catégories
           </Button>
           <Button onClick={handleAdd}>+ Ajouter un plat</Button>
         </div>
       </div>
 
+      {/* Menu type filter */}
+      <div className="mt-4 flex gap-2">
+        <Button
+          variant={menuFilter === "all" ? "default" : "outline"}
+          size="sm"
+          onClick={() => setMenuFilter("all")}
+        >
+          Tout
+        </Button>
+        {MENU_TYPES.map((mt) => (
+          <Button
+            key={mt.value}
+            variant={menuFilter === mt.value ? "default" : "outline"}
+            size="sm"
+            onClick={() => setMenuFilter(mt.value)}
+          >
+            {mt.label}
+          </Button>
+        ))}
+      </div>
+
       <Separator className="my-6" />
 
       {/* Dish list grouped by category */}
-      {groups.map(({ category, dishes }) => (
+      {filteredGroups.map(({ category, dishes }) => (
         <section key={category.id} className="mb-8">
           <h2 className="mb-4 text-lg font-medium tracking-wide">{category.name}</h2>
-          {dishes.length === 0 ? (
-            <p className="text-sm italic text-muted-foreground">Aucun plat dans cette catégorie.</p>
-          ) : (
-            <div className="space-y-2">
-              {dishes.map((dish) => (
-                <DishRow
-                  key={dish.id}
-                  dish={dish}
-                  supabaseUrl={process.env.NEXT_PUBLIC_SUPABASE_URL!}
-                  onEdit={() => handleEdit(dish)}
-                  onDelete={() => setDeleteTarget(dish)}
-                  onToggle={() => handleToggleAvailable(dish)}
-                  getImageUrl={(path) => getDishImageUrl(supabase, path)}
-                />
-              ))}
-            </div>
-          )}
+          <div className="space-y-2">
+            {dishes.map((dish) => (
+              <DishRow
+                key={dish.id}
+                dish={dish}
+                supabaseUrl={process.env.NEXT_PUBLIC_SUPABASE_URL!}
+                onEdit={() => handleEdit(dish)}
+                onDelete={() => setDeleteTarget(dish)}
+                onToggle={() => handleToggleAvailable(dish)}
+                onGenerateImage={() => handleGenerateImage(dish)}
+                generating={generatingId === dish.id}
+                getImageUrl={(path) => getDishImageUrl(supabase, path)}
+              />
+            ))}
+          </div>
         </section>
       ))}
+
+      {filteredGroups.length === 0 && (
+        <p className="py-12 text-center text-sm italic text-muted-foreground">
+          Aucun plat trouvé.
+        </p>
+      )}
 
       {/* Add/Edit Sheet */}
       <DishFormSheet
@@ -183,10 +242,14 @@ type DishRowProps = {
   onEdit: () => void;
   onDelete: () => void;
   onToggle: () => void;
+  onGenerateImage: () => void;
+  generating: boolean;
   getImageUrl: (path: string) => string;
 };
 
-function DishRow({ dish, onEdit, onDelete, onToggle, getImageUrl }: DishRowProps) {
+function DishRow({ dish, onEdit, onDelete, onToggle, onGenerateImage, generating, getImageUrl }: DishRowProps) {
+  const menuLabel = MENU_TYPES.find((mt) => mt.value === dish.menu_type)?.label;
+
   return (
     <div
       className={`flex items-center gap-4 rounded-lg border p-3 transition-colors ${
@@ -195,7 +258,7 @@ function DishRow({ dish, onEdit, onDelete, onToggle, getImageUrl }: DishRowProps
     >
       {/* Thumbnail */}
       <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-md bg-muted">
-        {dish.image_path && (
+        {dish.image_path ? (
           <Image
             src={getImageUrl(dish.image_path)}
             alt={dish.name.fr}
@@ -203,6 +266,15 @@ function DishRow({ dish, onEdit, onDelete, onToggle, getImageUrl }: DishRowProps
             className="object-cover"
             sizes="48px"
           />
+        ) : (
+          <button
+            onClick={onGenerateImage}
+            disabled={generating}
+            className="flex h-full w-full items-center justify-center text-[10px] text-muted-foreground hover:bg-muted/80"
+            title="Générer une photo IA"
+          >
+            {generating ? "..." : "IA"}
+          </button>
         )}
       </div>
 
@@ -215,18 +287,34 @@ function DishRow({ dish, onEdit, onDelete, onToggle, getImageUrl }: DishRowProps
               Signature
             </Badge>
           )}
+          {menuLabel && (
+            <Badge variant="outline" className="shrink-0 text-[10px]">
+              {menuLabel}
+            </Badge>
+          )}
         </div>
         <p className="truncate text-xs text-muted-foreground">{dish.description?.fr}</p>
       </div>
 
       {/* Price */}
-      <p className="shrink-0 text-sm font-medium">{Number(dish.price).toFixed(2)}&nbsp;€</p>
+      <p className="shrink-0 text-sm font-medium">
+        {Number(dish.price) > 0 ? `${Number(dish.price).toFixed(2)} €` : "—"}
+      </p>
 
       {/* Available toggle */}
       <Switch checked={dish.available} onCheckedChange={onToggle} aria-label="Disponible" />
 
       {/* Actions */}
       <div className="flex shrink-0 gap-1">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={onGenerateImage}
+          disabled={generating}
+          title="Régénérer la photo avec DALL-E"
+        >
+          {generating ? "Génération..." : "📷 IA"}
+        </Button>
         <Button variant="ghost" size="sm" onClick={onEdit}>
           Modifier
         </Button>
