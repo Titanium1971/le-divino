@@ -45,10 +45,12 @@ export function DishFormSheet({ open, onOpenChange, dish, onSaved, onRefresh }: 
   const [nameEn, setNameEn] = useState("");
   const [nameIt, setNameIt] = useState("");
   const [nameEs, setNameEs] = useState("");
+  const [nameDe, setNameDe] = useState("");
   const [descFr, setDescFr] = useState("");
   const [descEn, setDescEn] = useState("");
   const [descIt, setDescIt] = useState("");
   const [descEs, setDescEs] = useState("");
+  const [descDe, setDescDe] = useState("");
   const [category, setCategory] = useState<DishCategory>("plat");
   const [source, setSource] = useState<DishSource>("carte");
   const [price, setPrice] = useState("");
@@ -72,10 +74,12 @@ export function DishFormSheet({ open, onOpenChange, dish, onSaved, onRefresh }: 
       setNameEn(dish.name_en ?? "");
       setNameIt(dish.name_it ?? "");
       setNameEs(dish.name_es ?? "");
+      setNameDe(dish.name_de ?? "");
       setDescFr(dish.description_fr ?? "");
       setDescEn(dish.description_en ?? "");
       setDescIt(dish.description_it ?? "");
       setDescEs(dish.description_es ?? "");
+      setDescDe(dish.description_de ?? "");
       setCategory(dish.category);
       setSource(dish.source);
       setPrice(String(Number(dish.price)));
@@ -89,10 +93,12 @@ export function DishFormSheet({ open, onOpenChange, dish, onSaved, onRefresh }: 
       setNameEn("");
       setNameIt("");
       setNameEs("");
+      setNameDe("");
       setDescFr("");
       setDescEn("");
       setDescIt("");
       setDescEs("");
+      setDescDe("");
       setCategory("plat");
       setSource("carte");
       setPrice("");
@@ -128,9 +134,11 @@ export function DishFormSheet({ open, onOpenChange, dish, onSaved, onRefresh }: 
       setNameEn(data.name?.en || nameEn);
       setNameIt(data.name?.it || nameIt);
       setNameEs(data.name?.es || nameEs);
+      setNameDe(data.name?.de || nameDe);
       setDescEn(data.description?.en || descEn);
       setDescIt(data.description?.it || descIt);
       setDescEs(data.description?.es || descEs);
+      setDescDe(data.description?.de || descDe);
 
       // Auto-save translations when editing
       if (isEdit && dish) {
@@ -138,9 +146,11 @@ export function DishFormSheet({ open, onOpenChange, dish, onSaved, onRefresh }: 
           name_en: data.name?.en || nameEn,
           name_it: data.name?.it || nameIt,
           name_es: data.name?.es || nameEs,
+          name_de: data.name?.de || nameDe,
           description_en: data.description?.en || descEn,
           description_it: data.description?.it || descIt,
           description_es: data.description?.es || descEs,
+          description_de: data.description?.de || descDe,
         });
       }
     } catch (err) {
@@ -209,10 +219,12 @@ export function DishFormSheet({ open, onOpenChange, dish, onSaved, onRefresh }: 
         name_en: nameEn || null,
         name_it: nameIt || null,
         name_es: nameEs || null,
+        name_de: nameDe || null,
         description_fr: descFr || null,
         description_en: descEn || null,
         description_it: descIt || null,
         description_es: descEs || null,
+        description_de: descDe || null,
         category,
         source,
         price: parseFloat(price),
@@ -312,7 +324,7 @@ export function DishFormSheet({ open, onOpenChange, dish, onSaved, onRefresh }: 
                 onClick={handleTranslate}
                 disabled={translating || !nameFr}
               >
-                {translating ? "Traduction..." : "Traduire FR → EN/IT/ES"}
+                {translating ? "Traduction..." : "Traduire FR → EN/IT/ES/DE"}
               </Button>
             </div>
 
@@ -320,10 +332,11 @@ export function DishFormSheet({ open, onOpenChange, dish, onSaved, onRefresh }: 
             <div className="space-y-3">
               <Label>Nom du plat</Label>
               <Input value={nameFr} onChange={(e) => setNameFr(e.target.value)} placeholder="Nom (FR)" required />
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-4 gap-2">
                 <Input value={nameEn} onChange={(e) => setNameEn(e.target.value)} placeholder="EN" />
                 <Input value={nameIt} onChange={(e) => setNameIt(e.target.value)} placeholder="IT" />
                 <Input value={nameEs} onChange={(e) => setNameEs(e.target.value)} placeholder="ES" />
+                <Input value={nameDe} onChange={(e) => setNameDe(e.target.value)} placeholder="DE" />
               </div>
             </div>
 
@@ -331,10 +344,11 @@ export function DishFormSheet({ open, onOpenChange, dish, onSaved, onRefresh }: 
             <div className="space-y-3">
               <Label>Description</Label>
               <Textarea value={descFr} onChange={(e) => setDescFr(e.target.value)} placeholder="Description (FR)" rows={3} />
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-4 gap-2">
                 <Textarea value={descEn} onChange={(e) => setDescEn(e.target.value)} placeholder="EN" rows={2} />
                 <Textarea value={descIt} onChange={(e) => setDescIt(e.target.value)} placeholder="IT" rows={2} />
                 <Textarea value={descEs} onChange={(e) => setDescEs(e.target.value)} placeholder="ES" rows={2} />
+                <Textarea value={descDe} onChange={(e) => setDescDe(e.target.value)} placeholder="DE" rows={2} />
               </div>
             </div>
 

@@ -13,10 +13,12 @@ export type Dish = {
   name_en: string | null;
   name_it: string | null;
   name_es: string | null;
+  name_de: string | null;
   description_fr: string | null;
   description_en: string | null;
   description_it: string | null;
   description_es: string | null;
+  description_de: string | null;
   category: DishCategory;
   source: DishSource;
   price: number;
@@ -31,10 +33,12 @@ export type DishFormData = {
   name_en?: string | null;
   name_it?: string | null;
   name_es?: string | null;
+  name_de?: string | null;
   description_fr?: string | null;
   description_en?: string | null;
   description_it?: string | null;
   description_es?: string | null;
+  description_de?: string | null;
   category: DishCategory;
   source: DishSource;
   price: number;
