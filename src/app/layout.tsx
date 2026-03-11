@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import { Raleway } from "next/font/google";
+import { GoogleAnalytics } from "@next/third-parties/google";
 import { SITE_URL, LOCALES, DEFAULT_LOCALE, RESTAURANT_JSON_LD } from "@/lib/seo/constants";
 import "./globals.css";
+
+const gaId = process.env.NEXT_PUBLIC_GA_ID;
 
 const raleway = Raleway({
   subsets: ["latin"],
@@ -34,7 +37,10 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(RESTAURANT_JSON_LD) }}
         />
       </head>
-      <body className={`${raleway.variable} font-sans antialiased`}>{children}</body>
+      <body className={`${raleway.variable} font-sans antialiased`}>
+        {children}
+        {gaId && <GoogleAnalytics gaId={gaId} />}
+      </body>
     </html>
   );
 }
