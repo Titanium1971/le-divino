@@ -203,6 +203,7 @@ export function DishesManager({ initialGroups, categories }: Props) {
           setSheetOpen(false);
           await refresh();
         }}
+        onRefresh={refresh}
       />
 
       {/* Categories Sheet */}

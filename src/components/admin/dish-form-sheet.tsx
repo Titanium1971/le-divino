@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
-import { createDish, updateDish, uploadDishImage, getDishImageUrl } from "@/lib/supabase/dishes";
+import { createDish, updateDish, uploadDishImage, deleteDishImage, getDishImageUrl } from "@/lib/supabase/dishes";
 import type { Category, Dish, DishFormData, I18nField, Locale, MenuType } from "@/lib/types/database";
 import { ALLERGENS, MENU_TYPES } from "@/lib/types/database";
 import {
@@ -45,9 +45,10 @@ type Props = {
   dish: Dish | null;
   categories: Category[];
   onSaved: () => Promise<void>;
+  onRefresh?: () => Promise<void>;
 };
 
-export function DishFormSheet({ open, onOpenChange, dish, categories, onSaved }: Props) {
+export function DishFormSheet({ open, onOpenChange, dish, categories, onSaved, onRefresh }: Props) {
   const supabase = createClient();
   const fileRef = useRef<HTMLInputElement>(null);
   const isEdit = !!dish;
@@ -64,9 +65,11 @@ export function DishFormSheet({ open, onOpenChange, dish, categories, onSaved }:
   const [available, setAvailable] = useState(true);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [imageKey, setImageKey] = useState(0);
   const [saving, setSaving] = useState(false);
   const [translating, setTranslating] = useState(false);
   const [generatingAI, setGeneratingAI] = useState(false);
+  const [deletingImage, setDeletingImage] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   // Reset form when dish changes
@@ -174,12 +177,35 @@ export function DishFormSheet({ open, onOpenChange, dish, categories, onSaved }:
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Erreur génération IA");
-      // Update preview with new public URL (add cache buster)
-      setImagePreview(`${data.publicUrl}?t=${Date.now()}`);
+      // Force new URL + re-render via key change to bust Next.js Image cache
+      setImagePreview(data.publicUrl);
+      setImageKey((k) => k + 1);
+      setImageFile(null);
+      // Refresh the list without closing the sheet
+      if (onRefresh) await onRefresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erreur génération IA");
     } finally {
       setGeneratingAI(false);
+    }
+  }
+
+  async function handleDeleteImage() {
+    if (!isEdit || !dish?.image_path) return;
+    setDeletingImage(true);
+    setError(null);
+    try {
+      await deleteDishImage(supabase, dish.image_path);
+      await updateDish(supabase, dish.id, { image_path: null });
+      setImagePreview(null);
+      setImageFile(null);
+      setImageKey((k) => k + 1);
+      // Refresh the list without closing the sheet
+      if (onRefresh) await onRefresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Erreur suppression photo");
+    } finally {
+      setDeletingImage(false);
     }
   }
 
@@ -359,12 +385,13 @@ export function DishFormSheet({ open, onOpenChange, dish, categories, onSaved }:
                 <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-lg border bg-muted">
                   {imagePreview && (
                     <Image
+                      key={imageKey}
                       src={imagePreview}
                       alt="Aperçu"
                       fill
                       className="object-cover"
                       sizes="80px"
-                      unoptimized={imagePreview.startsWith("blob:")}
+                      unoptimized
                     />
                   )}
                 </div>
@@ -393,6 +420,18 @@ export function DishFormSheet({ open, onOpenChange, dish, categories, onSaved }:
                       disabled={generatingAI}
                     >
                       {generatingAI ? "Génération IA..." : "📷 Générer avec DALL-E"}
+                    </Button>
+                  )}
+                  {isEdit && imagePreview && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      className="text-destructive"
+                      onClick={handleDeleteImage}
+                      disabled={deletingImage}
+                    >
+                      {deletingImage ? "Suppression..." : "Supprimer la photo"}
                     </Button>
                   )}
                 </div>
