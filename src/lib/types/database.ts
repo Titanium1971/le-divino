@@ -64,6 +64,10 @@ export type Menu = {
   id: string;
   name_fr: string;
   description_fr: string | null;
+  description_en: string | null;
+  description_it: string | null;
+  description_es: string | null;
+  description_de: string | null;
   price: number;
   type: MenuType;
   active: boolean;
@@ -73,6 +77,10 @@ export type Menu = {
 export type MenuFormData = {
   name_fr: string;
   description_fr?: string | null;
+  description_en?: string | null;
+  description_it?: string | null;
+  description_es?: string | null;
+  description_de?: string | null;
   price: number;
   type: MenuType;
   active?: boolean;

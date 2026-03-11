@@ -22,7 +22,7 @@ export function SiteHeader() {
   function isActive(key: string) {
     const href = getHref(key);
     if (href === "/") return pathname === "/";
-    return pathname.startsWith(href);
+    return pathname === href || pathname.startsWith(href + "/");
   }
 
   useEffect(() => {

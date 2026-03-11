@@ -44,17 +44,26 @@ export function MenuFormSheet({ open, onOpenChange, menu, menuDishes, dishGroups
 
   const [nameFr, setNameFr] = useState("");
   const [descFr, setDescFr] = useState("");
+  const [descEn, setDescEn] = useState("");
+  const [descIt, setDescIt] = useState("");
+  const [descEs, setDescEs] = useState("");
+  const [descDe, setDescDe] = useState("");
   const [price, setPrice] = useState("");
   const [type, setType] = useState<MenuType>("entree_plat");
   const [active, setActive] = useState(true);
   const [selectedDishIds, setSelectedDishIds] = useState<Set<string>>(new Set());
   const [saving, setSaving] = useState(false);
+  const [translating, setTranslating] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (menu) {
       setNameFr(menu.name_fr ?? "");
       setDescFr(menu.description_fr ?? "");
+      setDescEn(menu.description_en ?? "");
+      setDescIt(menu.description_it ?? "");
+      setDescEs(menu.description_es ?? "");
+      setDescDe(menu.description_de ?? "");
       setPrice(String(Number(menu.price)));
       setType(menu.type);
       setActive(menu.active);
@@ -62,6 +71,10 @@ export function MenuFormSheet({ open, onOpenChange, menu, menuDishes, dishGroups
     } else {
       setNameFr("");
       setDescFr("");
+      setDescEn("");
+      setDescIt("");
+      setDescEs("");
+      setDescDe("");
       setPrice("");
       setType("entree_plat");
       setActive(true);
@@ -80,6 +93,30 @@ export function MenuFormSheet({ open, onOpenChange, menu, menuDishes, dishGroups
       }
       return next;
     });
+  }
+
+  async function handleTranslate() {
+    if (!descFr) return;
+    setTranslating(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/translate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: nameFr, description: descFr }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Translation failed");
+
+      setDescEn(data.description?.en || descEn);
+      setDescIt(data.description?.it || descIt);
+      setDescEs(data.description?.es || descEs);
+      setDescDe(data.description?.de || descDe);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Erreur de traduction.");
+    } finally {
+      setTranslating(false);
+    }
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -101,7 +138,11 @@ export function MenuFormSheet({ open, onOpenChange, menu, menuDishes, dishGroups
     try {
       const formData: MenuFormData = {
         name_fr: nameFr,
-        description_fr: descFr || null,
+        description_fr: descFr.trim() || null,
+        description_en: descEn.trim() || null,
+        description_it: descIt.trim() || null,
+        description_es: descEs.trim() || null,
+        description_de: descDe.trim() || null,
         price: parsedPrice,
         type,
         active,
@@ -165,14 +206,41 @@ export function MenuFormSheet({ open, onOpenChange, menu, menuDishes, dishGroups
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="menu-desc">Description</Label>
+              <Label htmlFor="menu-desc">Description (FR)</Label>
               <Textarea
                 id="menu-desc"
                 value={descFr}
                 onChange={(e) => setDescFr(e.target.value)}
                 placeholder="Description du menu"
-                rows={3}
+                rows={2}
               />
+            </div>
+
+            {/* Translate button */}
+            <div className="flex items-center justify-between rounded-md border border-dashed p-3">
+              <p className="text-xs text-muted-foreground">
+                Traduire la description automatiquement.
+              </p>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={handleTranslate}
+                disabled={translating || !descFr}
+              >
+                {translating ? "Traduction..." : "Traduire FR → EN/IT/ES/DE"}
+              </Button>
+            </div>
+
+            {/* Description translations */}
+            <div className="space-y-2">
+              <Label>Description (traductions)</Label>
+              <div className="grid grid-cols-2 gap-2">
+                <Textarea value={descEn} onChange={(e) => setDescEn(e.target.value)} placeholder="EN" rows={2} />
+                <Textarea value={descIt} onChange={(e) => setDescIt(e.target.value)} placeholder="IT" rows={2} />
+                <Textarea value={descEs} onChange={(e) => setDescEs(e.target.value)} placeholder="ES" rows={2} />
+                <Textarea value={descDe} onChange={(e) => setDescDe(e.target.value)} placeholder="DE" rows={2} />
+              </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
