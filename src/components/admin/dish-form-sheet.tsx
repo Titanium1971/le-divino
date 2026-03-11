@@ -205,8 +205,9 @@ export function DishFormSheet({ open, onOpenChange, dish, onSaved, onRefresh }: 
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!nameFr || !price) {
-      setError("Nom (FR) et prix sont obligatoires.");
+    const parsedPrice = parseFloat(price);
+    if (!nameFr || !price || isNaN(parsedPrice)) {
+      setError("Nom (FR) et un prix valide sont obligatoires.");
       return;
     }
 
@@ -227,7 +228,7 @@ export function DishFormSheet({ open, onOpenChange, dish, onSaved, onRefresh }: 
         description_de: descDe || null,
         category,
         source,
-        price: parseFloat(price),
+        price: parsedPrice,
         available,
       };
 
@@ -245,6 +246,7 @@ export function DishFormSheet({ open, onOpenChange, dish, onSaved, onRefresh }: 
 
       await onSaved();
     } catch (err) {
+      console.error("Dish save error:", err);
       setError(err instanceof Error ? err.message : "Erreur lors de la sauvegarde.");
     } finally {
       setSaving(false);
