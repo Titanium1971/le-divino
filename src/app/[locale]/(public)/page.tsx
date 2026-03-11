@@ -2,9 +2,13 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { setRequestLocale } from "next-intl/server";
 import { getTranslations } from "next-intl/server";
+import { createClient } from "@/lib/supabase/server";
+import { getDishImageUrl } from "@/lib/supabase/dishes";
+import type { Dish } from "@/lib/types/database";
 import { HeroSection } from "@/components/restaurant/hero-section";
 import { ReservationWidget } from "@/components/restaurant/reservation-widget";
 import { GoogleReviews } from "@/components/restaurant/google-reviews";
+import { SpecialtiesSection } from "@/components/restaurant/specialties-section";
 import { Link } from "@/i18n/navigation";
 import { generatePageMetadata } from "@/lib/seo/metadata";
 
@@ -27,6 +31,25 @@ export default async function HomePage({ params }: Props) {
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("home");
+
+  // Fetch dishes with images for the specialties section
+  const supabase = await createClient();
+  const { data: dishesWithImages } = await supabase
+    .from("dishes")
+    .select("*")
+    .not("image_path", "is", null)
+    .eq("available", true)
+    .limit(10);
+
+  // Shuffle and pick 3
+  const shuffled = (dishesWithImages ?? []).sort(() => Math.random() - 0.5);
+  const featuredDishes = shuffled.slice(0, 3) as Dish[];
+  const featuredImageUrls: Record<string, string> = {};
+  for (const dish of featuredDishes) {
+    if (dish.image_path) {
+      featuredImageUrls[dish.id] = getDishImageUrl(supabase, dish.image_path);
+    }
+  }
 
   return (
     <>
@@ -104,6 +127,15 @@ export default async function HomePage({ params }: Props) {
 
       {/* ── Avis Google ── */}
       <GoogleReviews />
+
+      {/* ── Nos Spécialités ── */}
+      {featuredDishes.length > 0 && (
+        <SpecialtiesSection
+          dishes={featuredDishes}
+          imageUrls={featuredImageUrls}
+          locale={locale}
+        />
+      )}
 
       {/* ── Widget flottant réservation ── */}
       <ReservationWidget locale={locale} />

@@ -33,6 +33,9 @@
         "title": "Aufmerksamer Service",
         "description": "Ein leidenschaftliches Team zu Ihrem Service für ein unvergessliches Erlebnis."
       }
+    },
+    "specialties": {
+      "title": "Unsere Spezialitäten"
     }
   },
   "menu": {

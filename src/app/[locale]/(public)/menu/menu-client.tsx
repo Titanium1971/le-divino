@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import Image from "next/image";
 import { useTranslations } from "next-intl";
 import type { Dish, Menu, DishCategory, Locale } from "@/lib/types/database";
 import { DISH_CATEGORIES } from "@/lib/types/database";
@@ -12,6 +13,7 @@ type Props = {
   menus: Menu[];
   todayDishes: Dish[];
   locale: string;
+  imageUrls: Record<string, string>;
 };
 
 // Map category values to i18n keys
@@ -28,7 +30,7 @@ const TODAY_CATEGORY_KEY: Record<DishCategory, string> = {
   dessert: "todayDesserts",
 };
 
-export function MenuClient({ grouped, menus, todayDishes, locale }: Props) {
+export function MenuClient({ grouped, menus, todayDishes, locale, imageUrls }: Props) {
   const t = useTranslations("menu");
   const loc = locale as Locale;
 
@@ -60,6 +62,7 @@ export function MenuClient({ grouped, menus, todayDishes, locale }: Props) {
   const tabsRef = useRef<(HTMLButtonElement | null)[]>([]);
   const navRef = useRef<HTMLDivElement>(null);
   const [underlineStyle, setUnderlineStyle] = useState({ left: 0, width: 0 });
+  const [lightboxUrl, setLightboxUrl] = useState<string | null>(null);
 
   useEffect(() => {
     function updateUnderline() {
@@ -101,6 +104,45 @@ export function MenuClient({ grouped, menus, todayDishes, locale }: Props) {
     .filter((g) => g.dishes.length > 0);
 
   const hasTodayDishes = todayByCategory.length > 0;
+
+  // Dish card with optional image
+  function DishCard({ dish, showPrice = true }: { dish: Dish; showPrice?: boolean }) {
+    const url = imageUrls[dish.id];
+    return (
+      <div className="flex items-start gap-4 border-b border-brand-dark/5 pb-6">
+        {url && (
+          <button
+            onClick={() => setLightboxUrl(url)}
+            className="relative h-20 w-20 shrink-0 cursor-zoom-in overflow-hidden rounded-sm"
+          >
+            <Image
+              src={url}
+              alt={getDishName(dish)}
+              fill
+              className="object-cover transition-transform duration-300 hover:scale-110"
+              sizes="80px"
+              unoptimized
+            />
+          </button>
+        )}
+        <div className="min-w-0 flex-1">
+          <h3 className="text-base font-normal text-brand-dark">
+            {getDishName(dish)}
+          </h3>
+          {getDishDescription(dish) && (
+            <p className="mt-1.5 text-sm font-light text-brand-dark/70">
+              {getDishDescription(dish)}
+            </p>
+          )}
+        </div>
+        {showPrice && Number(dish.price) > 0 && (
+          <span className="shrink-0 text-lg font-semibold text-brand-gold">
+            {Number(dish.price).toFixed(2)} &euro;
+          </span>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div className="isolate">
@@ -177,19 +219,7 @@ export function MenuClient({ grouped, menus, todayDishes, locale }: Props) {
                       </h4>
                       <div className="space-y-4">
                         {dishes.map((dish) => (
-                          <div
-                            key={dish.id}
-                            className="border-b border-brand-dark/5 pb-4"
-                          >
-                            <h5 className="text-base font-normal text-brand-dark">
-                              {getDishName(dish)}
-                            </h5>
-                            {getDishDescription(dish) && (
-                              <p className="mt-1 text-sm font-light text-brand-dark/70">
-                                {getDishDescription(dish)}
-                              </p>
-                            )}
-                          </div>
+                          <DishCard key={dish.id} dish={dish} showPrice={false} />
                         ))}
                       </div>
                       {category === "plat" && (
@@ -212,30 +242,37 @@ export function MenuClient({ grouped, menus, todayDishes, locale }: Props) {
             {grouped
               .find((g) => g.category === activeTab)
               ?.dishes.map((dish) => (
-                <div
-                  key={dish.id}
-                  className="flex items-start justify-between gap-4 border-b border-brand-dark/5 pb-6"
-                >
-                  <div className="flex-1">
-                    <h3 className="text-base font-normal text-brand-dark">
-                      {getDishName(dish)}
-                    </h3>
-                    {getDishDescription(dish) && (
-                      <p className="mt-1.5 text-sm font-light text-brand-dark/70">
-                        {getDishDescription(dish)}
-                      </p>
-                    )}
-                  </div>
-                  {Number(dish.price) > 0 && (
-                    <span className="shrink-0 text-lg font-semibold text-brand-gold">
-                      {Number(dish.price).toFixed(2)} &euro;
-                    </span>
-                  )}
-                </div>
+                <DishCard key={dish.id} dish={dish} />
               ))}
           </div>
         )}
       </div>
+
+      {/* Lightbox */}
+      {lightboxUrl && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4"
+          onClick={() => setLightboxUrl(null)}
+        >
+          <button
+            onClick={() => setLightboxUrl(null)}
+            className="absolute top-4 right-4 text-3xl text-white/80 hover:text-white"
+            aria-label="Fermer"
+          >
+            &times;
+          </button>
+          <div className="relative max-h-[90vh] max-w-[90vw]" onClick={(e) => e.stopPropagation()}>
+            <Image
+              src={lightboxUrl}
+              alt="Photo du plat"
+              width={1024}
+              height={1024}
+              className="h-auto max-h-[85vh] w-auto rounded-lg object-contain"
+              unoptimized
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

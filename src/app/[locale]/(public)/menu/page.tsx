@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getDishesGrouped } from "@/lib/supabase/dishes";
 import { getMenus } from "@/lib/supabase/menus";
 import type { Dish } from "@/lib/types/database";
+import { getDishImageUrl } from "@/lib/supabase/dishes";
 import { MenuClient } from "./menu-client";
 import { generatePageMetadata, breadcrumbJsonLd } from "@/lib/seo/metadata";
 
@@ -55,6 +56,15 @@ export default async function MenuPage({ params }: Props) {
 
   const activeMenus = menus.filter((m) => m.active);
 
+  // Build image URL map for all dishes that have images
+  const allDishes = [...filteredGrouped.flatMap((g) => g.dishes), ...todayDishes];
+  const imageUrls: Record<string, string> = {};
+  for (const dish of allDishes) {
+    if (dish.image_path && !imageUrls[dish.id]) {
+      imageUrls[dish.id] = getDishImageUrl(supabase, dish.image_path);
+    }
+  }
+
   const breadcrumb = breadcrumbJsonLd(locale, "menu", t("title"));
 
   return (
@@ -87,6 +97,7 @@ export default async function MenuPage({ params }: Props) {
               menus={activeMenus}
               todayDishes={todayDishes}
               locale={locale}
+              imageUrls={imageUrls}
             />
           )}
         </div>

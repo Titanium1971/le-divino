@@ -33,6 +33,9 @@
         "title": "Servicio atento",
         "description": "Un equipo apasionado a su servicio para una experiencia memorable."
       }
+    },
+    "specialties": {
+      "title": "Nuestras Especialidades"
     }
   },
   "menu": {
