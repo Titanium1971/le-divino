@@ -139,6 +139,39 @@ export function DishesManager({ initialGroups }: Props) {
     });
   }
 
+  async function handleDuplicate(dish: Dish) {
+    const { data: newDish, error } = await supabase
+      .from("dishes")
+      .insert({
+        name_fr: `${dish.name_fr} (copie)`,
+        name_en: dish.name_en,
+        name_it: dish.name_it,
+        name_es: dish.name_es,
+        name_de: dish.name_de,
+        description_fr: dish.description_fr,
+        description_en: dish.description_en,
+        description_it: dish.description_it,
+        description_es: dish.description_es,
+        description_de: dish.description_de,
+        category: dish.category,
+        source: dish.source,
+        price: dish.price,
+        available: true,
+        sort_order: dish.sort_order + 1,
+      })
+      .select()
+      .single();
+
+    if (error) {
+      console.error("Duplicate error:", error);
+      return;
+    }
+
+    await refresh();
+    setEditingDish(newDish as Dish);
+    setSheetOpen(true);
+  }
+
   async function handleDelete() {
     if (!deleteTarget) return;
     setDeleting(true);
@@ -237,6 +270,7 @@ export function DishesManager({ initialGroups }: Props) {
                 imageTs={imageTimestamps[dish.id]}
                 isToday={todayDishIds.has(dish.id)}
                 onEdit={() => handleEdit(dish)}
+                onDuplicate={() => handleDuplicate(dish)}
                 onDelete={() => setDeleteTarget(dish)}
                 onToggle={() => handleToggleAvailable(dish)}
                 onToggleToday={() => handleToggleToday(dish)}
@@ -322,6 +356,7 @@ type DishRowProps = {
   imageTs?: number;
   isToday: boolean;
   onEdit: () => void;
+  onDuplicate: () => void;
   onDelete: () => void;
   onToggle: () => void;
   onToggleToday: () => void;
@@ -331,11 +366,10 @@ type DishRowProps = {
   getImageUrl: (path: string) => string;
 };
 
-function DishRow({ dish, onEdit, onDelete, onToggle, onToggleToday, onGenerateImage, onClickImage, generating, getImageUrl, imageTs, isToday }: DishRowProps) {
+function DishRow({ dish, onEdit, onDuplicate, onDelete, onToggle, onToggleToday, onGenerateImage, onClickImage, generating, getImageUrl, imageTs, isToday }: DishRowProps) {
   const sourceLabel = DISH_SOURCES.find((s) => s.value === dish.source)?.label;
   const rawUrl = dish.image_path ? getImageUrl(dish.image_path) : null;
   const imageUrl = rawUrl && imageTs ? `${rawUrl}?t=${imageTs}` : rawUrl;
-  const isMarche = dish.source === "marche";
 
   return (
     <div
@@ -380,7 +414,7 @@ function DishRow({ dish, onEdit, onDelete, onToggle, onToggleToday, onGenerateIm
               {sourceLabel}
             </Badge>
           )}
-          {isMarche && isToday && (
+          {isToday && (
             <Badge variant="default" className="shrink-0 text-[10px] bg-green-600">
               Menu du jour
             </Badge>
@@ -394,17 +428,15 @@ function DishRow({ dish, onEdit, onDelete, onToggle, onToggleToday, onGenerateIm
         {Number(dish.price) > 0 ? `${Number(dish.price).toFixed(2)} €` : "—"}
       </p>
 
-      {/* Today toggle (only for marché dishes) */}
-      {isMarche && (
-        <div className="flex shrink-0 flex-col items-center gap-0.5">
-          <span className="text-[10px] text-muted-foreground">Jour</span>
-          <Switch
-            checked={isToday}
-            onCheckedChange={onToggleToday}
-            aria-label="Disponible au menu du jour"
-          />
-        </div>
-      )}
+      {/* Today toggle */}
+      <div className="flex shrink-0 flex-col items-center gap-0.5">
+        <span className="text-[10px] text-muted-foreground">Jour</span>
+        <Switch
+          checked={isToday}
+          onCheckedChange={onToggleToday}
+          aria-label="Disponible au menu du jour"
+        />
+      </div>
 
       {/* Available toggle */}
       <Switch checked={dish.available} onCheckedChange={onToggle} aria-label="Disponible" />
@@ -419,6 +451,9 @@ function DishRow({ dish, onEdit, onDelete, onToggle, onToggleToday, onGenerateIm
           title="Régénérer la photo avec DALL-E"
         >
           {generating ? "Génération..." : "IA"}
+        </Button>
+        <Button variant="ghost" size="sm" onClick={onDuplicate}>
+          Dupliquer
         </Button>
         <Button variant="ghost" size="sm" onClick={onEdit}>
           Modifier

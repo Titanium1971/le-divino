@@ -30,11 +30,18 @@ export default async function MenuPage({ params }: Props) {
     getMenus(supabase),
     supabase
       .from("menu_dishes")
-      .select("available_today, dishes(*)")
+      .select("dish_id, dishes(*)")
       .eq("available_today", true),
   ]);
 
+  // Deduplicate by dish_id (a dish can be linked to multiple menus)
+  const seen = new Set<string>();
   const todayDishes = (todayRes.data ?? [])
+    .filter((md) => {
+      if (seen.has(md.dish_id)) return false;
+      seen.add(md.dish_id);
+      return true;
+    })
     .map((md) => md.dishes as unknown as Dish)
     .filter(Boolean);
 
