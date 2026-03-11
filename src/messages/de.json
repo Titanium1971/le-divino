@@ -57,7 +57,13 @@
       "boisson": "Getränk"
     },
     "choice": "(nach Wahl)",
-    "or": "oder"
+    "or": "oder",
+    "todaySelection": "Tagesauswahl",
+    "todayEntrees": "Vorspeisen",
+    "todayPlats": "Hauptgerichte",
+    "todayDesserts": "Hausgemachte Desserts",
+    "todayPlatsNote": "Serviert mit Kartoffelgratin und frischem Marktgemüse",
+    "todayEmpty": "Tagesmenü auf Anfrage"
   },
   "reservation": {
     "title": "Tisch reservieren",

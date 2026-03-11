@@ -10,6 +10,7 @@ type DishGroup = { category: DishCategory; label: string; dishes: Dish[] };
 type Props = {
   grouped: DishGroup[];
   menus: Menu[];
+  todayDishes: Dish[];
   locale: string;
 };
 
@@ -20,7 +21,14 @@ const CATEGORY_I18N_KEY: Record<DishCategory, string> = {
   dessert: "desserts",
 };
 
-export function MenuClient({ grouped, menus, locale }: Props) {
+// Map category to today's section i18n key
+const TODAY_CATEGORY_KEY: Record<DishCategory, string> = {
+  entree: "todayEntrees",
+  plat: "todayPlats",
+  dessert: "todayDesserts",
+};
+
+export function MenuClient({ grouped, menus, todayDishes, locale }: Props) {
   const t = useTranslations("menu");
   const loc = locale as Locale;
 
@@ -84,6 +92,16 @@ export function MenuClient({ grouped, menus, locale }: Props) {
     locale === "fr" ||
     allDishes.some((d) => getDishName(d) !== d.name_fr);
 
+  // Group today's dishes by category
+  const todayByCategory = DISH_CATEGORIES
+    .map(({ value }) => ({
+      category: value,
+      dishes: todayDishes.filter((d) => d.category === value),
+    }))
+    .filter((g) => g.dishes.length > 0);
+
+  const hasTodayDishes = todayByCategory.length > 0;
+
   return (
     <div className="isolate">
       {/* Translation notice for non-FR locales */}
@@ -120,6 +138,7 @@ export function MenuClient({ grouped, menus, locale }: Props) {
       <div key={contentKey} className="mt-12 animate-fade-in-up">
         {activeTab === "__formules__" ? (
           <div className="space-y-10">
+            {/* Formules */}
             {menus.map((menu) => (
               <div
                 key={menu.id}
@@ -142,6 +161,51 @@ export function MenuClient({ grouped, menus, locale }: Props) {
                 </div>
               </div>
             ))}
+
+            {/* Today's dishes */}
+            <div className="mt-12 border-t border-brand-dark/10 pt-10">
+              <h3 className="mb-8 text-center text-lg font-normal tracking-[0.15em] uppercase text-brand-bordeaux">
+                {t("todaySelection")}
+              </h3>
+
+              {hasTodayDishes ? (
+                <div className="space-y-8">
+                  {todayByCategory.map(({ category, dishes }) => (
+                    <div key={category}>
+                      <h4 className="mb-4 text-sm font-semibold tracking-[0.15em] uppercase text-brand-gold">
+                        {t(TODAY_CATEGORY_KEY[category])}
+                      </h4>
+                      <div className="space-y-4">
+                        {dishes.map((dish) => (
+                          <div
+                            key={dish.id}
+                            className="border-b border-brand-dark/5 pb-4"
+                          >
+                            <h5 className="text-base font-normal text-brand-dark">
+                              {getDishName(dish)}
+                            </h5>
+                            {getDishDescription(dish) && (
+                              <p className="mt-1 text-sm font-light text-brand-dark/70">
+                                {getDishDescription(dish)}
+                              </p>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                      {category === "plat" && (
+                        <p className="mt-3 text-xs font-light italic text-brand-dark/50">
+                          {t("todayPlatsNote")}
+                        </p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-center text-sm font-light italic text-brand-dark/60">
+                  {t("todayEmpty")}
+                </p>
+              )}
+            </div>
           </div>
         ) : (
           <div className="space-y-6">

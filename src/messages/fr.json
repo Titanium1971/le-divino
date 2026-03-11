@@ -56,7 +56,13 @@
       "boisson": "Boisson"
     },
     "choice": "(au choix)",
-    "or": "ou"
+    "or": "ou",
+    "todaySelection": "La sélection du jour",
+    "todayEntrees": "En entrées",
+    "todayPlats": "En plats",
+    "todayDesserts": "Les desserts maison",
+    "todayPlatsNote": "Servis avec gratin dauphinois et légumes frais du marché",
+    "todayEmpty": "Menu du jour sur demande"
   },
   "reservation": {
     "title": "Réserver une table",

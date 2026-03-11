@@ -57,7 +57,13 @@
       "boisson": "Bevanda"
     },
     "choice": "(a scelta)",
-    "or": "o"
+    "or": "o",
+    "todaySelection": "La selezione del giorno",
+    "todayEntrees": "Antipasti",
+    "todayPlats": "Piatti principali",
+    "todayDesserts": "Dolci della casa",
+    "todayPlatsNote": "Serviti con gratin dauphinois e verdure fresche di stagione",
+    "todayEmpty": "Menu del giorno su richiesta"
   },
   "reservation": {
     "title": "Prenota un tavolo",

@@ -57,7 +57,13 @@
       "boisson": "Drink"
     },
     "choice": "(choice)",
-    "or": "or"
+    "or": "or",
+    "todaySelection": "Today's selection",
+    "todayEntrees": "Starters",
+    "todayPlats": "Main courses",
+    "todayDesserts": "Homemade desserts",
+    "todayPlatsNote": "Served with gratin dauphinois and fresh market vegetables",
+    "todayEmpty": "Daily menu available upon request"
   },
   "reservation": {
     "title": "Book a table",

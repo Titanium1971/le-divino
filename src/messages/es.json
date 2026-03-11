@@ -57,7 +57,13 @@
       "boisson": "Bebida"
     },
     "choice": "(a elegir)",
-    "or": "o"
+    "or": "o",
+    "todaySelection": "La selección del día",
+    "todayEntrees": "De entrantes",
+    "todayPlats": "De platos",
+    "todayDesserts": "Postres caseros",
+    "todayPlatsNote": "Servidos con gratinado dauphinois y verduras frescas del mercado",
+    "todayEmpty": "Menú del día bajo petición"
   },
   "reservation": {
     "title": "Reservar una mesa",

@@ -4,6 +4,7 @@ import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 import { getDishesGrouped } from "@/lib/supabase/dishes";
 import { getMenus } from "@/lib/supabase/menus";
+import type { Dish } from "@/lib/types/database";
 import { MenuClient } from "./menu-client";
 import { generatePageMetadata, breadcrumbJsonLd } from "@/lib/seo/metadata";
 
@@ -22,10 +23,18 @@ export default async function MenuPage({ params }: Props) {
   const t = await getTranslations("menu");
 
   const supabase = await createClient();
-  const [grouped, menus] = await Promise.all([
+  const [grouped, menus, todayRes] = await Promise.all([
     getDishesGrouped(supabase),
     getMenus(supabase),
+    supabase
+      .from("menu_dishes")
+      .select("available_today, dishes(*)")
+      .eq("available_today", true),
   ]);
+
+  const todayDishes = (todayRes.data ?? [])
+    .map((md) => md.dishes as unknown as Dish)
+    .filter(Boolean);
 
   // Only keep groups with available dishes, and only "carte" dishes for public menu
   const filteredGrouped = grouped
@@ -67,6 +76,7 @@ export default async function MenuPage({ params }: Props) {
             <MenuClient
               grouped={filteredGrouped}
               menus={activeMenus}
+              todayDishes={todayDishes}
               locale={locale}
             />
           )}
