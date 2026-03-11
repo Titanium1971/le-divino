@@ -50,6 +50,7 @@ export function DishesManager({ initialGroups, categories }: Props) {
   const [menuFilter, setMenuFilter] = useState<MenuType | "all">("all");
   const [generatingId, setGeneratingId] = useState<string | null>(null);
   const [lightboxUrl, setLightboxUrl] = useState<string | null>(null);
+  const [imageTimestamps, setImageTimestamps] = useState<Record<string, number>>({});
 
   const refresh = useCallback(async () => {
     const data = await getDishesGrouped(supabase);
@@ -102,6 +103,7 @@ export function DishesManager({ initialGroups, categories }: Props) {
         alert(`Erreur : ${err.error}`);
         return;
       }
+      setImageTimestamps((prev) => ({ ...prev, [dish.id]: Date.now() }));
       await refresh();
     } catch {
       alert("Erreur lors de la génération de l'image");
@@ -174,6 +176,7 @@ export function DishesManager({ initialGroups, categories }: Props) {
                 key={dish.id}
                 dish={dish}
                 supabaseUrl={process.env.NEXT_PUBLIC_SUPABASE_URL!}
+                imageTs={imageTimestamps[dish.id]}
                 onEdit={() => handleEdit(dish)}
                 onDelete={() => setDeleteTarget(dish)}
                 onToggle={() => handleToggleAvailable(dish)}
@@ -203,7 +206,12 @@ export function DishesManager({ initialGroups, categories }: Props) {
           setSheetOpen(false);
           await refresh();
         }}
-        onRefresh={refresh}
+        onRefresh={async (dishId?: string) => {
+          if (dishId) {
+            setImageTimestamps((prev) => ({ ...prev, [dishId]: Date.now() }));
+          }
+          await refresh();
+        }}
       />
 
       {/* Categories Sheet */}
@@ -262,6 +270,7 @@ export function DishesManager({ initialGroups, categories }: Props) {
 type DishRowProps = {
   dish: Dish;
   supabaseUrl: string;
+  imageTs?: number;
   onEdit: () => void;
   onDelete: () => void;
   onToggle: () => void;
@@ -271,9 +280,10 @@ type DishRowProps = {
   getImageUrl: (path: string) => string;
 };
 
-function DishRow({ dish, onEdit, onDelete, onToggle, onGenerateImage, onClickImage, generating, getImageUrl }: DishRowProps) {
+function DishRow({ dish, onEdit, onDelete, onToggle, onGenerateImage, onClickImage, generating, getImageUrl, imageTs }: DishRowProps) {
   const menuLabel = MENU_TYPES.find((mt) => mt.value === dish.menu_type)?.label;
-  const imageUrl = dish.image_path ? getImageUrl(dish.image_path) : null;
+  const rawUrl = dish.image_path ? getImageUrl(dish.image_path) : null;
+  const imageUrl = rawUrl && imageTs ? `${rawUrl}?t=${imageTs}` : rawUrl;
 
   return (
     <div
@@ -294,6 +304,7 @@ function DishRow({ dish, onEdit, onDelete, onToggle, onGenerateImage, onClickIma
               fill
               className="object-cover"
               sizes="48px"
+              unoptimized={!!imageTs}
             />
           </button>
         ) : (

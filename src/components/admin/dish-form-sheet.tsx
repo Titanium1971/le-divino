@@ -45,7 +45,7 @@ type Props = {
   dish: Dish | null;
   categories: Category[];
   onSaved: () => Promise<void>;
-  onRefresh?: () => Promise<void>;
+  onRefresh?: (dishId?: string) => Promise<void>;
 };
 
 export function DishFormSheet({ open, onOpenChange, dish, categories, onSaved, onRefresh }: Props) {
@@ -182,7 +182,7 @@ export function DishFormSheet({ open, onOpenChange, dish, categories, onSaved, o
       setImageKey((k) => k + 1);
       setImageFile(null);
       // Refresh the list without closing the sheet
-      if (onRefresh) await onRefresh();
+      if (onRefresh) await onRefresh(dish.id);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erreur génération IA");
     } finally {
@@ -201,7 +201,7 @@ export function DishFormSheet({ open, onOpenChange, dish, categories, onSaved, o
       setImageFile(null);
       setImageKey((k) => k + 1);
       // Refresh the list without closing the sheet
-      if (onRefresh) await onRefresh();
+      if (onRefresh) await onRefresh(dish.id);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erreur suppression photo");
     } finally {
