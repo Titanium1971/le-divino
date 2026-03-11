@@ -64,13 +64,17 @@ export function DishFormSheet({ open, onOpenChange, dish, categories, onSaved, o
   const [isSignature, setIsSignature] = useState(false);
   const [available, setAvailable] = useState(true);
   const [imageFile, setImageFile] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [localPreview, setLocalPreview] = useState<string | null>(null); // blob: from file input
+  const [remoteUrl, setRemoteUrl] = useState<string | null>(null);       // Supabase/DALL-E URL
   const [imageKey, setImageKey] = useState(0);
   const [saving, setSaving] = useState(false);
   const [translating, setTranslating] = useState(false);
   const [generatingAI, setGeneratingAI] = useState(false);
   const [deletingImage, setDeletingImage] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Priority: local file preview > remote URL (DALL-E or Supabase)
+  const displayImage = localPreview ?? remoteUrl;
 
   // Reset form when dish changes
   useEffect(() => {
@@ -85,7 +89,9 @@ export function DishFormSheet({ open, onOpenChange, dish, categories, onSaved, o
       setIsSignature(dish.is_signature);
       setAvailable(dish.available);
       setImageFile(null);
-      setImagePreview(dish.image_path ? getDishImageUrl(supabase, dish.image_path) : null);
+      setLocalPreview(null);
+      setRemoteUrl(dish.image_path ? getDishImageUrl(supabase, dish.image_path) : null);
+      setImageKey(0);
     } else {
       setName(emptyI18n());
       setDescription(emptyI18n());
@@ -97,7 +103,9 @@ export function DishFormSheet({ open, onOpenChange, dish, categories, onSaved, o
       setIsSignature(false);
       setAvailable(true);
       setImageFile(null);
-      setImagePreview(null);
+      setLocalPreview(null);
+      setRemoteUrl(null);
+      setImageKey(0);
     }
     setError(null);
   }, [dish, open, categories, supabase]);
@@ -120,7 +128,7 @@ export function DishFormSheet({ open, onOpenChange, dish, categories, onSaved, o
     const file = e.target.files?.[0];
     if (!file) return;
     setImageFile(file);
-    setImagePreview(URL.createObjectURL(file));
+    setLocalPreview(URL.createObjectURL(file));
   }
 
   async function handleTranslate() {
@@ -177,10 +185,11 @@ export function DishFormSheet({ open, onOpenChange, dish, categories, onSaved, o
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Erreur génération IA");
-      // Force new URL + re-render via key change to bust Next.js Image cache
-      setImagePreview(data.publicUrl);
-      setImageKey((k) => k + 1);
+      // DALL-E URL becomes the source of truth — clear any local file
+      setLocalPreview(null);
       setImageFile(null);
+      setRemoteUrl(data.publicUrl);
+      setImageKey((k) => k + 1);
       // Refresh the list without closing the sheet
       if (onRefresh) await onRefresh(dish.id);
     } catch (err) {
@@ -197,7 +206,8 @@ export function DishFormSheet({ open, onOpenChange, dish, categories, onSaved, o
     try {
       await deleteDishImage(supabase, dish.image_path);
       await updateDish(supabase, dish.id, { image_path: null });
-      setImagePreview(null);
+      setLocalPreview(null);
+      setRemoteUrl(null);
       setImageFile(null);
       setImageKey((k) => k + 1);
       // Refresh the list without closing the sheet
@@ -383,10 +393,10 @@ export function DishFormSheet({ open, onOpenChange, dish, categories, onSaved, o
               <Label>Photo</Label>
               <div className="flex items-center gap-4">
                 <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-lg border bg-muted">
-                  {imagePreview && (
+                  {displayImage && (
                     <Image
                       key={imageKey}
-                      src={imagePreview}
+                      src={displayImage}
                       alt="Aperçu"
                       fill
                       className="object-cover"
@@ -409,7 +419,7 @@ export function DishFormSheet({ open, onOpenChange, dish, categories, onSaved, o
                     size="sm"
                     onClick={() => fileRef.current?.click()}
                   >
-                    {imagePreview ? "Changer la photo" : "Ajouter une photo"}
+                    {displayImage ? "Changer la photo" : "Ajouter une photo"}
                   </Button>
                   {isEdit && (
                     <Button
@@ -422,7 +432,7 @@ export function DishFormSheet({ open, onOpenChange, dish, categories, onSaved, o
                       {generatingAI ? "Génération IA..." : "📷 Générer avec DALL-E"}
                     </Button>
                   )}
-                  {isEdit && imagePreview && (
+                  {isEdit && displayImage && (
                     <Button
                       type="button"
                       variant="outline"
