@@ -25,6 +25,10 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import {
+  Dialog,
+  DialogContent,
+} from "@/components/ui/dialog";
 import { DishFormSheet } from "./dish-form-sheet";
 import { CategoriesSheet } from "./categories-sheet";
 
@@ -45,6 +49,7 @@ export function DishesManager({ initialGroups, categories }: Props) {
   const [categoriesOpen, setCategoriesOpen] = useState(false);
   const [menuFilter, setMenuFilter] = useState<MenuType | "all">("all");
   const [generatingId, setGeneratingId] = useState<string | null>(null);
+  const [lightboxUrl, setLightboxUrl] = useState<string | null>(null);
 
   const refresh = useCallback(async () => {
     const data = await getDishesGrouped(supabase);
@@ -173,6 +178,7 @@ export function DishesManager({ initialGroups, categories }: Props) {
                 onDelete={() => setDeleteTarget(dish)}
                 onToggle={() => handleToggleAvailable(dish)}
                 onGenerateImage={() => handleGenerateImage(dish)}
+                onClickImage={(url) => setLightboxUrl(url)}
                 generating={generatingId === dish.id}
                 getImageUrl={(path) => getDishImageUrl(supabase, path)}
               />
@@ -207,6 +213,22 @@ export function DishesManager({ initialGroups, categories }: Props) {
         dishGroups={groups}
         onCategoriesChanged={refresh}
       />
+
+      {/* Image Lightbox */}
+      <Dialog open={!!lightboxUrl} onOpenChange={() => setLightboxUrl(null)}>
+        <DialogContent className="max-w-2xl border-none bg-transparent p-0 shadow-none">
+          {lightboxUrl && (
+            <Image
+              src={lightboxUrl}
+              alt="Photo du plat"
+              width={1024}
+              height={1024}
+              className="h-auto w-full rounded-lg"
+              unoptimized
+            />
+          )}
+        </DialogContent>
+      </Dialog>
 
       {/* Delete Confirmation */}
       <AlertDialog open={!!deleteTarget} onOpenChange={() => setDeleteTarget(null)}>
@@ -243,12 +265,14 @@ type DishRowProps = {
   onDelete: () => void;
   onToggle: () => void;
   onGenerateImage: () => void;
+  onClickImage: (url: string) => void;
   generating: boolean;
   getImageUrl: (path: string) => string;
 };
 
-function DishRow({ dish, onEdit, onDelete, onToggle, onGenerateImage, generating, getImageUrl }: DishRowProps) {
+function DishRow({ dish, onEdit, onDelete, onToggle, onGenerateImage, onClickImage, generating, getImageUrl }: DishRowProps) {
   const menuLabel = MENU_TYPES.find((mt) => mt.value === dish.menu_type)?.label;
+  const imageUrl = dish.image_path ? getImageUrl(dish.image_path) : null;
 
   return (
     <div
@@ -256,16 +280,21 @@ function DishRow({ dish, onEdit, onDelete, onToggle, onGenerateImage, generating
         !dish.available ? "opacity-50" : ""
       }`}
     >
-      {/* Thumbnail */}
+      {/* Thumbnail — clickable to open lightbox */}
       <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-md bg-muted">
-        {dish.image_path ? (
-          <Image
-            src={getImageUrl(dish.image_path)}
-            alt={dish.name.fr}
-            fill
-            className="object-cover"
-            sizes="48px"
-          />
+        {imageUrl ? (
+          <button
+            onClick={() => onClickImage(imageUrl)}
+            className="relative h-full w-full cursor-zoom-in"
+          >
+            <Image
+              src={imageUrl}
+              alt={dish.name.fr}
+              fill
+              className="object-cover"
+              sizes="48px"
+            />
+          </button>
         ) : (
           <button
             onClick={onGenerateImage}

@@ -66,6 +66,7 @@ export function DishFormSheet({ open, onOpenChange, dish, categories, onSaved }:
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [translating, setTranslating] = useState(false);
+  const [generatingAI, setGeneratingAI] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   // Reset form when dish changes
@@ -158,6 +159,27 @@ export function DishFormSheet({ open, onOpenChange, dish, categories, onSaved }:
       setError(err instanceof Error ? err.message : "Erreur lors de la traduction automatique.");
     } finally {
       setTranslating(false);
+    }
+  }
+
+  async function handleGenerateAI() {
+    if (!isEdit || !dish) return;
+    setGeneratingAI(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/admin/generate-dish-image", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ dishId: dish.id }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Erreur génération IA");
+      // Update preview with new public URL (add cache buster)
+      setImagePreview(`${data.publicUrl}?t=${Date.now()}`);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Erreur génération IA");
+    } finally {
+      setGeneratingAI(false);
     }
   }
 
@@ -346,7 +368,7 @@ export function DishFormSheet({ open, onOpenChange, dish, categories, onSaved }:
                     />
                   )}
                 </div>
-                <div>
+                <div className="flex flex-col gap-2">
                   <input
                     ref={fileRef}
                     type="file"
@@ -362,6 +384,17 @@ export function DishFormSheet({ open, onOpenChange, dish, categories, onSaved }:
                   >
                     {imagePreview ? "Changer la photo" : "Ajouter une photo"}
                   </Button>
+                  {isEdit && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={handleGenerateAI}
+                      disabled={generatingAI}
+                    >
+                      {generatingAI ? "Génération IA..." : "📷 Générer avec DALL-E"}
+                    </Button>
+                  )}
                 </div>
               </div>
             </div>

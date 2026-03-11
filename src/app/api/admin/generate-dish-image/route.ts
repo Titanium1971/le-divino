@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
   // Get dish from DB
   const { data: dish, error: fetchError } = await supabase
     .from("dishes")
-    .select("id, name, image_path")
+    .select("id, name, description, image_path")
     .eq("id", dishId)
     .single();
 
@@ -30,12 +30,14 @@ export async function POST(request: NextRequest) {
   }
 
   const dishName = dish.name?.fr || "French dish";
+  const dishDesc = dish.description?.fr || "";
+  const subject = dishDesc ? `${dishName} - ${dishDesc}` : dishName;
 
   try {
     // Generate image with DALL-E 3
     const response = await openai.images.generate({
       model: "dall-e-3",
-      prompt: `Professional food photography, restaurant quality, ${dishName} french cuisine, elegant plating on a dark slate plate, soft natural lighting, shallow depth of field, Michelin-style presentation`,
+      prompt: `Professional food photography, restaurant quality, ${subject}, french cuisine, elegant plating on a dark slate plate, soft natural lighting, shallow depth of field, Michelin-style presentation`,
       n: 1,
       size: "1024x1024",
       quality: "standard",
