@@ -10,8 +10,8 @@ import {
   getDishImageUrl,
 } from "@/lib/supabase/dishes";
 import type { DishGroup } from "@/lib/supabase/dishes";
-import type { Dish, DishSource } from "@/lib/types/database";
-import { DISH_SOURCES } from "@/lib/types/database";
+import type { Dish, DishCategory } from "@/lib/types/database";
+import { DISH_CATEGORIES, DISH_SOURCES } from "@/lib/types/database";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
@@ -43,7 +43,7 @@ export function DishesManager({ initialGroups }: Props) {
   const [editingDish, setEditingDish] = useState<Dish | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<Dish | null>(null);
   const [deleting, setDeleting] = useState(false);
-  const [sourceFilter, setSourceFilter] = useState<DishSource | "all">("all");
+  const [categoryFilter, setCategoryFilter] = useState<DishCategory | "all">("all");
   const [generatingId, setGeneratingId] = useState<string | null>(null);
   const [lightboxUrl, setLightboxUrl] = useState<string | null>(null);
   const [imageTimestamps, setImageTimestamps] = useState<Record<string, number>>({});
@@ -141,16 +141,10 @@ export function DishesManager({ initialGroups }: Props) {
     }
   }
 
-  // Filter dishes by source
-  const filteredGroups = groups
-    .map((g) => ({
-      ...g,
-      dishes:
-        sourceFilter === "all"
-          ? g.dishes
-          : g.dishes.filter((d) => d.source === sourceFilter),
-    }))
-    .filter((g) => g.dishes.length > 0);
+  // Filter dishes by category
+  const filteredGroups = categoryFilter === "all"
+    ? groups.filter((g) => g.dishes.length > 0)
+    : groups.filter((g) => g.category === categoryFilter && g.dishes.length > 0);
 
   const totalDishes = filteredGroups.reduce((sum, g) => sum + g.dishes.length, 0);
 
@@ -167,23 +161,23 @@ export function DishesManager({ initialGroups }: Props) {
         <Button onClick={handleAdd}>+ Ajouter un plat</Button>
       </div>
 
-      {/* Source filter */}
+      {/* Category filter */}
       <div className="mt-4 flex gap-2">
         <Button
-          variant={sourceFilter === "all" ? "default" : "outline"}
+          variant={categoryFilter === "all" ? "default" : "outline"}
           size="sm"
-          onClick={() => setSourceFilter("all")}
+          onClick={() => setCategoryFilter("all")}
         >
           Tout
         </Button>
-        {DISH_SOURCES.map((s) => (
+        {DISH_CATEGORIES.map((c) => (
           <Button
-            key={s.value}
-            variant={sourceFilter === s.value ? "default" : "outline"}
+            key={c.value}
+            variant={categoryFilter === c.value ? "default" : "outline"}
             size="sm"
-            onClick={() => setSourceFilter(s.value)}
+            onClick={() => setCategoryFilter(c.value)}
           >
-            {s.label}
+            {c.label}
           </Button>
         ))}
       </div>
