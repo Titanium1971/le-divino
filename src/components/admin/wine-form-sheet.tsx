@@ -109,12 +109,14 @@ export function WineFormSheet({ open, onOpenChange, wine, onSaved, onRefresh }: 
     setTranslating(true);
     setError(null);
     try {
+      console.log("[wine-translate] descFr:", descFr, "name:", name);
       const res = await fetch("/api/translate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ description: descFr }),
+        body: JSON.stringify({ name: name || "Vin", description: descFr }),
       });
       const data = await res.json();
+      console.log("[wine-translate] response:", data);
       if (!res.ok) throw new Error(data.error || "Translation failed");
 
       setDescEn(data.description?.en || descEn);
