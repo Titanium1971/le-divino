@@ -18,12 +18,17 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "name is required" }, { status: 400 });
   }
 
+  // Tronquer la description à 500 caractères pour éviter les réponses tronquées
+  const descText = description
+    ? String(description).slice(0, 500)
+    : "";
+
   const prompt = `Tu es un traducteur professionnel pour un restaurant français haut de gamme.
 Traduis le nom et la description de ce plat du français vers l'anglais, l'italien, l'espagnol et l'allemand.
 Garde le ton gastronomique et élégant. Ne traduis pas les noms propres ou les appellations spécifiques.
 
 Nom du plat (FR) : ${name}
-Description (FR) : ${description || ""}
+Description (FR) : ${descText}
 
 Réponds UNIQUEMENT avec un objet JSON valide, sans markdown ni backticks :
 {
@@ -34,12 +39,22 @@ Réponds UNIQUEMENT avec un objet JSON valide, sans markdown ni backticks :
   try {
     const completion = await client.chat.completions.create({
       model: "gpt-4o-mini",
-      max_tokens: 512,
+      max_tokens: 4000,
       messages: [{ role: "user", content: prompt }],
     });
 
     const text = completion.choices[0]?.message?.content ?? "";
-    const parsed = JSON.parse(text);
+
+    let parsed;
+    try {
+      parsed = JSON.parse(text);
+    } catch {
+      console.error("Translation JSON parse error. Raw response:", text);
+      return NextResponse.json(
+        { error: "La réponse de traduction est invalide. Essayez avec une description plus courte." },
+        { status: 500 },
+      );
+    }
 
     return NextResponse.json(parsed);
   } catch (err) {

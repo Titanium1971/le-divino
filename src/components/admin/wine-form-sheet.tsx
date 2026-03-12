@@ -419,6 +419,12 @@ export function WineFormSheet({ open, onOpenChange, wine, onSaved, onRefresh }: 
               />
             </div>
 
+            {descFr.length > 500 && (
+              <p className="text-xs text-amber-600">
+                La description sera tronquée à 500 caractères pour la traduction ({descFr.length}/500).
+              </p>
+            )}
+
             {/* Translate button */}
             <div className="flex items-center justify-between rounded-md border border-dashed p-3">
               <p className="text-xs text-muted-foreground">
