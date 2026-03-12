@@ -2,6 +2,7 @@
 
 import { useState, useRef, useCallback } from "react";
 import { QRCodeSVG } from "qrcode.react";
+import { jsPDF } from "jspdf";
 import { createClient } from "@/lib/supabase/client";
 import { setSetting } from "@/lib/supabase/settings";
 import { Button } from "@/components/ui/button";
@@ -86,34 +87,127 @@ export function SettingsManager({
   const [error, setError] = useState<string | null>(null);
 
   // ── QR code ──
-  const menuUrl = typeof window !== "undefined" ? `${window.location.origin}/menu` : "/menu";
+  const qrUrl = "https://ledivino-agde.fr/fr/qr";
 
-  const handleDownloadQR = useCallback(() => {
-    const svg = qrRef.current?.querySelector("svg");
-    if (!svg) return;
+  /** Convert the SVG QR to a PNG data URL at the given size */
+  const qrToCanvas = useCallback((size: number): Promise<HTMLCanvasElement> => {
+    return new Promise((resolve, reject) => {
+      const svg = qrRef.current?.querySelector("svg");
+      if (!svg) return reject(new Error("SVG not found"));
 
-    const canvas = document.createElement("canvas");
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return reject(new Error("Canvas context failed"));
 
-    const svgData = new XMLSerializer().serializeToString(svg);
-    const img = new Image();
+      const svgData = new XMLSerializer().serializeToString(svg);
+      const img = new Image();
 
-    img.onload = () => {
-      canvas.width = 512;
-      canvas.height = 512;
-      ctx.fillStyle = "#ffffff";
-      ctx.fillRect(0, 0, 512, 512);
-      ctx.drawImage(img, 0, 0, 512, 512);
+      img.onload = () => {
+        canvas.width = size;
+        canvas.height = size;
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0, 0, size, size);
+        ctx.drawImage(img, 0, 0, size, size);
+        resolve(canvas);
+      };
+      img.onerror = reject;
+      img.src = "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(svgData)));
+    });
+  }, []);
 
+  const handleDownloadPNG = useCallback(async () => {
+    try {
+      const canvas = await qrToCanvas(256);
       const link = document.createElement("a");
       link.download = "qr-menu-le-divino.png";
       link.href = canvas.toDataURL("image/png");
       link.click();
-    };
+    } catch {
+      /* ignore */
+    }
+  }, [qrToCanvas]);
 
-    img.src = "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(svgData)));
-  }, []);
+  const handleDownloadPDF = useCallback(async () => {
+    try {
+      const canvas = await qrToCanvas(600);
+      const qrDataUrl = canvas.toDataURL("image/png");
+
+      const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+      const pageW = 210;
+
+      // Background beige
+      pdf.setFillColor(245, 240, 230);
+      pdf.rect(0, 0, 210, 297, "F");
+
+      // Top decorative line
+      pdf.setDrawColor(180, 140, 80);
+      pdf.setLineWidth(0.5);
+      pdf.line(30, 35, 180, 35);
+
+      // Title "LE DIVINO"
+      pdf.setFont("helvetica", "bold");
+      pdf.setFontSize(32);
+      pdf.setTextColor(45, 25, 15);
+      pdf.text("LE DIVINO", pageW / 2, 55, { align: "center" });
+
+      // Subtitle
+      pdf.setFont("helvetica", "normal");
+      pdf.setFontSize(12);
+      pdf.setTextColor(140, 100, 60);
+      pdf.text("RESTAURANT \u2022 AGDE", pageW / 2, 65, { align: "center" });
+
+      // Decorative line under title
+      pdf.line(80, 72, 130, 72);
+
+      // QR Code centered — 120x120mm
+      const qrSize = 120;
+      const qrX = (pageW - qrSize) / 2;
+      const qrY = 85;
+
+      // White background for QR
+      pdf.setFillColor(255, 255, 255);
+      pdf.roundedRect(qrX - 5, qrY - 5, qrSize + 10, qrSize + 10, 3, 3, "F");
+
+      // Border around QR
+      pdf.setDrawColor(180, 140, 80);
+      pdf.setLineWidth(0.3);
+      pdf.roundedRect(qrX - 5, qrY - 5, qrSize + 10, qrSize + 10, 3, 3, "S");
+
+      pdf.addImage(qrDataUrl, "PNG", qrX, qrY, qrSize, qrSize);
+
+      // Text under QR
+      pdf.setFont("helvetica", "normal");
+      pdf.setFontSize(14);
+      pdf.setTextColor(45, 25, 15);
+      pdf.text("Scannez pour consulter notre carte", pageW / 2, qrY + qrSize + 20, {
+        align: "center",
+      });
+
+      // Decorative line
+      pdf.setDrawColor(180, 140, 80);
+      pdf.line(60, qrY + qrSize + 28, 150, qrY + qrSize + 28);
+
+      // URL
+      pdf.setFontSize(9);
+      pdf.setTextColor(140, 100, 60);
+      pdf.text(qrUrl, pageW / 2, qrY + qrSize + 36, { align: "center" });
+
+      // Bottom address
+      pdf.setFont("helvetica", "normal");
+      pdf.setFontSize(10);
+      pdf.setTextColor(100, 80, 60);
+      pdf.text("5 place Jean Jaur\u00e8s, 34300 Agde", pageW / 2, 270, { align: "center" });
+      pdf.setFontSize(9);
+      pdf.text("04 48 17 78 75  \u2022  ledivino-agde.fr", pageW / 2, 277, { align: "center" });
+
+      // Bottom decorative line
+      pdf.line(30, 284, 180, 284);
+
+      pdf.save("qr-menu-le-divino.pdf");
+    } catch {
+      /* ignore */
+    }
+  }, [qrToCanvas, qrUrl]);
 
   // ── Helpers for hours ──
   function toggleDay(day: keyof OpeningHours) {
@@ -410,19 +504,32 @@ export function SettingsManager({
           Section 6: QR Code Menu
           ══════════════════════════════════════════════ */}
       <section className="mb-10">
-        <h2 className="mb-4 text-lg font-medium">QR Code — Carte en ligne</h2>
+        <h2 className="mb-4 text-lg font-medium">QR Code — Menu en salle</h2>
         <p className="mb-4 text-sm text-muted-foreground">
-          Imprimez ce QR code pour permettre aux clients de consulter la carte depuis leur téléphone.
+          Imprimez ce QR code pour permettre aux clients de consulter la carte, les menus, les vins et les boissons depuis leur téléphone.
         </p>
-        <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center">
+        <div className="flex flex-col items-start gap-6 sm:flex-row sm:items-start">
           <div ref={qrRef} className="rounded-lg border bg-white p-4">
-            <QRCodeSVG value={menuUrl} size={180} level="H" />
+            <QRCodeSVG value={qrUrl} size={200} level="H" />
           </div>
-          <div className="space-y-2">
-            <p className="text-sm font-medium">URL : {menuUrl}</p>
-            <Button variant="outline" size="sm" onClick={handleDownloadQR}>
-              Télécharger PNG (512×512)
-            </Button>
+          <div className="space-y-3">
+            <p className="text-sm">
+              <span className="font-medium">URL :</span>{" "}
+              <a href={qrUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">
+                {qrUrl}
+              </a>
+            </p>
+            <div className="flex flex-wrap gap-2">
+              <Button variant="outline" size="sm" onClick={handleDownloadPNG}>
+                Télécharger PNG (256×256)
+              </Button>
+              <Button variant="outline" size="sm" onClick={handleDownloadPDF}>
+                Télécharger PDF (A4)
+              </Button>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Le PDF contient un design prêt à imprimer avec le logo et les coordonnées du restaurant.
+            </p>
           </div>
         </div>
       </section>
