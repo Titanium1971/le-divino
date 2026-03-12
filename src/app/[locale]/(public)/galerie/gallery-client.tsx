@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import type { GalleryTag } from "@/lib/types/database";
@@ -12,33 +12,58 @@ type GalleryImage = {
   tag: GalleryTag;
 };
 
-// Masonry height patterns — alternates between portrait, landscape, and square
-// to create visual rhythm like an editorial spread
-const HEIGHT_PATTERNS = [
-  "h-[420px]", // tall portrait
-  "h-[280px]", // landscape
-  "h-[350px]", // medium
-  "h-[300px]", // landscape
-  "h-[450px]", // tall portrait
-  "h-[260px]", // compact landscape
-  "h-[380px]", // medium-tall
-  "h-[320px]", // medium
-  "h-[400px]", // tall
-  "h-[270px]", // compact
-  "h-[360px]", // medium
-  "h-[290px]", // landscape
-];
-
 const ALL_TAGS: GalleryTag[] = ["restaurant", "dishes", "events", "team", "ambiance"];
 
 export function GalleryClient({ images }: { images: GalleryImage[] }) {
   const t = useTranslations("gallery");
   const [activeTag, setActiveTag] = useState<GalleryTag | null>(null);
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const [visibleItems, setVisibleItems] = useState<Set<number>>(new Set());
 
   const filtered = activeTag ? images.filter((img) => img.tag === activeTag) : images;
-
-  // Collect only tags that have images
   const availableTags = ALL_TAGS.filter((tag) => images.some((img) => img.tag === tag));
+
+  // Staggered fade-in on mount and filter change
+  useEffect(() => {
+    setVisibleItems(new Set());
+    const timeouts: ReturnType<typeof setTimeout>[] = [];
+    filtered.forEach((_, i) => {
+      timeouts.push(
+        setTimeout(() => {
+          setVisibleItems((prev) => new Set(prev).add(i));
+        }, 80 * i)
+      );
+    });
+    return () => timeouts.forEach(clearTimeout);
+  }, [filtered.length, activeTag]);
+
+  // Lightbox keyboard navigation
+  const goNext = useCallback(() => {
+    if (lightboxIndex === null) return;
+    setLightboxIndex((lightboxIndex + 1) % filtered.length);
+  }, [lightboxIndex, filtered.length]);
+
+  const goPrev = useCallback(() => {
+    if (lightboxIndex === null) return;
+    setLightboxIndex((lightboxIndex - 1 + filtered.length) % filtered.length);
+  }, [lightboxIndex, filtered.length]);
+
+  const closeLightbox = useCallback(() => setLightboxIndex(null), []);
+
+  useEffect(() => {
+    if (lightboxIndex === null) return;
+    function handleKey(e: KeyboardEvent) {
+      if (e.key === "Escape") closeLightbox();
+      if (e.key === "ArrowRight") goNext();
+      if (e.key === "ArrowLeft") goPrev();
+    }
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", handleKey);
+    return () => {
+      document.body.style.overflow = "";
+      window.removeEventListener("keydown", handleKey);
+    };
+  }, [lightboxIndex, closeLightbox, goNext, goPrev]);
 
   return (
     <>
@@ -71,48 +96,115 @@ export function GalleryClient({ images }: { images: GalleryImage[] }) {
         </div>
       )}
 
-      {/* Masonry grid */}
+      {/* Photo grid */}
       {filtered.length === 0 ? (
         <p className="py-20 text-center text-sm font-light text-brand-cream/40">
           {t("empty")}
         </p>
       ) : (
-        <div className="columns-2 gap-3 md:columns-3 lg:columns-4 lg:gap-4">
-          {filtered.map((img, i) => {
-            const heightClass = HEIGHT_PATTERNS[i % HEIGHT_PATTERNS.length];
-
-            return (
-              <div
-                key={img.id}
-                className="gallery-item group relative mb-3 break-inside-avoid overflow-hidden lg:mb-4"
-              >
-                <div className={`relative w-full ${heightClass}`}>
-                  <Image
-                    src={img.url}
-                    alt={img.caption || "Le Divino"}
-                    fill
-                    className="object-cover transition-transform duration-[400ms] ease-out group-hover:scale-105"
-                    sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                    unoptimized
-                  />
-
-                  {/* Hover overlay — bordeaux tint */}
-                  <div className="pointer-events-none absolute inset-0 bg-brand-bordeaux/0 transition-colors duration-[400ms] ease-out group-hover:bg-brand-bordeaux/15" />
-
-                  {/* Caption overlay — bottom gradient + text */}
-                  {img.caption && (
-                    <div className="absolute inset-x-0 bottom-0 translate-y-2 opacity-0 transition-all duration-[400ms] ease-out group-hover:translate-y-0 group-hover:opacity-100">
-                      <div className="bg-gradient-to-t from-black/70 via-black/30 to-transparent px-4 pb-4 pt-10">
-                        <p className="text-sm font-light leading-relaxed text-brand-cream/90">
-                          {img.caption}
-                        </p>
-                      </div>
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {filtered.map((img, i) => (
+            <div
+              key={img.id}
+              onClick={() => setLightboxIndex(i)}
+              className={`group cursor-zoom-in overflow-hidden rounded-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_12px_40px_rgba(0,0,0,0.4)] ${
+                visibleItems.has(i)
+                  ? "translate-y-0 opacity-100"
+                  : "translate-y-5 opacity-0"
+              }`}
+              style={{ transitionProperty: "transform, opacity, box-shadow" }}
+            >
+              <div className="relative aspect-[4/3]">
+                <Image
+                  src={img.url}
+                  alt={img.caption || "Le Divino"}
+                  fill
+                  className="object-cover transition-all duration-300 group-hover:brightness-105"
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  unoptimized
+                />
+                {/* Caption overlay on hover */}
+                {img.caption && (
+                  <div className="absolute inset-x-0 bottom-0 translate-y-2 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+                    <div className="bg-gradient-to-t from-black/70 via-black/30 to-transparent px-4 pb-4 pt-10">
+                      <p className="text-sm font-light leading-relaxed text-brand-cream/90">
+                        {img.caption}
+                      </p>
                     </div>
-                  )}
-                </div>
+                  </div>
+                )}
               </div>
-            );
-          })}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Lightbox */}
+      {lightboxIndex !== null && filtered[lightboxIndex] && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/90"
+          onClick={closeLightbox}
+        >
+          {/* Close button */}
+          <button
+            onClick={closeLightbox}
+            className="absolute top-6 right-6 z-10 text-3xl text-white/70 transition-colors hover:text-white"
+            aria-label="Fermer"
+          >
+            ✕
+          </button>
+
+          {/* Previous arrow */}
+          {filtered.length > 1 && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                goPrev();
+              }}
+              className="absolute left-4 z-10 flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-2xl text-white/70 backdrop-blur-sm transition-colors hover:bg-white/20 hover:text-white md:left-8"
+              aria-label="Photo précédente"
+            >
+              ‹
+            </button>
+          )}
+
+          {/* Image */}
+          <div
+            className="relative max-h-[85vh] max-w-[90vw]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Image
+              src={filtered[lightboxIndex].url}
+              alt={filtered[lightboxIndex].caption || "Le Divino"}
+              width={1200}
+              height={900}
+              className="max-h-[85vh] w-auto rounded-lg object-contain"
+              unoptimized
+            />
+            {filtered[lightboxIndex].caption && (
+              <p className="mt-4 text-center text-sm font-light tracking-wide text-brand-cream/80">
+                {filtered[lightboxIndex].caption}
+              </p>
+            )}
+            {/* Counter */}
+            <p className="mt-2 text-center text-xs text-white/40">
+              {lightboxIndex + 1} / {filtered.length}
+            </p>
+          </div>
+
+          {/* Next arrow */}
+          {filtered.length > 1 && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                goNext();
+              }}
+              className="absolute right-4 z-10 flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-2xl text-white/70 backdrop-blur-sm transition-colors hover:bg-white/20 hover:text-white md:right-8"
+              aria-label="Photo suivante"
+            >
+              ›
+            </button>
+          )}
         </div>
       )}
     </>
