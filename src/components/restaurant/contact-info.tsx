@@ -1,22 +1,28 @@
 import { getTranslations } from "next-intl/server";
 import { restaurantConfig } from "@/restaurant.config";
+import { createClient } from "@/lib/supabase/server";
+import { getHoraires, type Horaires } from "@/lib/supabase/horaires";
 
-const dayNames: Record<number, string> = {
-  1: "Lundi",
-  2: "Mardi",
-  3: "Mercredi",
-  4: "Jeudi",
-  5: "Vendredi",
-  6: "Samedi",
-  7: "Dimanche",
+const DAY_KEYS: (keyof Horaires)[] = [
+  "lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi", "dimanche",
+];
+
+const DAY_LABELS: Record<keyof Horaires, string> = {
+  lundi: "Lundi",
+  mardi: "Mardi",
+  mercredi: "Mercredi",
+  jeudi: "Jeudi",
+  vendredi: "Vendredi",
+  samedi: "Samedi",
+  dimanche: "Dimanche",
 };
 
-// Days with late-night or special hours
-const HIGHLIGHT_DAYS = new Set([5, 6]); // Vendredi, Samedi
-const SUNDAY = 7;
+const HIGHLIGHT_DAYS = new Set<keyof Horaires>(["vendredi", "samedi"]);
 
 export async function ContactInfo() {
   const t = await getTranslations("contact");
+  const supabase = await createClient();
+  const horaires = await getHoraires(supabase);
 
   return (
     <div className="space-y-10">
@@ -69,13 +75,14 @@ export async function ContactInfo() {
           {t("hours")}
         </h3>
         <ul className="mt-3 space-y-1.5">
-          {restaurantConfig.hours.map((h) => {
-            const isHighlight = HIGHLIGHT_DAYS.has(h.day);
-            const isSunday = h.day === SUNDAY;
+          {DAY_KEYS.map((key) => {
+            const day = horaires[key];
+            const isHighlight = HIGHLIGHT_DAYS.has(key);
+            const isSunday = key === "dimanche";
 
             return (
               <li
-                key={h.day}
+                key={key}
                 className={`flex justify-between text-sm font-light ${
                   isHighlight
                     ? "font-medium text-brand-gold"
@@ -85,18 +92,15 @@ export async function ContactInfo() {
                 }`}
               >
                 <span className={isHighlight || isSunday ? "" : "text-brand-dark/90"}>
-                  {dayNames[h.day]}
+                  {DAY_LABELS[key]}
                 </span>
                 <span className={isHighlight || isSunday ? "" : "text-brand-dark/60"}>
-                  {h.open ? `${h.open} – ${h.close}` : "Fermé"}
+                  {day.ouvert ? `${day.debut} – ${day.fin}` : "Fermé"}
                 </span>
               </li>
             );
           })}
         </ul>
-        <p className="mt-3 text-xs font-light text-brand-dark/50">
-          Vendredi &amp; Samedi : ouvert jusqu&apos;à 1h du matin
-        </p>
       </div>
 
       {/* Social links */}

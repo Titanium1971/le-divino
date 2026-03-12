@@ -1,21 +1,27 @@
-"use client";
-
 import Image from "next/image";
-import { useTranslations } from "next-intl";
+import { getTranslations } from "next-intl/server";
 import { restaurantConfig } from "@/restaurant.config";
+import { createClient } from "@/lib/supabase/server";
+import { getHoraires, type Horaires } from "@/lib/supabase/horaires";
 
-const dayNames: Record<number, string> = {
-  1: "Lundi",
-  2: "Mardi",
-  3: "Mercredi",
-  4: "Jeudi",
-  5: "Vendredi",
-  6: "Samedi",
-  7: "Dimanche",
+const DAY_KEYS: (keyof Horaires)[] = [
+  "lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi", "dimanche",
+];
+
+const DAY_LABELS: Record<keyof Horaires, string> = {
+  lundi: "Lundi",
+  mardi: "Mardi",
+  mercredi: "Mercredi",
+  jeudi: "Jeudi",
+  vendredi: "Vendredi",
+  samedi: "Samedi",
+  dimanche: "Dimanche",
 };
 
-export function SiteFooter() {
-  const t = useTranslations("footer");
+export async function SiteFooter() {
+  const t = await getTranslations("footer");
+  const supabase = await createClient();
+  const horaires = await getHoraires(supabase);
 
   return (
     <footer className="relative bg-brand-dark text-brand-cream/80">
@@ -64,12 +70,13 @@ export function SiteFooter() {
               {t("hours")}
             </h3>
             <ul className="mt-4 space-y-2">
-              {restaurantConfig.hours.map((h) => {
-                const isWeekend = h.day === 5 || h.day === 6;
-                const isSunday = h.day === 7;
+              {DAY_KEYS.map((key) => {
+                const day = horaires[key];
+                const isWeekend = key === "vendredi" || key === "samedi";
+                const isSunday = key === "dimanche";
                 return (
                   <li
-                    key={h.day}
+                    key={key}
                     className={`flex justify-between text-sm font-light ${
                       isWeekend
                         ? "text-brand-gold"
@@ -79,10 +86,10 @@ export function SiteFooter() {
                     }`}
                   >
                     <span className={isWeekend || isSunday ? "" : "text-brand-cream/90"}>
-                      {dayNames[h.day]}
+                      {DAY_LABELS[key]}
                     </span>
                     <span className={isWeekend || isSunday ? "" : "text-brand-cream/70"}>
-                      {h.open ? `${h.open} – ${h.close}` : "Fermé"}
+                      {day.ouvert ? `${day.debut} – ${day.fin}` : "Fermé"}
                     </span>
                   </li>
                 );

@@ -11,6 +11,14 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Horaires, DayHoraires } from "@/lib/supabase/horaires";
 
 // ── Types ──
 
@@ -20,18 +28,6 @@ type RestaurantInfo = {
   phone: string;
   email: string;
   website: string;
-};
-
-type DayHours = string | null; // e.g. "09:00–23:30" or null (fermé)
-
-type OpeningHours = {
-  lundi: DayHours;
-  mardi: DayHours;
-  mercredi: DayHours;
-  jeudi: DayHours;
-  vendredi: DayHours;
-  samedi: DayHours;
-  dimanche: DayHours;
 };
 
 type SocialLinks = {
@@ -47,7 +43,7 @@ type ReservationConfig = {
   confirmation_message: string;
 };
 
-const DAYS: { key: keyof OpeningHours; label: string }[] = [
+const DAYS: { key: keyof Horaires; label: string }[] = [
   { key: "lundi", label: "Lundi" },
   { key: "mardi", label: "Mardi" },
   { key: "mercredi", label: "Mercredi" },
@@ -57,10 +53,18 @@ const DAYS: { key: keyof OpeningHours; label: string }[] = [
   { key: "dimanche", label: "Dimanche" },
 ];
 
+// Generate time options from 00:00 to 23:30 in 30-min steps
+const TIME_OPTIONS: string[] = [];
+for (let h = 0; h < 24; h++) {
+  for (const m of [0, 30]) {
+    TIME_OPTIONS.push(`${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`);
+  }
+}
+
 type Props = {
   initialPin: string;
   initialRestaurantInfo: RestaurantInfo;
-  initialOpeningHours: OpeningHours;
+  initialHoraires: Horaires;
   initialSocialLinks: SocialLinks;
   initialReservationConfig: ReservationConfig;
 };
@@ -68,7 +72,7 @@ type Props = {
 export function SettingsManager({
   initialPin,
   initialRestaurantInfo,
-  initialOpeningHours,
+  initialHoraires,
   initialSocialLinks,
   initialReservationConfig,
 }: Props) {
@@ -77,7 +81,7 @@ export function SettingsManager({
 
   // ── State ──
   const [info, setInfo] = useState<RestaurantInfo>(initialRestaurantInfo);
-  const [hours, setHours] = useState<OpeningHours>(initialOpeningHours);
+  const [horaires, setHoraires] = useState<Horaires>(initialHoraires);
   const [social, setSocial] = useState<SocialLinks>(initialSocialLinks);
   const [reservation, setReservation] = useState<ReservationConfig>(initialReservationConfig);
   const [pin, setPin] = useState(initialPin);
@@ -173,16 +177,19 @@ export function SettingsManager({
     }
   }, [qrToCanvas, pdfSize]);
 
-  // ── Helpers for hours ──
-  function toggleDay(day: keyof OpeningHours) {
-    setHours((prev) => ({
+  // ── Helpers for horaires ──
+  function toggleDay(day: keyof Horaires) {
+    setHoraires((prev) => ({
       ...prev,
-      [day]: prev[day] ? null : "09:00–23:30",
+      [day]: { ...prev[day], ouvert: !prev[day].ouvert },
     }));
   }
 
-  function updateDayHours(day: keyof OpeningHours, value: string) {
-    setHours((prev) => ({ ...prev, [day]: value }));
+  function updateDay(day: keyof Horaires, field: keyof DayHoraires, value: string | boolean) {
+    setHoraires((prev) => ({
+      ...prev,
+      [day]: { ...prev[day], [field]: value },
+    }));
   }
 
   // ── Save all ──
@@ -194,7 +201,7 @@ export function SettingsManager({
     try {
       await Promise.all([
         setSetting(supabase, "restaurant_info", info),
-        setSetting(supabase, "opening_hours", hours),
+        setSetting(supabase, "horaires", horaires),
         setSetting(supabase, "social_links", social),
         setSetting(supabase, "reservation_config", reservation),
         setSetting(supabase, "service_pin", pin),
@@ -279,35 +286,59 @@ export function SettingsManager({
         <h2 className="mb-4 text-lg font-medium">Horaires d&apos;ouverture</h2>
         <div className="space-y-3">
           {DAYS.map(({ key, label }) => {
-            const isOpen = hours[key] !== null;
+            const day = horaires[key];
             return (
               <div
                 key={key}
                 className={`flex flex-col gap-2 rounded-lg border p-3 sm:flex-row sm:items-center ${
-                  !isOpen ? "opacity-50" : ""
+                  !day.ouvert ? "opacity-50" : ""
                 }`}
               >
                 <div className="flex w-28 shrink-0 items-center gap-2">
                   <Switch
-                    checked={isOpen}
+                    checked={day.ouvert}
                     onCheckedChange={() => toggleDay(key)}
                     aria-label={`${label} ouvert`}
                   />
                   <span className="text-sm font-medium">{label}</span>
                 </div>
 
-                {isOpen && hours[key] && (
-                  <div className="flex-1">
-                    <Input
-                      value={hours[key]!}
-                      onChange={(e) => updateDayHours(key, e.target.value)}
-                      placeholder="09:00–23:30"
-                      className="h-8 text-sm"
-                    />
+                {day.ouvert ? (
+                  <div className="flex flex-1 items-center gap-3">
+                    <div className="flex-1 space-y-1">
+                      <Label className="text-xs text-muted-foreground">Ouverture</Label>
+                      <Select
+                        value={day.debut}
+                        onValueChange={(v) => updateDay(key, "debut", v)}
+                      >
+                        <SelectTrigger className="h-8 text-sm">
+                          <SelectValue placeholder="Heure" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {TIME_OPTIONS.map((t) => (
+                            <SelectItem key={t} value={t}>{t}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="flex-1 space-y-1">
+                      <Label className="text-xs text-muted-foreground">Fermeture</Label>
+                      <Select
+                        value={day.fin}
+                        onValueChange={(v) => updateDay(key, "fin", v)}
+                      >
+                        <SelectTrigger className="h-8 text-sm">
+                          <SelectValue placeholder="Heure" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {TIME_OPTIONS.map((t) => (
+                            <SelectItem key={t} value={t}>{t}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </div>
-                )}
-
-                {!isOpen && (
+                ) : (
                   <span className="text-sm italic text-muted-foreground">Fermé</span>
                 )}
               </div>

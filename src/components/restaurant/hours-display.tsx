@@ -1,30 +1,41 @@
-import { restaurantConfig } from "@/restaurant.config";
+import { createClient } from "@/lib/supabase/server";
+import { getHoraires, type Horaires } from "@/lib/supabase/horaires";
 
-const dayNames: Record<number, string> = {
-  1: "Lundi",
-  2: "Mardi",
-  3: "Mercredi",
-  4: "Jeudi",
-  5: "Vendredi",
-  6: "Samedi",
-  7: "Dimanche",
+const DAY_KEYS: (keyof Horaires)[] = [
+  "lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi", "dimanche",
+];
+
+const DAY_LABELS: Record<keyof Horaires, string> = {
+  lundi: "Lundi",
+  mardi: "Mardi",
+  mercredi: "Mercredi",
+  jeudi: "Jeudi",
+  vendredi: "Vendredi",
+  samedi: "Samedi",
+  dimanche: "Dimanche",
 };
 
-export function HoursDisplay() {
+export async function HoursDisplay() {
+  const supabase = await createClient();
+  const horaires = await getHoraires(supabase);
+
   return (
     <div>
       <h3 className="text-sm font-medium uppercase tracking-wider text-muted-foreground">
         Horaires
       </h3>
       <ul className="mt-2 space-y-1 text-sm">
-        {restaurantConfig.hours.map((h) => (
-          <li key={h.day} className="flex justify-between">
-            <span>{dayNames[h.day]}</span>
-            <span className="text-muted-foreground">
-              {h.open ? `${h.open} – ${h.close}` : "Fermé"}
-            </span>
-          </li>
-        ))}
+        {DAY_KEYS.map((key) => {
+          const day = horaires[key];
+          return (
+            <li key={key} className="flex justify-between">
+              <span>{DAY_LABELS[key]}</span>
+              <span className="text-muted-foreground">
+                {day.ouvert ? `${day.debut} – ${day.fin}` : "Fermé"}
+              </span>
+            </li>
+          );
+        })}
       </ul>
     </div>
   );

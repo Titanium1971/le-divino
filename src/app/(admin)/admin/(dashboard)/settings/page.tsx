@@ -1,15 +1,16 @@
 import { createClient } from "@/lib/supabase/server";
 import { getSetting } from "@/lib/supabase/settings";
+import { getHoraires } from "@/lib/supabase/horaires";
 import { SettingsManager } from "@/components/admin/settings-manager";
 
 export default async function AdminSettingsPage() {
   const supabase = await createClient();
 
-  const [pin, restaurantInfo, openingHours, socialLinks, reservationConfig] =
+  const [pin, restaurantInfo, horaires, socialLinks, reservationConfig] =
     await Promise.all([
       getSetting<string>(supabase, "service_pin"),
       getSetting<RestaurantInfo>(supabase, "restaurant_info"),
-      getSetting<OpeningHours>(supabase, "opening_hours"),
+      getHoraires(supabase),
       getSetting<SocialLinks>(supabase, "social_links"),
       getSetting<ReservationConfig>(supabase, "reservation_config"),
     ]);
@@ -27,17 +28,7 @@ export default async function AdminSettingsPage() {
             website: "",
           }
         }
-        initialOpeningHours={
-          openingHours ?? {
-            lundi: "09:00–23:30",
-            mardi: "09:00–23:30",
-            mercredi: "09:00–23:30",
-            jeudi: "09:00–23:30",
-            vendredi: "09:00–01:00",
-            samedi: "09:00–01:00",
-            dimanche: "09:00–15:30",
-          }
-        }
+        initialHoraires={horaires}
         initialSocialLinks={
           socialLinks ?? {
             instagram: "",
@@ -65,18 +56,6 @@ type RestaurantInfo = {
   phone: string;
   email: string;
   website: string;
-};
-
-type DayHours = string | null;
-
-type OpeningHours = {
-  lundi: DayHours;
-  mardi: DayHours;
-  mercredi: DayHours;
-  jeudi: DayHours;
-  vendredi: DayHours;
-  samedi: DayHours;
-  dimanche: DayHours;
 };
 
 type SocialLinks = {

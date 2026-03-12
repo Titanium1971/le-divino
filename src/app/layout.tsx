@@ -1,8 +1,12 @@
 import type { Metadata } from "next";
 import { Raleway } from "next/font/google";
 import { GoogleAnalytics } from "@next/third-parties/google";
-import { SITE_URL, LOCALES, DEFAULT_LOCALE, RESTAURANT_JSON_LD } from "@/lib/seo/constants";
+import { SITE_URL, LOCALES, DEFAULT_LOCALE, buildRestaurantJsonLd } from "@/lib/seo/constants";
+import { createClient } from "@/lib/supabase/server";
+import { getHoraires } from "@/lib/supabase/horaires";
 import "./globals.css";
+
+export const dynamic = "force-dynamic";
 
 const gaId = process.env.NEXT_PUBLIC_GA_ID;
 
@@ -24,17 +28,21 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const supabase = await createClient();
+  const horaires = await getHoraires(supabase);
+  const jsonLd = buildRestaurantJsonLd(horaires);
+
   return (
     <html lang="fr" suppressHydrationWarning>
       <head>
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(RESTAURANT_JSON_LD) }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
       <body className={`${raleway.variable} font-sans antialiased`}>
