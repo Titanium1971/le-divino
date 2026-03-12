@@ -4,6 +4,7 @@ import { useState, useCallback, useEffect } from "react";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
 import { getDrinks, getDrinksGrouped, deleteDrink, deleteDrinkImage, getDrinkImageUrl } from "@/lib/supabase/drinks";
+import { logActivity } from "@/lib/supabase/activity-log";
 import type { Drink, DrinkCategory } from "@/lib/types/database";
 import { DRINK_CATEGORIES } from "@/lib/types/database";
 import { Button } from "@/components/ui/button";
@@ -66,6 +67,13 @@ export function DrinksManager({ initialDrinks }: Props) {
       .from("drinks")
       .update({ available: !drink.available })
       .eq("id", drink.id);
+    await logActivity(supabase, {
+      action: "UPDATE",
+      entityType: "drink",
+      entityId: drink.id,
+      entityName: drink.name,
+      details: { field: "available", value: !drink.available },
+    });
     await refresh();
   }
 
@@ -77,6 +85,12 @@ export function DrinksManager({ initialDrinks }: Props) {
         await deleteDrinkImage(supabase, deleteTarget.image_path);
       }
       await deleteDrink(supabase, deleteTarget.id);
+      await logActivity(supabase, {
+        action: "DELETE",
+        entityType: "drink",
+        entityId: deleteTarget.id,
+        entityName: deleteTarget.name,
+      });
       await refresh();
     } finally {
       setDeleting(false);

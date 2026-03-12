@@ -9,6 +9,7 @@ import {
   deleteDishImage,
   getDishImageUrl,
 } from "@/lib/supabase/dishes";
+import { logActivity } from "@/lib/supabase/activity-log";
 import type { DishGroup } from "@/lib/supabase/dishes";
 import type { Dish, DishCategory } from "@/lib/types/database";
 import { DISH_CATEGORIES, DISH_SOURCES } from "@/lib/types/database";
@@ -68,6 +69,13 @@ export function DishesManager({ initialGroups }: Props) {
       .from("dishes")
       .update({ available: !dish.available })
       .eq("id", dish.id);
+    await logActivity(supabase, {
+      action: "UPDATE",
+      entityType: "dish",
+      entityId: dish.id,
+      entityName: dish.name_fr,
+      details: { field: "available", value: !dish.available },
+    });
     await refresh();
   }
 
@@ -99,6 +107,12 @@ export function DishesManager({ initialGroups }: Props) {
       return;
     }
 
+    await logActivity(supabase, {
+      action: "CREATE",
+      entityType: "dish",
+      entityId: newDish?.id,
+      entityName: `${dish.name_fr} (copie)`,
+    });
     await refresh();
     setEditingDish(newDish as Dish);
     setSheetOpen(true);
@@ -112,6 +126,12 @@ export function DishesManager({ initialGroups }: Props) {
         await deleteDishImage(supabase, deleteTarget.image_path);
       }
       await deleteDish(supabase, deleteTarget.id);
+      await logActivity(supabase, {
+        action: "DELETE",
+        entityType: "dish",
+        entityId: deleteTarget.id,
+        entityName: deleteTarget.name_fr,
+      });
       await refresh();
     } finally {
       setDeleting(false);

@@ -4,6 +4,7 @@ import { useState, useCallback, useEffect } from "react";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
 import { getWines, getWinesGrouped, deleteWine, deleteWineImage, getWineImageUrl } from "@/lib/supabase/wines";
+import { logActivity } from "@/lib/supabase/activity-log";
 import type { Wine, WineColor } from "@/lib/types/database";
 import { WINE_COLORS } from "@/lib/types/database";
 import { Button } from "@/components/ui/button";
@@ -66,6 +67,13 @@ export function WinesManager({ initialWines }: Props) {
       .from("wines")
       .update({ available: !wine.available })
       .eq("id", wine.id);
+    await logActivity(supabase, {
+      action: "UPDATE",
+      entityType: "wine",
+      entityId: wine.id,
+      entityName: wine.name,
+      details: { field: "available", value: !wine.available },
+    });
     await refresh();
   }
 
@@ -77,6 +85,12 @@ export function WinesManager({ initialWines }: Props) {
         await deleteWineImage(supabase, deleteTarget.image_path);
       }
       await deleteWine(supabase, deleteTarget.id);
+      await logActivity(supabase, {
+        action: "DELETE",
+        entityType: "wine",
+        entityId: deleteTarget.id,
+        entityName: deleteTarget.name,
+      });
       await refresh();
     } finally {
       setDeleting(false);

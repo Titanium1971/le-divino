@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
 import { createWine, updateWine, uploadWineImage, deleteWineImage, getWineImageUrl } from "@/lib/supabase/wines";
+import { logActivity } from "@/lib/supabase/activity-log";
 import type { Wine, WineFormData, WineColor } from "@/lib/types/database";
 import { WINE_COLORS } from "@/lib/types/database";
 import {
@@ -192,11 +193,21 @@ export function WineFormSheet({ open, onOpenChange, wine, onSaved, onRefresh }: 
         available,
       };
 
+      let savedId: string;
       if (isEdit) {
         await updateWine(supabase, wine.id, formData);
+        savedId = wine.id;
       } else {
-        await createWine(supabase, formData);
+        const created = await createWine(supabase, formData);
+        savedId = created.id;
       }
+
+      await logActivity(supabase, {
+        action: isEdit ? "UPDATE" : "CREATE",
+        entityType: "wine",
+        entityId: savedId,
+        entityName: name,
+      });
 
       await onSaved();
     } catch (err) {

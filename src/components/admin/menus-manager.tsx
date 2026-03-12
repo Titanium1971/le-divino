@@ -3,6 +3,7 @@
 import { useState, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { getMenus, deleteMenu, updateMenu, getMenuDishes } from "@/lib/supabase/menus";
+import { logActivity } from "@/lib/supabase/activity-log";
 import type { Menu, MenuDish } from "@/lib/types/database";
 import { MENU_TYPES } from "@/lib/types/database";
 import type { DishGroup } from "@/lib/supabase/dishes";
@@ -86,6 +87,13 @@ export function MenusManager({ initialMenus, dishGroups: initialDishGroups }: Pr
 
   async function handleToggleActive(menu: Menu) {
     await updateMenu(supabase, menu.id, { active: !menu.active });
+    await logActivity(supabase, {
+      action: "UPDATE",
+      entityType: "menu",
+      entityId: menu.id,
+      entityName: menu.name_fr,
+      details: { field: "active", value: !menu.active },
+    });
     await refresh();
   }
 
@@ -94,6 +102,12 @@ export function MenusManager({ initialMenus, dishGroups: initialDishGroups }: Pr
     setDeleting(true);
     try {
       await deleteMenu(supabase, deleteTarget.id);
+      await logActivity(supabase, {
+        action: "DELETE",
+        entityType: "menu",
+        entityId: deleteTarget.id,
+        entityName: deleteTarget.name_fr,
+      });
       await refresh();
     } finally {
       setDeleting(false);

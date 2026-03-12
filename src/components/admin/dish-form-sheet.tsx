@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
 import { createDish, updateDish, uploadDishImage, deleteDishImage, getDishImageUrl } from "@/lib/supabase/dishes";
+import { logActivity } from "@/lib/supabase/activity-log";
 import type { Dish, DishFormData, DishCategory, DishSource } from "@/lib/types/database";
 import { DISH_CATEGORIES, DISH_SOURCES } from "@/lib/types/database";
 import {
@@ -245,6 +246,13 @@ export function DishFormSheet({ open, onOpenChange, dish, onSaved, onRefresh }: 
         const path = await uploadDishImage(supabase, imageFile, saved.id);
         await updateDish(supabase, saved.id, { image_path: path });
       }
+
+      await logActivity(supabase, {
+        action: isEdit ? "UPDATE" : "CREATE",
+        entityType: "dish",
+        entityId: saved.id,
+        entityName: nameFr,
+      });
 
       await onSaved();
     } catch (err) {

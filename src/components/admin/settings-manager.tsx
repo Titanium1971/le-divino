@@ -5,6 +5,7 @@ import { QRCodeSVG } from "qrcode.react";
 import { jsPDF } from "jspdf";
 import { createClient } from "@/lib/supabase/client";
 import { setSetting } from "@/lib/supabase/settings";
+import { logActivity } from "@/lib/supabase/activity-log";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -206,6 +207,11 @@ export function SettingsManager({
         setSetting(supabase, "reservation_config", reservation),
         setSetting(supabase, "service_pin", pin),
       ]);
+      await logActivity(supabase, {
+        action: "UPDATE",
+        entityType: "settings",
+        entityName: "Paramètres généraux",
+      });
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
     } catch (err) {

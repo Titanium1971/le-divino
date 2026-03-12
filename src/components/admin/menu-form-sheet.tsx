@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { createMenu, updateMenu, addDishToMenu, removeDishFromMenu } from "@/lib/supabase/menus";
+import { logActivity } from "@/lib/supabase/activity-log";
 import type { Menu, MenuFormData, MenuType, MenuDish } from "@/lib/types/database";
 import { MENU_TYPES } from "@/lib/types/database";
 import type { DishGroup } from "@/lib/supabase/dishes";
@@ -186,6 +187,13 @@ export function MenuFormSheet({ open, onOpenChange, menu, menuDishes, dishGroups
         ...toAdd.map((dishId) => addDishToMenu(supabase, menuId, dishId)),
         ...toRemove.map((dishId) => removeDishFromMenu(supabase, menuId, dishId)),
       ]);
+
+      await logActivity(supabase, {
+        action: isEdit ? "UPDATE" : "CREATE",
+        entityType: "menu",
+        entityId: menuId,
+        entityName: nameFr,
+      });
 
       await onSaved();
     } catch (err) {

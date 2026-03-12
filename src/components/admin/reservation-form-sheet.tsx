@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { createReservation } from "@/lib/supabase/reservations";
+import { logActivity } from "@/lib/supabase/activity-log";
 import type { ReservationStatus } from "@/lib/types/database";
 import {
   Sheet,
@@ -70,7 +71,7 @@ export function ReservationFormSheet({ open, onOpenChange, onSaved }: Props) {
     setError(null);
 
     try {
-      await createReservation(supabase, {
+      const created = await createReservation(supabase, {
         name,
         email: email || undefined,
         phone: phone || undefined,
@@ -79,6 +80,14 @@ export function ReservationFormSheet({ open, onOpenChange, onSaved }: Props) {
         guests: Number(guests),
         message: message || undefined,
         status,
+      });
+
+      await logActivity(supabase, {
+        action: "CREATE",
+        entityType: "reservation",
+        entityId: created.id,
+        entityName: name,
+        details: { date, time, guests: Number(guests) },
       });
 
       resetForm();

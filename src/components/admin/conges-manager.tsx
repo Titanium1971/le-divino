@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { setSetting } from "@/lib/supabase/settings";
+import { logActivity } from "@/lib/supabase/activity-log";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -87,6 +88,12 @@ export function CongesManager({
         setSetting(supabase, "conges_date_debut", dateDebut),
         setSetting(supabase, "conges_date_fin", dateFin),
       ]);
+      await logActivity(supabase, {
+        action: "UPDATE",
+        entityType: "conges",
+        entityName: actif ? "Congés activés" : "Congés désactivés",
+        details: { actif, dateDebut, dateFin },
+      });
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
     } catch (err) {

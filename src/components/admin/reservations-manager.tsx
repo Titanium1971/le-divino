@@ -7,6 +7,7 @@ import {
   getReservationsByDateRange,
   updateReservationStatus,
 } from "@/lib/supabase/reservations";
+import { logActivity } from "@/lib/supabase/activity-log";
 import type { Reservation, ReservationStatus } from "@/lib/types/database";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -160,17 +161,38 @@ export function ReservationsManager({ initialReservations, todayCount }: Props) 
 
   async function handleQuickConfirm(reservation: Reservation) {
     await updateReservationStatus(supabase, reservation.id, "confirmed");
+    await logActivity(supabase, {
+      action: "UPDATE",
+      entityType: "reservation",
+      entityId: reservation.id,
+      entityName: reservation.name,
+      details: { status: "confirmed" },
+    });
     await refresh();
   }
 
   async function handleQuickComplete(reservation: Reservation) {
     await updateReservationStatus(supabase, reservation.id, "completed");
+    await logActivity(supabase, {
+      action: "UPDATE",
+      entityType: "reservation",
+      entityId: reservation.id,
+      entityName: reservation.name,
+      details: { status: "completed" },
+    });
     await refresh();
   }
 
   async function handleCancelConfirm() {
     if (!cancelTarget) return;
     await updateReservationStatus(supabase, cancelTarget.id, "cancelled");
+    await logActivity(supabase, {
+      action: "UPDATE",
+      entityType: "reservation",
+      entityId: cancelTarget.id,
+      entityName: cancelTarget.name,
+      details: { status: "cancelled" },
+    });
     setCancelTarget(null);
     await refresh();
   }

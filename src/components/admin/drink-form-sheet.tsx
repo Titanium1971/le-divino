@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
 import { createDrink, updateDrink, uploadDrinkImage, deleteDrinkImage, getDrinkImageUrl } from "@/lib/supabase/drinks";
+import { logActivity } from "@/lib/supabase/activity-log";
 import type { Drink, DrinkFormData, DrinkCategory } from "@/lib/types/database";
 import { DRINK_CATEGORIES } from "@/lib/types/database";
 import {
@@ -162,11 +163,21 @@ export function DrinkFormSheet({ open, onOpenChange, drink, onSaved, onRefresh }
         available,
       };
 
+      let savedId: string;
       if (isEdit) {
         await updateDrink(supabase, drink.id, formData);
+        savedId = drink.id;
       } else {
-        await createDrink(supabase, formData);
+        const created = await createDrink(supabase, formData);
+        savedId = created.id;
       }
+
+      await logActivity(supabase, {
+        action: isEdit ? "UPDATE" : "CREATE",
+        entityType: "drink",
+        entityId: savedId,
+        entityName: formData.name,
+      });
 
       await onSaved();
     } catch (err) {
