@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import type { Wine, WineColor, Locale } from "@/lib/types/database";
@@ -23,6 +23,17 @@ export function WinesClient({ groups, locale, imageUrls }: Props) {
   const t = useTranslations("wines");
   const loc = locale as Locale;
   const [lightboxUrl, setLightboxUrl] = useState<string | null>(null);
+
+  const closeLightbox = useCallback(() => setLightboxUrl(null), []);
+
+  useEffect(() => {
+    if (!lightboxUrl) return;
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") closeLightbox();
+    }
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [lightboxUrl, closeLightbox]);
 
   function getDescription(wine: Wine): string | null {
     if (loc === "fr") return wine.description_fr;
