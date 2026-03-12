@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
-import { createWine, updateWine } from "@/lib/supabase/wines";
+import { createWine, updateWine, uploadWineImage, deleteWineImage, getWineImageUrl } from "@/lib/supabase/wines";
 import type { Wine, WineFormData, WineColor } from "@/lib/types/database";
 import { WINE_COLORS } from "@/lib/types/database";
 import {
@@ -25,17 +26,20 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
 
 type Props = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   wine: Wine | null;
   onSaved: () => Promise<void>;
+  onRefresh?: (wineId?: string) => Promise<void>;
 };
 
-export function WineFormSheet({ open, onOpenChange, wine, onSaved }: Props) {
+export function WineFormSheet({ open, onOpenChange, wine, onSaved, onRefresh }: Props) {
   const supabase = createClient();
   const isEdit = !!wine;
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [name, setName] = useState("");
   const [descFr, setDescFr] = useState("");
@@ -46,11 +50,17 @@ export function WineFormSheet({ open, onOpenChange, wine, onSaved }: Props) {
   const [region, setRegion] = useState("");
   const [appellation, setAppellation] = useState("");
   const [color, setColor] = useState<WineColor>("rouge");
+  const [vintage, setVintage] = useState("");
+  const [grapeVariety, setGrapeVariety] = useState("");
+  const [alcoholDegree, setAlcoholDegree] = useState("");
+  const [style, setStyle] = useState("");
   const [priceBottle, setPriceBottle] = useState("");
   const [priceGlass, setPriceGlass] = useState("");
   const [available, setAvailable] = useState(true);
+  const [imagePath, setImagePath] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [translating, setTranslating] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -64,9 +74,14 @@ export function WineFormSheet({ open, onOpenChange, wine, onSaved }: Props) {
       setRegion(wine.region ?? "");
       setAppellation(wine.appellation ?? "");
       setColor(wine.color);
+      setVintage(wine.vintage != null ? String(wine.vintage) : "");
+      setGrapeVariety(wine.grape_variety ?? "");
+      setAlcoholDegree(wine.alcohol_degree ?? "");
+      setStyle(wine.style ?? "");
       setPriceBottle(wine.price_bottle != null ? String(Number(wine.price_bottle)) : "");
       setPriceGlass(wine.price_glass != null ? String(Number(wine.price_glass)) : "");
       setAvailable(wine.available);
+      setImagePath(wine.image_path);
     } else {
       setName("");
       setDescFr("");
@@ -77,9 +92,14 @@ export function WineFormSheet({ open, onOpenChange, wine, onSaved }: Props) {
       setRegion("");
       setAppellation("");
       setColor("rouge");
+      setVintage("");
+      setGrapeVariety("");
+      setAlcoholDegree("");
+      setStyle("");
       setPriceBottle("");
       setPriceGlass("");
       setAvailable(true);
+      setImagePath(null);
     }
     setError(null);
   }, [wine, open]);
@@ -108,6 +128,38 @@ export function WineFormSheet({ open, onOpenChange, wine, onSaved }: Props) {
     }
   }
 
+  async function handleImageUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file || !wine) return;
+
+    setUploading(true);
+    setError(null);
+    try {
+      const path = await uploadWineImage(supabase, file, wine.id);
+      await updateWine(supabase, wine.id, { image_path: path });
+      setImagePath(path);
+      if (onRefresh) await onRefresh(wine.id);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Erreur lors de l'upload.");
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  }
+
+  async function handleImageDelete() {
+    if (!wine || !imagePath) return;
+    setError(null);
+    try {
+      await deleteWineImage(supabase, imagePath);
+      await updateWine(supabase, wine.id, { image_path: null });
+      setImagePath(null);
+      if (onRefresh) await onRefresh(wine.id);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Erreur lors de la suppression.");
+    }
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!name) {
@@ -129,6 +181,10 @@ export function WineFormSheet({ open, onOpenChange, wine, onSaved }: Props) {
         region: region.trim() || null,
         appellation: appellation.trim() || null,
         color,
+        vintage: vintage ? parseInt(vintage) : null,
+        grape_variety: grapeVariety.trim() || null,
+        alcohol_degree: alcoholDegree.trim() || null,
+        style: style.trim() || null,
         price_bottle: priceBottle ? parseFloat(priceBottle) : null,
         price_glass: priceGlass ? parseFloat(priceGlass) : null,
         available,
@@ -147,6 +203,8 @@ export function WineFormSheet({ open, onOpenChange, wine, onSaved }: Props) {
       setSaving(false);
     }
   }
+
+  const imageUrl = imagePath ? getWineImageUrl(supabase, imagePath) : null;
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -200,13 +258,58 @@ export function WineFormSheet({ open, onOpenChange, wine, onSaved }: Props) {
               </div>
             </div>
 
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="wine-region">Région</Label>
+                <Input
+                  id="wine-region"
+                  value={region}
+                  onChange={(e) => setRegion(e.target.value)}
+                  placeholder="Ex : Bordeaux"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="wine-vintage">Millésime</Label>
+                <Input
+                  id="wine-vintage"
+                  type="number"
+                  min="1900"
+                  max="2099"
+                  value={vintage}
+                  onChange={(e) => setVintage(e.target.value)}
+                  placeholder="Ex : 2018"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="wine-grape">Cépage</Label>
+                <Input
+                  id="wine-grape"
+                  value={grapeVariety}
+                  onChange={(e) => setGrapeVariety(e.target.value)}
+                  placeholder="Ex : Cabernet-Sauvignon"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="wine-alcohol">Degré d&apos;alcool</Label>
+                <Input
+                  id="wine-alcohol"
+                  value={alcoholDegree}
+                  onChange={(e) => setAlcoholDegree(e.target.value)}
+                  placeholder="Ex : 13,5°"
+                />
+              </div>
+            </div>
+
             <div className="space-y-2">
-              <Label htmlFor="wine-region">Région</Label>
+              <Label htmlFor="wine-style">Style</Label>
               <Input
-                id="wine-region"
-                value={region}
-                onChange={(e) => setRegion(e.target.value)}
-                placeholder="Ex : Bordeaux"
+                id="wine-style"
+                value={style}
+                onChange={(e) => setStyle(e.target.value)}
+                placeholder="Ex : Fruité, Tannique, Puissant"
               />
             </div>
 
@@ -241,6 +344,68 @@ export function WineFormSheet({ open, onOpenChange, wine, onSaved }: Props) {
               <Label htmlFor="wine-available">Disponible</Label>
               <Switch id="wine-available" checked={available} onCheckedChange={setAvailable} />
             </div>
+
+            <Separator />
+
+            {/* Photo */}
+            {isEdit && (
+              <div className="space-y-3">
+                <Label>Photo</Label>
+                {imageUrl ? (
+                  <div className="flex items-start gap-4">
+                    <div className="relative h-24 w-16 shrink-0 overflow-hidden rounded-md bg-muted">
+                      <Image
+                        src={`${imageUrl}?t=${Date.now()}`}
+                        alt={name}
+                        fill
+                        className="object-cover"
+                        sizes="64px"
+                        unoptimized
+                      />
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => fileInputRef.current?.click()}
+                        disabled={uploading}
+                      >
+                        {uploading ? "Upload..." : "Remplacer"}
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        className="text-destructive"
+                        onClick={handleImageDelete}
+                      >
+                        Supprimer la photo
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={uploading}
+                  >
+                    {uploading ? "Upload..." : "Ajouter une photo"}
+                  </Button>
+                )}
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleImageUpload}
+                />
+              </div>
+            )}
+
+            <Separator />
 
             <div className="space-y-2">
               <Label htmlFor="wine-desc">Description (FR)</Label>

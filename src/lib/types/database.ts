@@ -211,6 +211,11 @@ export type Wine = {
   region: string | null;
   appellation: string | null;
   color: WineColor;
+  vintage: number | null;
+  grape_variety: string | null;
+  alcohol_degree: string | null;
+  style: string | null;
+  image_path: string | null;
   price_bottle: number | null;
   price_glass: number | null;
   available: boolean;
@@ -228,6 +233,11 @@ export type WineFormData = {
   region?: string | null;
   appellation?: string | null;
   color: WineColor;
+  vintage?: number | null;
+  grape_variety?: string | null;
+  alcohol_degree?: string | null;
+  style?: string | null;
+  image_path?: string | null;
   price_bottle?: number | null;
   price_glass?: number | null;
   available?: boolean;

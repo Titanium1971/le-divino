@@ -61,3 +61,35 @@ export async function deleteWine(supabase: SupabaseClient, id: string): Promise<
   const { error } = await supabase.from("wines").delete().eq("id", id);
   if (error) throw error;
 }
+
+// ── Wine images ──
+
+export async function uploadWineImage(
+  supabase: SupabaseClient,
+  file: File,
+  wineId: string,
+): Promise<string> {
+  const ext = file.name.split(".").pop();
+  const path = `${wineId}.${ext}`;
+
+  const { error } = await supabase.storage.from("wine-images").upload(path, file, {
+    upsert: true,
+    contentType: file.type,
+  });
+
+  if (error) throw error;
+  return path;
+}
+
+export async function deleteWineImage(
+  supabase: SupabaseClient,
+  path: string,
+): Promise<void> {
+  const { error } = await supabase.storage.from("wine-images").remove([path]);
+  if (error) throw error;
+}
+
+export function getWineImageUrl(supabase: SupabaseClient, path: string): string {
+  const { data } = supabase.storage.from("wine-images").getPublicUrl(path);
+  return data.publicUrl;
+}

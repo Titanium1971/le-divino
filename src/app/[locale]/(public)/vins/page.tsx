@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { setRequestLocale } from "next-intl/server";
 import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
-import { getWines, getWinesGrouped } from "@/lib/supabase/wines";
+import { getWines, getWinesGrouped, getWineImageUrl } from "@/lib/supabase/wines";
 import { WinesClient } from "./wines-client";
 import { generatePageMetadata, breadcrumbJsonLd } from "@/lib/seo/metadata";
 
@@ -27,6 +27,14 @@ export default async function WinesPage({ params }: Props) {
   const availableWines = wines.filter((w) => w.available);
   const groups = getWinesGrouped(availableWines);
   const nonEmptyGroups = groups.filter((g) => g.wines.length > 0);
+
+  // Build image URLs server-side
+  const imageUrls: Record<string, string> = {};
+  for (const wine of availableWines) {
+    if (wine.image_path) {
+      imageUrls[wine.id] = getWineImageUrl(supabase, wine.image_path);
+    }
+  }
 
   const breadcrumb = breadcrumbJsonLd(locale, "vins", t("title"));
 
@@ -55,7 +63,7 @@ export default async function WinesPage({ params }: Props) {
           {nonEmptyGroups.length === 0 ? (
             <p className="text-center text-brand-dark/70 font-light">{t("empty")}</p>
           ) : (
-            <WinesClient groups={nonEmptyGroups} locale={locale} />
+            <WinesClient groups={nonEmptyGroups} locale={locale} imageUrls={imageUrls} />
           )}
         </div>
       </section>

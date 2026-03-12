@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
-import { getWines, getWinesGrouped, deleteWine } from "@/lib/supabase/wines";
-import type { WineGroup } from "@/lib/supabase/wines";
+import { getWines, getWinesGrouped, deleteWine, deleteWineImage, getWineImageUrl } from "@/lib/supabase/wines";
 import type { Wine, WineColor } from "@/lib/types/database";
 import { WINE_COLORS } from "@/lib/types/database";
 import { Button } from "@/components/ui/button";
@@ -34,6 +34,7 @@ export function WinesManager({ initialWines }: Props) {
   const [deleteTarget, setDeleteTarget] = useState<Wine | null>(null);
   const [deleting, setDeleting] = useState(false);
   const [colorFilter, setColorFilter] = useState<WineColor | "all">("all");
+  const [imageTimestamps, setImageTimestamps] = useState<Record<string, number>>({});
 
   const refresh = useCallback(async () => {
     const data = await getWines(supabase);
@@ -62,6 +63,9 @@ export function WinesManager({ initialWines }: Props) {
     if (!deleteTarget) return;
     setDeleting(true);
     try {
+      if (deleteTarget.image_path) {
+        await deleteWineImage(supabase, deleteTarget.image_path);
+      }
       await deleteWine(supabase, deleteTarget.id);
       await refresh();
     } finally {
@@ -123,9 +127,11 @@ export function WinesManager({ initialWines }: Props) {
               <WineRow
                 key={wine.id}
                 wine={wine}
+                imageTs={imageTimestamps[wine.id]}
                 onEdit={() => handleEdit(wine)}
                 onDelete={() => setDeleteTarget(wine)}
                 onToggle={() => handleToggleAvailable(wine)}
+                getImageUrl={(path) => getWineImageUrl(supabase, path)}
               />
             ))}
           </div>
@@ -145,6 +151,12 @@ export function WinesManager({ initialWines }: Props) {
         wine={editingWine}
         onSaved={async () => {
           setSheetOpen(false);
+          await refresh();
+        }}
+        onRefresh={async (wineId?: string) => {
+          if (wineId) {
+            setImageTimestamps((prev) => ({ ...prev, [wineId]: Date.now() }));
+          }
           await refresh();
         }}
       />
@@ -179,13 +191,17 @@ export function WinesManager({ initialWines }: Props) {
 
 type WineRowProps = {
   wine: Wine;
+  imageTs?: number;
   onEdit: () => void;
   onDelete: () => void;
   onToggle: () => void;
+  getImageUrl: (path: string) => string;
 };
 
-function WineRow({ wine, onEdit, onDelete, onToggle }: WineRowProps) {
+function WineRow({ wine, imageTs, onEdit, onDelete, onToggle, getImageUrl }: WineRowProps) {
   const colorLabel = WINE_COLORS.find((c) => c.value === wine.color)?.label;
+  const rawUrl = wine.image_path ? getImageUrl(wine.image_path) : null;
+  const imageUrl = rawUrl && imageTs ? `${rawUrl}?t=${imageTs}` : rawUrl;
 
   return (
     <div
@@ -193,6 +209,24 @@ function WineRow({ wine, onEdit, onDelete, onToggle }: WineRowProps) {
         !wine.available ? "opacity-50" : ""
       }`}
     >
+      {/* Thumbnail */}
+      <div className="relative h-12 w-8 shrink-0 overflow-hidden rounded-md bg-muted">
+        {imageUrl ? (
+          <Image
+            src={imageUrl}
+            alt={wine.name}
+            fill
+            className="object-cover"
+            sizes="32px"
+            unoptimized={!!imageTs}
+          />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center text-[10px] text-muted-foreground">
+            —
+          </div>
+        )}
+      </div>
+
       {/* Info */}
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">
@@ -202,9 +236,14 @@ function WineRow({ wine, onEdit, onDelete, onToggle }: WineRowProps) {
               {colorLabel}
             </Badge>
           )}
+          {wine.vintage && (
+            <Badge variant="secondary" className="shrink-0 text-[10px]">
+              {wine.vintage}
+            </Badge>
+          )}
         </div>
         <p className="truncate text-xs text-muted-foreground">
-          {[wine.appellation, wine.region].filter(Boolean).join(" — ")}
+          {[wine.appellation, wine.region, wine.grape_variety].filter(Boolean).join(" — ")}
         </p>
       </div>
 
