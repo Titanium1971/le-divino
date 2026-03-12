@@ -115,7 +115,10 @@
       "time": "Uhrzeit",
       "guests": "Anzahl der Gäste",
       "message": "Nachricht oder besonderer Wunsch",
-      "submit": "Reservierung bestätigen"
+      "submit": "Reservierung bestätigen",
+      "lunch": "Mittagessen",
+      "dinner": "Abendessen",
+      "selectSlot": "Wählen Sie eine Uhrzeit"
     }
   },
   "gallery": {

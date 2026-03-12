@@ -114,7 +114,10 @@
       "time": "Heure",
       "guests": "Nombre de convives",
       "message": "Message ou demande particulière",
-      "submit": "Confirmer la réservation"
+      "submit": "Confirmer la réservation",
+      "lunch": "Déjeuner",
+      "dinner": "Dîner",
+      "selectSlot": "Choisissez un créneau"
     }
   },
   "gallery": {

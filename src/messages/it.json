@@ -115,7 +115,10 @@
       "time": "Ora",
       "guests": "Numero di ospiti",
       "message": "Messaggio o richiesta particolare",
-      "submit": "Confermare la prenotazione"
+      "submit": "Confermare la prenotazione",
+      "lunch": "Pranzo",
+      "dinner": "Cena",
+      "selectSlot": "Scegliete un orario"
     }
   },
   "gallery": {

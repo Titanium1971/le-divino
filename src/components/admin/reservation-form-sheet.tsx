@@ -18,7 +18,9 @@ import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
+  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
@@ -154,14 +156,30 @@ export function ReservationFormSheet({ open, onOpenChange, onSaved }: Props) {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="res-time">Heure *</Label>
-                <Input
-                  id="res-time"
-                  type="time"
-                  value={time}
-                  onChange={(e) => setTime(e.target.value)}
-                  required
-                />
+                <Label>Heure *</Label>
+                <Select value={time} onValueChange={setTime}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Créneau" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectLabel>Déjeuner</SelectLabel>
+                      <SelectItem value="12:00">12:00</SelectItem>
+                      <SelectItem value="12:30">12:30</SelectItem>
+                      <SelectItem value="13:00">13:00</SelectItem>
+                      <SelectItem value="13:30">13:30</SelectItem>
+                    </SelectGroup>
+                    <SelectGroup>
+                      <SelectLabel>Dîner</SelectLabel>
+                      <SelectItem value="19:00">19:00</SelectItem>
+                      <SelectItem value="19:30">19:30</SelectItem>
+                      <SelectItem value="20:00">20:00</SelectItem>
+                      <SelectItem value="20:30">20:30</SelectItem>
+                      <SelectItem value="21:00">21:00</SelectItem>
+                      <SelectItem value="21:30">21:30</SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
 

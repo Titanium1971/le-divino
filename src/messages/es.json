@@ -115,7 +115,10 @@
       "time": "Hora",
       "guests": "Número de comensales",
       "message": "Mensaje o solicitud especial",
-      "submit": "Confirmar reserva"
+      "submit": "Confirmar reserva",
+      "lunch": "Almuerzo",
+      "dinner": "Cena",
+      "selectSlot": "Elija un horario"
     }
   },
   "gallery": {

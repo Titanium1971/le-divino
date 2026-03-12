@@ -115,7 +115,10 @@
       "time": "Time",
       "guests": "Number of guests",
       "message": "Message or special request",
-      "submit": "Confirm reservation"
+      "submit": "Confirm reservation",
+      "lunch": "Lunch",
+      "dinner": "Dinner",
+      "selectSlot": "Choose a time slot"
     }
   },
   "gallery": {

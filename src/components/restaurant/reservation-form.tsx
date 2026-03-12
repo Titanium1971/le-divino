@@ -106,13 +106,29 @@ export function ReservationForm() {
           >
             {t("form.time")}
           </label>
-          <input
+          <select
             id="time"
             name="time"
-            type="time"
             required
+            defaultValue=""
             className="mt-2 w-full border-b border-brand-dark/30 bg-transparent px-0 py-3 text-sm font-light text-brand-dark focus:border-brand-gold focus:outline-none transition-colors"
-          />
+          >
+            <option value="" disabled>{t("form.selectSlot")}</option>
+            <optgroup label={t("form.lunch")}>
+              <option value="12:00">12:00</option>
+              <option value="12:30">12:30</option>
+              <option value="13:00">13:00</option>
+              <option value="13:30">13:30</option>
+            </optgroup>
+            <optgroup label={t("form.dinner")}>
+              <option value="19:00">19:00</option>
+              <option value="19:30">19:30</option>
+              <option value="20:00">20:00</option>
+              <option value="20:30">20:30</option>
+              <option value="21:00">21:00</option>
+              <option value="21:30">21:30</option>
+            </optgroup>
+          </select>
         </div>
         <div>
           <label
