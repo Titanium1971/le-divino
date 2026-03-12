@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
+import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
-import { getDrinks, getDrinksGrouped, deleteDrink } from "@/lib/supabase/drinks";
+import { getDrinks, getDrinksGrouped, deleteDrink, deleteDrinkImage, getDrinkImageUrl } from "@/lib/supabase/drinks";
 import type { Drink, DrinkCategory } from "@/lib/types/database";
 import { DRINK_CATEGORIES } from "@/lib/types/database";
 import { Button } from "@/components/ui/button";
@@ -33,6 +34,17 @@ export function DrinksManager({ initialDrinks }: Props) {
   const [deleteTarget, setDeleteTarget] = useState<Drink | null>(null);
   const [deleting, setDeleting] = useState(false);
   const [categoryFilter, setCategoryFilter] = useState<DrinkCategory | "all">("all");
+  const [imageTimestamps, setImageTimestamps] = useState<Record<string, number>>({});
+  const [lightboxUrl, setLightboxUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!lightboxUrl) return;
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") setLightboxUrl(null);
+    }
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [lightboxUrl]);
 
   const refresh = useCallback(async () => {
     const data = await getDrinks(supabase);
@@ -61,6 +73,9 @@ export function DrinksManager({ initialDrinks }: Props) {
     if (!deleteTarget) return;
     setDeleting(true);
     try {
+      if (deleteTarget.image_path) {
+        await deleteDrinkImage(supabase, deleteTarget.image_path);
+      }
       await deleteDrink(supabase, deleteTarget.id);
       await refresh();
     } finally {
@@ -122,9 +137,12 @@ export function DrinksManager({ initialDrinks }: Props) {
               <DrinkRow
                 key={drink.id}
                 drink={drink}
+                imageTs={imageTimestamps[drink.id]}
                 onEdit={() => handleEdit(drink)}
                 onDelete={() => setDeleteTarget(drink)}
                 onToggle={() => handleToggleAvailable(drink)}
+                onClickImage={(url) => setLightboxUrl(url)}
+                getImageUrl={(path) => getDrinkImageUrl(supabase, path)}
               />
             ))}
           </div>
@@ -144,6 +162,12 @@ export function DrinksManager({ initialDrinks }: Props) {
         drink={editingDrink}
         onSaved={async () => {
           setSheetOpen(false);
+          await refresh();
+        }}
+        onRefresh={async (drinkId?: string) => {
+          if (drinkId) {
+            setImageTimestamps((prev) => ({ ...prev, [drinkId]: Date.now() }));
+          }
           await refresh();
         }}
       />
@@ -170,6 +194,32 @@ export function DrinksManager({ initialDrinks }: Props) {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Image Lightbox */}
+      {lightboxUrl && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4"
+          onClick={() => setLightboxUrl(null)}
+        >
+          <button
+            onClick={() => setLightboxUrl(null)}
+            className="absolute top-4 right-4 text-3xl text-white/80 hover:text-white"
+            aria-label="Fermer"
+          >
+            &times;
+          </button>
+          <div className="relative max-h-[90vh] max-w-[90vw]" onClick={(e) => e.stopPropagation()}>
+            <Image
+              src={lightboxUrl}
+              alt="Photo de la boisson"
+              width={600}
+              height={600}
+              className="h-auto max-h-[80vh] w-auto rounded-lg object-contain"
+              unoptimized
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -178,13 +228,18 @@ export function DrinksManager({ initialDrinks }: Props) {
 
 type DrinkRowProps = {
   drink: Drink;
+  imageTs?: number;
   onEdit: () => void;
   onDelete: () => void;
   onToggle: () => void;
+  onClickImage: (url: string) => void;
+  getImageUrl: (path: string) => string;
 };
 
-function DrinkRow({ drink, onEdit, onDelete, onToggle }: DrinkRowProps) {
+function DrinkRow({ drink, imageTs, onEdit, onDelete, onToggle, onClickImage, getImageUrl }: DrinkRowProps) {
   const categoryLabel = DRINK_CATEGORIES.find((c) => c.value === drink.category)?.label;
+  const rawUrl = drink.image_path ? getImageUrl(drink.image_path) : null;
+  const imageUrl = rawUrl && imageTs ? `${rawUrl}?t=${imageTs}` : rawUrl;
 
   return (
     <div
@@ -192,6 +247,29 @@ function DrinkRow({ drink, onEdit, onDelete, onToggle }: DrinkRowProps) {
         !drink.available ? "opacity-50" : ""
       }`}
     >
+      {/* Thumbnail */}
+      <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-md bg-muted">
+        {imageUrl ? (
+          <button
+            onClick={() => onClickImage(imageUrl)}
+            className="relative h-full w-full cursor-zoom-in"
+          >
+            <Image
+              src={imageUrl}
+              alt={drink.name}
+              fill
+              className="object-cover"
+              sizes="40px"
+              unoptimized={!!imageTs}
+            />
+          </button>
+        ) : (
+          <div className="flex h-full w-full items-center justify-center text-[10px] text-muted-foreground">
+            —
+          </div>
+        )}
+      </div>
+
       {/* Info */}
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">

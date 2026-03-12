@@ -263,6 +263,7 @@ export type Drink = {
   description_es: string | null;
   description_de: string | null;
   category: DrinkCategory;
+  image_path: string | null;
   price: number | null;
   available: boolean;
   sort_order: number;
@@ -277,6 +278,7 @@ export type DrinkFormData = {
   description_es?: string | null;
   description_de?: string | null;
   category: DrinkCategory;
+  image_path?: string | null;
   price?: number | null;
   available?: boolean;
 };

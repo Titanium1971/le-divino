@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
-import { createDrink, updateDrink } from "@/lib/supabase/drinks";
+import { createDrink, updateDrink, uploadDrinkImage, deleteDrinkImage, getDrinkImageUrl } from "@/lib/supabase/drinks";
 import type { Drink, DrinkFormData, DrinkCategory } from "@/lib/types/database";
 import { DRINK_CATEGORIES } from "@/lib/types/database";
 import {
@@ -25,17 +26,20 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
 
 type Props = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   drink: Drink | null;
   onSaved: () => Promise<void>;
+  onRefresh?: (drinkId?: string) => Promise<void>;
 };
 
-export function DrinkFormSheet({ open, onOpenChange, drink, onSaved }: Props) {
+export function DrinkFormSheet({ open, onOpenChange, drink, onSaved, onRefresh }: Props) {
   const supabase = createClient();
   const isEdit = !!drink;
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [name, setName] = useState("");
   const [descFr, setDescFr] = useState("");
@@ -46,8 +50,10 @@ export function DrinkFormSheet({ open, onOpenChange, drink, onSaved }: Props) {
   const [category, setCategory] = useState<DrinkCategory>("soft");
   const [price, setPrice] = useState("");
   const [available, setAvailable] = useState(true);
+  const [imagePath, setImagePath] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [translating, setTranslating] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -61,6 +67,7 @@ export function DrinkFormSheet({ open, onOpenChange, drink, onSaved }: Props) {
       setCategory(drink.category);
       setPrice(drink.price != null ? String(Number(drink.price)) : "");
       setAvailable(drink.available);
+      setImagePath(drink.image_path);
     } else {
       setName("");
       setDescFr("");
@@ -71,6 +78,7 @@ export function DrinkFormSheet({ open, onOpenChange, drink, onSaved }: Props) {
       setCategory("soft");
       setPrice("");
       setAvailable(true);
+      setImagePath(null);
     }
     setError(null);
   }, [drink, open]);
@@ -96,6 +104,38 @@ export function DrinkFormSheet({ open, onOpenChange, drink, onSaved }: Props) {
       setError(err instanceof Error ? err.message : "Erreur de traduction.");
     } finally {
       setTranslating(false);
+    }
+  }
+
+  async function handleImageUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file || !drink) return;
+
+    setUploading(true);
+    setError(null);
+    try {
+      const path = await uploadDrinkImage(supabase, file, drink.id);
+      await updateDrink(supabase, drink.id, { image_path: path });
+      setImagePath(path);
+      if (onRefresh) await onRefresh(drink.id);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Erreur lors de l'upload.");
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  }
+
+  async function handleImageDelete() {
+    if (!drink || !imagePath) return;
+    setError(null);
+    try {
+      await deleteDrinkImage(supabase, imagePath);
+      await updateDrink(supabase, drink.id, { image_path: null });
+      setImagePath(null);
+      if (onRefresh) await onRefresh(drink.id);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Erreur lors de la suppression.");
     }
   }
 
@@ -135,6 +175,8 @@ export function DrinkFormSheet({ open, onOpenChange, drink, onSaved }: Props) {
       setSaving(false);
     }
   }
+
+  const imageUrl = imagePath ? getDrinkImageUrl(supabase, imagePath) : null;
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -195,6 +237,68 @@ export function DrinkFormSheet({ open, onOpenChange, drink, onSaved }: Props) {
               <Switch id="drink-available" checked={available} onCheckedChange={setAvailable} />
             </div>
 
+            <Separator />
+
+            {/* Photo */}
+            {isEdit && (
+              <div className="space-y-3">
+                <Label>Photo</Label>
+                {imageUrl ? (
+                  <div className="flex items-start gap-4">
+                    <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-md bg-muted">
+                      <Image
+                        src={`${imageUrl}?t=${Date.now()}`}
+                        alt={name}
+                        fill
+                        className="object-cover"
+                        sizes="80px"
+                        unoptimized
+                      />
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => fileInputRef.current?.click()}
+                        disabled={uploading}
+                      >
+                        {uploading ? "Upload..." : "Remplacer"}
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        className="text-destructive"
+                        onClick={handleImageDelete}
+                      >
+                        Supprimer la photo
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={uploading}
+                  >
+                    {uploading ? "Upload..." : "Ajouter une photo"}
+                  </Button>
+                )}
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/jpeg,image/jpg,image/png,image/webp,image/gif"
+                  className="hidden"
+                  onChange={handleImageUpload}
+                />
+              </div>
+            )}
+
+            <Separator />
+
             <div className="space-y-2">
               <Label htmlFor="drink-desc">Description (FR)</Label>
               <Textarea
@@ -205,6 +309,12 @@ export function DrinkFormSheet({ open, onOpenChange, drink, onSaved }: Props) {
                 rows={3}
               />
             </div>
+
+            {descFr.length > 800 && (
+              <p className="text-xs text-amber-600">
+                La description sera tronquée à 800 caractères pour la traduction ({descFr.length}/800).
+              </p>
+            )}
 
             {/* Translate button */}
             <div className="flex items-center justify-between rounded-md border border-dashed p-3">

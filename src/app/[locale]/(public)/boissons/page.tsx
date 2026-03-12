@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { setRequestLocale } from "next-intl/server";
 import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
-import { getDrinks, getDrinksGrouped } from "@/lib/supabase/drinks";
+import { getDrinks, getDrinksGrouped, getDrinkImageUrl } from "@/lib/supabase/drinks";
 import { DrinksClient } from "./drinks-client";
 import { generatePageMetadata, breadcrumbJsonLd } from "@/lib/seo/metadata";
 
@@ -27,6 +27,14 @@ export default async function DrinksPage({ params }: Props) {
   const availableDrinks = drinks.filter((d) => d.available);
   const groups = getDrinksGrouped(availableDrinks);
   const nonEmptyGroups = groups.filter((g) => g.drinks.length > 0);
+
+  // Build image URLs server-side
+  const imageUrls: Record<string, string> = {};
+  for (const drink of availableDrinks) {
+    if (drink.image_path) {
+      imageUrls[drink.id] = getDrinkImageUrl(supabase, drink.image_path);
+    }
+  }
 
   const breadcrumb = breadcrumbJsonLd(locale, "boissons", t("title"));
 
@@ -55,7 +63,7 @@ export default async function DrinksPage({ params }: Props) {
           {nonEmptyGroups.length === 0 ? (
             <p className="text-center text-brand-dark/70 font-light">{t("empty")}</p>
           ) : (
-            <DrinksClient groups={nonEmptyGroups} locale={locale} />
+            <DrinksClient groups={nonEmptyGroups} locale={locale} imageUrls={imageUrls} />
           )}
         </div>
       </section>

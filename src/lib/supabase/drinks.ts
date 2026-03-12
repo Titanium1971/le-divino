@@ -61,3 +61,35 @@ export async function deleteDrink(supabase: SupabaseClient, id: string): Promise
   const { error } = await supabase.from("drinks").delete().eq("id", id);
   if (error) throw error;
 }
+
+// ── Drink images ──
+
+export async function uploadDrinkImage(
+  supabase: SupabaseClient,
+  file: File,
+  drinkId: string,
+): Promise<string> {
+  const ext = file.name.split(".").pop();
+  const path = `${drinkId}.${ext}`;
+
+  const { error } = await supabase.storage.from("drink-images").upload(path, file, {
+    upsert: true,
+    contentType: file.type,
+  });
+
+  if (error) throw error;
+  return path;
+}
+
+export async function deleteDrinkImage(
+  supabase: SupabaseClient,
+  path: string,
+): Promise<void> {
+  const { error } = await supabase.storage.from("drink-images").remove([path]);
+  if (error) throw error;
+}
+
+export function getDrinkImageUrl(supabase: SupabaseClient, path: string): string {
+  const { data } = supabase.storage.from("drink-images").getPublicUrl(path);
+  return data.publicUrl;
+}
