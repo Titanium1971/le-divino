@@ -10,6 +10,7 @@
     "reservation": "Prenotazione",
     "gallery": "Galleria",
     "vins": "Vini",
+    "boissons": "Bevande",
     "contact": "Contatto"
   },
   "home": {
@@ -90,6 +91,17 @@
     "petillant": "Spumanti",
     "glass": "bicchiere",
     "bottle": "bott."
+  },
+  "drinks": {
+    "title": "Le Nostre Bevande",
+    "subtitle": "Scoprite la nostra selezione",
+    "empty": "Carta delle bevande in preparazione",
+    "soft": "Analcolici",
+    "cocktail": "Cocktail",
+    "biere": "Birre",
+    "spiritueux": "Distillati",
+    "hot": "Bevande Calde",
+    "autre": "Altro"
   },
   "reservation": {
     "title": "Prenota un tavolo",
@@ -173,6 +185,11 @@
       "title": "Carta dei Vini — Le Divino | Ristorante Agde",
       "description": "Scopri la carta dei vini del ristorante Le Divino ad Agde: rossi, bianchi, rosati e spumanti selezionati con cura.",
       "keywords": "carta dei vini agde, vini ristorante le divino, vini rossi bianchi rosati agde"
+    },
+    "boissons": {
+      "title": "Le Nostre Bevande — Le Divino | Ristorante Agde",
+      "description": "Scopri la carta delle bevande del ristorante Le Divino ad Agde: analcolici, cocktail, birre, distillati e bevande calde.",
+      "keywords": "bevande ristorante agde, cocktail le divino, carta bevande agde"
     },
     "contact": {
       "title": "Contatto & Come Arrivare — Le Divino | Ristorante Agde",

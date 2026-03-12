@@ -250,6 +250,46 @@ export const WINE_COLORS: { value: WineColor; label: string }[] = [
   { value: "petillant", label: "Pétillant" },
 ];
 
+// ── Drinks ──
+
+export type DrinkCategory = "soft" | "cocktail" | "biere" | "spiritueux" | "hot" | "autre";
+
+export type Drink = {
+  id: string;
+  name: string;
+  description_fr: string | null;
+  description_en: string | null;
+  description_it: string | null;
+  description_es: string | null;
+  description_de: string | null;
+  category: DrinkCategory;
+  price: number | null;
+  available: boolean;
+  sort_order: number;
+  created_at: string;
+};
+
+export type DrinkFormData = {
+  name: string;
+  description_fr?: string | null;
+  description_en?: string | null;
+  description_it?: string | null;
+  description_es?: string | null;
+  description_de?: string | null;
+  category: DrinkCategory;
+  price?: number | null;
+  available?: boolean;
+};
+
+export const DRINK_CATEGORIES: { value: DrinkCategory; label: string }[] = [
+  { value: "soft", label: "Softs" },
+  { value: "cocktail", label: "Cocktails" },
+  { value: "biere", label: "Bières" },
+  { value: "spiritueux", label: "Spiritueux" },
+  { value: "hot", label: "Boissons Chaudes" },
+  { value: "autre", label: "Autres" },
+];
+
 export const ALLERGENS = [
   "Gluten",
   "Crustacés",

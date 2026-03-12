@@ -10,6 +10,7 @@
     "reservation": "Reservierung",
     "gallery": "Galerie",
     "vins": "Weinkarte",
+    "boissons": "Getränke",
     "contact": "Kontakt"
   },
   "home": {
@@ -90,6 +91,17 @@
     "petillant": "Schaumweine",
     "glass": "Glas",
     "bottle": "Fl."
+  },
+  "drinks": {
+    "title": "Unsere Getränke",
+    "subtitle": "Entdecken Sie unsere Auswahl",
+    "empty": "Getränkekarte in Vorbereitung",
+    "soft": "Alkoholfreie Getränke",
+    "cocktail": "Cocktails",
+    "biere": "Biere",
+    "spiritueux": "Spirituosen",
+    "hot": "Heißgetränke",
+    "autre": "Sonstiges"
   },
   "reservation": {
     "title": "Tisch reservieren",
@@ -173,6 +185,11 @@
       "title": "Weinkarte — Le Divino | Restaurant Agde",
       "description": "Entdecken Sie die Weinkarte des Restaurants Le Divino in Agde: sorgfältig ausgewählte Rot-, Weiß-, Rosé- und Schaumweine.",
       "keywords": "weinkarte agde, weine restaurant le divino, rotweine weißweine roséweine agde"
+    },
+    "boissons": {
+      "title": "Unsere Getränke — Le Divino | Restaurant Agde",
+      "description": "Entdecken Sie die Getränkekarte des Restaurants Le Divino in Agde: alkoholfreie Getränke, Cocktails, Biere, Spirituosen und Heißgetränke.",
+      "keywords": "getränke restaurant agde, cocktails le divino, getränkekarte agde"
     },
     "contact": {
       "title": "Kontakt & Anfahrt — Le Divino | Restaurant Agde",

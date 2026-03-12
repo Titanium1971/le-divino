@@ -10,6 +10,7 @@
     "reservation": "Reservation",
     "gallery": "Gallery",
     "vins": "Wines",
+    "boissons": "Drinks",
     "contact": "Contact"
   },
   "home": {
@@ -90,6 +91,17 @@
     "petillant": "Sparkling Wines",
     "glass": "glass",
     "bottle": "btl."
+  },
+  "drinks": {
+    "title": "Our Drinks",
+    "subtitle": "Discover our selection",
+    "empty": "Drinks menu coming soon",
+    "soft": "Soft Drinks",
+    "cocktail": "Cocktails",
+    "biere": "Beers",
+    "spiritueux": "Spirits",
+    "hot": "Hot Drinks",
+    "autre": "Others"
   },
   "reservation": {
     "title": "Book a table",
@@ -173,6 +185,11 @@
       "title": "Wine List — Le Divino | Restaurant Agde",
       "description": "Discover the wine list at Le Divino restaurant in Agde: carefully selected red, white, rosé and sparkling wines.",
       "keywords": "wine list agde, le divino wines, red white rosé wines agde restaurant"
+    },
+    "boissons": {
+      "title": "Our Drinks — Le Divino | Restaurant Agde",
+      "description": "Discover the drinks menu at Le Divino restaurant in Agde: soft drinks, cocktails, beers, spirits and hot drinks.",
+      "keywords": "drinks restaurant agde, cocktails le divino, drinks menu agde"
     },
     "contact": {
       "title": "Contact & Directions — Le Divino | Restaurant Agde",

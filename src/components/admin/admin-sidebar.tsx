@@ -9,6 +9,7 @@ const navItems = [
   { href: "/admin/menu", label: "Plats", icon: "◇" },
   { href: "/admin/menus", label: "Menus", icon: "◈" },
   { href: "/admin/vins", label: "Vins", icon: "◗" },
+  { href: "/admin/boissons", label: "Boissons", icon: "◔" },
   { href: "/admin/reservations", label: "Réservations", icon: "◉" },
   { href: "/admin/events", label: "Événements", icon: "◎" },
   { href: "/admin/gallery", label: "Galerie", icon: "○" },
