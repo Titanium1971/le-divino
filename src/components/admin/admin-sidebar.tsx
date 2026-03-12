@@ -15,6 +15,7 @@ const navItems = [
   { href: "/admin/gallery", label: "Galerie", icon: "○" },
   { href: "/admin/ecran", label: "Écran 55\"", icon: "▢" },
   { href: "/admin/settings", label: "Paramètres", icon: "⚙" },
+  { href: "/admin/conges", label: "Congés", icon: "✦" },
 ];
 
 type AdminSidebarProps = {

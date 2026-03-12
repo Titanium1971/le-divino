@@ -5,8 +5,10 @@ import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 import { getDishImageUrl } from "@/lib/supabase/dishes";
 import type { Dish } from "@/lib/types/database";
+import { getConges } from "@/lib/supabase/conges";
 import { HeroSection } from "@/components/restaurant/hero-section";
 import { ReservationWidget } from "@/components/restaurant/reservation-widget";
+import { CongesBanner } from "@/components/restaurant/conges-banner";
 import { GoogleReviews } from "@/components/restaurant/google-reviews";
 import { SpecialtiesSection } from "@/components/restaurant/specialties-section";
 import { Link } from "@/i18n/navigation";
@@ -32,8 +34,12 @@ export default async function HomePage({ params }: Props) {
   setRequestLocale(locale);
   const t = await getTranslations("home");
 
-  // Fetch dishes with images for the specialties section
   const supabase = await createClient();
+
+  // Fetch congés status
+  const conges = await getConges(supabase, locale);
+
+  // Fetch dishes with images for the specialties section
   const { data: dishesWithImages } = await supabase
     .from("dishes")
     .select("*")
@@ -55,6 +61,15 @@ export default async function HomePage({ params }: Props) {
     <>
       {/* ── Hero plein écran ── */}
       <HeroSection />
+
+      {/* ── Bannière congés ── */}
+      {conges.actif && (
+        <CongesBanner
+          message={conges.message}
+          dateDebut={conges.dateDebut}
+          dateFin={conges.dateFin}
+        />
+      )}
 
       {/* ── Section Bienvenue ── */}
       <section className="bg-brand-cream py-24">
@@ -138,7 +153,7 @@ export default async function HomePage({ params }: Props) {
       )}
 
       {/* ── Widget flottant réservation ── */}
-      <ReservationWidget locale={locale} />
+      {!conges.actif && <ReservationWidget locale={locale} />}
 
       {/* ── CTA Réservation ── */}
       <section className="bg-brand-cream py-24">

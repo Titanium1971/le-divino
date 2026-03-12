@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import { setRequestLocale } from "next-intl/server";
 import { getTranslations } from "next-intl/server";
+import { createClient } from "@/lib/supabase/server";
+import { getConges } from "@/lib/supabase/conges";
 import { ReservationForm } from "@/components/restaurant/reservation-form";
+import { CongesBanner } from "@/components/restaurant/conges-banner";
 import { generatePageMetadata, breadcrumbJsonLd } from "@/lib/seo/metadata";
 
 type Props = {
@@ -18,6 +21,9 @@ export default async function ReservationPage({ params }: Props) {
   setRequestLocale(locale);
   const t = await getTranslations("reservation");
   const breadcrumb = breadcrumbJsonLd(locale, "reservation", t("title"));
+
+  const supabase = await createClient();
+  const conges = await getConges(supabase, locale);
 
   return (
     <>
@@ -38,10 +44,18 @@ export default async function ReservationPage({ params }: Props) {
         </div>
       </section>
 
-      {/* Form */}
+      {/* Form or congés message */}
       <section className="bg-brand-cream py-16">
         <div className="mx-auto max-w-xl px-6">
-          <ReservationForm />
+          {conges.actif ? (
+            <CongesBanner
+              message={conges.message}
+              dateDebut={conges.dateDebut}
+              dateFin={conges.dateFin}
+            />
+          ) : (
+            <ReservationForm />
+          )}
         </div>
       </section>
     </>
