@@ -88,8 +88,24 @@ export function SettingsManager({
 
   // ── QR code ──
   const qrUrl = "https://ledivino-agde.fr/fr/qr";
+  const [pdfSize, setPdfSize] = useState<"7x7" | "10x10" | "a4">("10x10");
 
-  /** Convert the SVG QR to a PNG data URL at the given size */
+  const handleDownloadSVG = useCallback(() => {
+    const svg = qrRef.current?.querySelector("svg");
+    if (!svg) return;
+
+    const clone = svg.cloneNode(true) as SVGElement;
+    clone.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+    const svgData = new XMLSerializer().serializeToString(clone);
+    const blob = new Blob([svgData], { type: "image/svg+xml;charset=utf-8" });
+    const link = document.createElement("a");
+    link.download = "qr-le-divino.svg";
+    link.href = URL.createObjectURL(blob);
+    link.click();
+    URL.revokeObjectURL(link.href);
+  }, []);
+
+  /** Convert the SVG QR to a canvas at the given pixel size */
   const qrToCanvas = useCallback((size: number): Promise<HTMLCanvasElement> => {
     return new Promise((resolve, reject) => {
       const svg = qrRef.current?.querySelector("svg");
@@ -115,99 +131,47 @@ export function SettingsManager({
     });
   }, []);
 
-  const handleDownloadPNG = useCallback(async () => {
-    try {
-      const canvas = await qrToCanvas(256);
-      const link = document.createElement("a");
-      link.download = "qr-menu-le-divino.png";
-      link.href = canvas.toDataURL("image/png");
-      link.click();
-    } catch {
-      /* ignore */
-    }
-  }, [qrToCanvas]);
-
   const handleDownloadPDF = useCallback(async () => {
     try {
       const canvas = await qrToCanvas(600);
       const qrDataUrl = canvas.toDataURL("image/png");
 
-      const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
-      const pageW = 210;
+      // Page dimensions in mm
+      const sizes: Record<string, { w: number; h: number }> = {
+        "7x7": { w: 70, h: 85 },
+        "10x10": { w: 100, h: 120 },
+        a4: { w: 210, h: 297 },
+      };
+      const { w: pageW, h: pageH } = sizes[pdfSize];
 
-      // Background beige
-      pdf.setFillColor(245, 240, 230);
-      pdf.rect(0, 0, 210, 297, "F");
+      const pdf = new jsPDF({
+        orientation: "portrait",
+        unit: "mm",
+        format: [pageW, pageH],
+      });
 
-      // Top decorative line
-      pdf.setDrawColor(180, 140, 80);
-      pdf.setLineWidth(0.5);
-      pdf.line(30, 35, 180, 35);
-
-      // Title "LE DIVINO"
-      pdf.setFont("helvetica", "bold");
-      pdf.setFontSize(32);
-      pdf.setTextColor(45, 25, 15);
-      pdf.text("LE DIVINO", pageW / 2, 55, { align: "center" });
-
-      // Subtitle
-      pdf.setFont("helvetica", "normal");
-      pdf.setFontSize(12);
-      pdf.setTextColor(140, 100, 60);
-      pdf.text("RESTAURANT \u2022 AGDE", pageW / 2, 65, { align: "center" });
-
-      // Decorative line under title
-      pdf.line(80, 72, 130, 72);
-
-      // QR Code centered — 120x120mm
-      const qrSize = 120;
-      const qrX = (pageW - qrSize) / 2;
-      const qrY = 85;
-
-      // White background for QR
-      pdf.setFillColor(255, 255, 255);
-      pdf.roundedRect(qrX - 5, qrY - 5, qrSize + 10, qrSize + 10, 3, 3, "F");
-
-      // Border around QR
-      pdf.setDrawColor(180, 140, 80);
-      pdf.setLineWidth(0.3);
-      pdf.roundedRect(qrX - 5, qrY - 5, qrSize + 10, qrSize + 10, 3, 3, "S");
+      // QR size: fill most of the width with margin
+      const margin = pdfSize === "a4" ? 30 : 8;
+      const qrSize = pageW - margin * 2;
+      const qrX = margin;
+      const qrY = pdfSize === "a4" ? 40 : 5;
 
       pdf.addImage(qrDataUrl, "PNG", qrX, qrY, qrSize, qrSize);
 
-      // Text under QR
+      // "Le Divino" text below QR
       pdf.setFont("helvetica", "normal");
-      pdf.setFontSize(14);
-      pdf.setTextColor(45, 25, 15);
-      pdf.text("Scannez pour consulter notre carte", pageW / 2, qrY + qrSize + 20, {
+      const fontSize = pdfSize === "a4" ? 12 : pdfSize === "10x10" ? 9 : 7;
+      pdf.setFontSize(fontSize);
+      pdf.setTextColor(60, 60, 60);
+      pdf.text("Le Divino", pageW / 2, qrY + qrSize + (pdfSize === "a4" ? 15 : 7), {
         align: "center",
       });
 
-      // Decorative line
-      pdf.setDrawColor(180, 140, 80);
-      pdf.line(60, qrY + qrSize + 28, 150, qrY + qrSize + 28);
-
-      // URL
-      pdf.setFontSize(9);
-      pdf.setTextColor(140, 100, 60);
-      pdf.text(qrUrl, pageW / 2, qrY + qrSize + 36, { align: "center" });
-
-      // Bottom address
-      pdf.setFont("helvetica", "normal");
-      pdf.setFontSize(10);
-      pdf.setTextColor(100, 80, 60);
-      pdf.text("5 place Jean Jaur\u00e8s, 34300 Agde", pageW / 2, 270, { align: "center" });
-      pdf.setFontSize(9);
-      pdf.text("04 48 17 78 75  \u2022  ledivino-agde.fr", pageW / 2, 277, { align: "center" });
-
-      // Bottom decorative line
-      pdf.line(30, 284, 180, 284);
-
-      pdf.save("qr-menu-le-divino.pdf");
+      pdf.save(`qr-le-divino-${pdfSize}.pdf`);
     } catch {
       /* ignore */
     }
-  }, [qrToCanvas, qrUrl]);
+  }, [qrToCanvas, pdfSize]);
 
   // ── Helpers for hours ──
   function toggleDay(day: keyof OpeningHours) {
@@ -512,23 +476,49 @@ export function SettingsManager({
           <div ref={qrRef} className="rounded-lg border bg-white p-4">
             <QRCodeSVG value={qrUrl} size={200} level="H" />
           </div>
-          <div className="space-y-3">
+          <div className="space-y-4">
             <p className="text-sm">
               <span className="font-medium">URL :</span>{" "}
               <a href={qrUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">
                 {qrUrl}
               </a>
             </p>
-            <div className="flex flex-wrap gap-2">
-              <Button variant="outline" size="sm" onClick={handleDownloadPNG}>
-                Télécharger PNG (256×256)
-              </Button>
-              <Button variant="outline" size="sm" onClick={handleDownloadPDF}>
-                Télécharger PDF (A4)
+
+            {/* SVG download */}
+            <div>
+              <Button variant="outline" size="sm" onClick={handleDownloadSVG}>
+                Télécharger SVG (vectoriel)
               </Button>
             </div>
-            <p className="text-xs text-muted-foreground">
-              Le PDF contient un design prêt à imprimer avec le logo et les coordonnées du restaurant.
+
+            {/* PDF download with size selector */}
+            <div className="space-y-2">
+              <div className="flex flex-wrap items-center gap-2">
+                <Button variant="outline" size="sm" onClick={handleDownloadPDF}>
+                  Télécharger PDF
+                </Button>
+                <div className="flex items-center gap-1 rounded-md border px-1">
+                  {(["7x7", "10x10", "a4"] as const).map((size) => (
+                    <button
+                      key={size}
+                      onClick={() => setPdfSize(size)}
+                      className={`rounded px-2 py-1 text-xs transition-colors ${
+                        pdfSize === size
+                          ? "bg-primary text-primary-foreground"
+                          : "text-muted-foreground hover:text-foreground"
+                      }`}
+                    >
+                      {size === "a4" ? "A4" : `${size}cm`}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Note for printer */}
+            <p className="text-xs text-muted-foreground italic">
+              Pour l&apos;imprimeur : privilégiez le format SVG.
+              Précisez la taille souhaitée (ex: 8×8cm).
             </p>
           </div>
         </div>
