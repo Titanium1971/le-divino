@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { restaurantConfig } from "@/restaurant.config";
 import { createClient } from "@/lib/supabase/server";
@@ -162,12 +163,12 @@ export async function SiteFooter() {
             &copy; {new Date().getFullYear()} {restaurantConfig.name}. {t("rights")}.
           </p>
           <div className="mt-3 text-center">
-            <a
+            <Link
               href="/admin"
               className="text-xs text-brand-cream/40 transition-colors hover:text-brand-cream/70"
             >
               Administration
-            </a>
+            </Link>
           </div>
         </div>
       </div>

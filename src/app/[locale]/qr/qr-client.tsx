@@ -13,7 +13,7 @@ import type {
   DrinkCategory,
   Locale,
 } from "@/lib/types/database";
-import { DISH_CATEGORIES, MENU_TYPES } from "@/lib/types/database";
+import { DISH_CATEGORIES } from "@/lib/types/database";
 import type { WineGroup } from "@/lib/supabase/wines";
 import type { DrinkGroup } from "@/lib/supabase/drinks";
 

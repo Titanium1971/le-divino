@@ -35,6 +35,7 @@ export function GalleryClient({ images }: { images: GalleryImage[] }) {
       );
     });
     return () => timeouts.forEach(clearTimeout);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filtered.length, activeTag]);
 
   // Lightbox keyboard navigation
