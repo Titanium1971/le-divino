@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
 import { getWines, getWinesGrouped, deleteWine, deleteWineImage, getWineImageUrl } from "@/lib/supabase/wines";
@@ -35,6 +35,16 @@ export function WinesManager({ initialWines }: Props) {
   const [deleting, setDeleting] = useState(false);
   const [colorFilter, setColorFilter] = useState<WineColor | "all">("all");
   const [imageTimestamps, setImageTimestamps] = useState<Record<string, number>>({});
+  const [lightboxUrl, setLightboxUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!lightboxUrl) return;
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") setLightboxUrl(null);
+    }
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [lightboxUrl]);
 
   const refresh = useCallback(async () => {
     const data = await getWines(supabase);
@@ -131,6 +141,7 @@ export function WinesManager({ initialWines }: Props) {
                 onEdit={() => handleEdit(wine)}
                 onDelete={() => setDeleteTarget(wine)}
                 onToggle={() => handleToggleAvailable(wine)}
+                onClickImage={(url) => setLightboxUrl(url)}
                 getImageUrl={(path) => getWineImageUrl(supabase, path)}
               />
             ))}
@@ -183,6 +194,32 @@ export function WinesManager({ initialWines }: Props) {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Image Lightbox */}
+      {lightboxUrl && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4"
+          onClick={() => setLightboxUrl(null)}
+        >
+          <button
+            onClick={() => setLightboxUrl(null)}
+            className="absolute top-4 right-4 text-3xl text-white/80 hover:text-white"
+            aria-label="Fermer"
+          >
+            &times;
+          </button>
+          <div className="relative max-h-[90vh] max-w-[90vw]" onClick={(e) => e.stopPropagation()}>
+            <Image
+              src={lightboxUrl}
+              alt="Photo du vin"
+              width={600}
+              height={900}
+              className="h-auto max-h-[80vh] w-auto rounded-lg object-contain"
+              unoptimized
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -195,10 +232,11 @@ type WineRowProps = {
   onEdit: () => void;
   onDelete: () => void;
   onToggle: () => void;
+  onClickImage: (url: string) => void;
   getImageUrl: (path: string) => string;
 };
 
-function WineRow({ wine, imageTs, onEdit, onDelete, onToggle, getImageUrl }: WineRowProps) {
+function WineRow({ wine, imageTs, onEdit, onDelete, onToggle, onClickImage, getImageUrl }: WineRowProps) {
   const colorLabel = WINE_COLORS.find((c) => c.value === wine.color)?.label;
   const rawUrl = wine.image_path ? getImageUrl(wine.image_path) : null;
   const imageUrl = rawUrl && imageTs ? `${rawUrl}?t=${imageTs}` : rawUrl;
@@ -212,14 +250,19 @@ function WineRow({ wine, imageTs, onEdit, onDelete, onToggle, getImageUrl }: Win
       {/* Thumbnail */}
       <div className="relative h-12 w-8 shrink-0 overflow-hidden rounded-md bg-muted">
         {imageUrl ? (
-          <Image
-            src={imageUrl}
-            alt={wine.name}
-            fill
-            className="object-cover"
-            sizes="32px"
-            unoptimized={!!imageTs}
-          />
+          <button
+            onClick={() => onClickImage(imageUrl)}
+            className="relative h-full w-full cursor-zoom-in"
+          >
+            <Image
+              src={imageUrl}
+              alt={wine.name}
+              fill
+              className="object-cover"
+              sizes="32px"
+              unoptimized={!!imageTs}
+            />
+          </button>
         ) : (
           <div className="flex h-full w-full items-center justify-center text-[10px] text-muted-foreground">
             —
