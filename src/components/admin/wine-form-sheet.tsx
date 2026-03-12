@@ -399,7 +399,7 @@ export function WineFormSheet({ open, onOpenChange, wine, onSaved, onRefresh }: 
                 <input
                   ref={fileInputRef}
                   type="file"
-                  accept="image/*"
+                  accept="image/jpeg,image/jpg,image/png,image/webp,image/gif"
                   className="hidden"
                   onChange={handleImageUpload}
                 />
