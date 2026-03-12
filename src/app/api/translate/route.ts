@@ -18,10 +18,12 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "name is required" }, { status: 400 });
   }
 
-  // Tronquer la description à 500 caractères pour éviter les réponses tronquées
-  const descText = description
-    ? String(description).slice(0, 500)
-    : "";
+  // Tronquer la description à 800 caractères pour éviter les réponses tronquées
+  const rawDesc = description ? String(description) : "";
+  if (rawDesc.length > 800) {
+    console.warn(`Translation: description tronquée de ${rawDesc.length} à 800 caractères`);
+  }
+  const descText = rawDesc.slice(0, 800);
 
   const prompt = `Tu es un traducteur professionnel pour un restaurant français haut de gamme.
 Traduis le nom et la description de ce plat du français vers l'anglais, l'italien, l'espagnol et l'allemand.

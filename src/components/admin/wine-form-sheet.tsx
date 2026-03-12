@@ -419,9 +419,9 @@ export function WineFormSheet({ open, onOpenChange, wine, onSaved, onRefresh }: 
               />
             </div>
 
-            {descFr.length > 500 && (
+            {descFr.length > 800 && (
               <p className="text-xs text-amber-600">
-                La description sera tronquée à 500 caractères pour la traduction ({descFr.length}/500).
+                La description sera tronquée à 800 caractères pour la traduction ({descFr.length}/800).
               </p>
             )}
 
