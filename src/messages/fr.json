@@ -9,6 +9,7 @@
     "menus": "Menus",
     "reservation": "Réservation",
     "gallery": "Galerie",
+    "vins": "Vins",
     "contact": "Contact"
   },
   "home": {
@@ -77,6 +78,17 @@
     "todayDesserts": "Les desserts maison",
     "platsNote": "Servis avec gratin dauphinois et légumes frais du marché",
     "noDishesFallback": "Menu du jour sur demande — contactez-nous"
+  },
+  "wines": {
+    "title": "Carte des Vins",
+    "subtitle": "Découvrez notre sélection",
+    "empty": "Carte des vins en cours de préparation",
+    "rouge": "Vins Rouges",
+    "blanc": "Vins Blancs",
+    "rose": "Vins Rosés",
+    "petillant": "Pétillants",
+    "glass": "verre",
+    "bottle": "bout."
   },
   "reservation": {
     "title": "Réserver une table",
@@ -155,6 +167,11 @@
       "title": "Galerie Photos — Le Divino | Restaurant Agde",
       "description": "Découvrez Le Divino en images : notre salle, nos plats, notre équipe et l'ambiance de notre restaurant à Agde.",
       "keywords": "photos restaurant agde, galerie le divino, ambiance restaurant, plats français photos"
+    },
+    "vins": {
+      "title": "Carte des Vins — Le Divino | Restaurant Agde",
+      "description": "Découvrez la carte des vins du restaurant Le Divino à Agde : rouges, blancs, rosés et pétillants sélectionnés avec soin.",
+      "keywords": "carte des vins agde, vins restaurant le divino, vins rouges blancs rosés agde"
     },
     "contact": {
       "title": "Contact & Accès — Le Divino | Restaurant Agde",

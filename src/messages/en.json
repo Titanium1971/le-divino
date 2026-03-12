@@ -9,6 +9,7 @@
     "menus": "Set Menus",
     "reservation": "Reservation",
     "gallery": "Gallery",
+    "vins": "Wines",
     "contact": "Contact"
   },
   "home": {
@@ -78,6 +79,17 @@
     "todayDesserts": "Homemade desserts",
     "platsNote": "Served with gratin dauphinois and fresh market vegetables",
     "noDishesFallback": "Daily menu available upon request — contact us"
+  },
+  "wines": {
+    "title": "Wine List",
+    "subtitle": "Discover our selection",
+    "empty": "Wine list coming soon",
+    "rouge": "Red Wines",
+    "blanc": "White Wines",
+    "rose": "Rosé Wines",
+    "petillant": "Sparkling Wines",
+    "glass": "glass",
+    "bottle": "btl."
   },
   "reservation": {
     "title": "Book a table",
@@ -156,6 +168,11 @@
       "title": "Photo Gallery — Le Divino | Restaurant Agde",
       "description": "Discover Le Divino in pictures: our dining room, dishes, team and the atmosphere of our restaurant in Agde.",
       "keywords": "photos restaurant agde, le divino gallery, restaurant atmosphere, french dishes photos"
+    },
+    "vins": {
+      "title": "Wine List — Le Divino | Restaurant Agde",
+      "description": "Discover the wine list at Le Divino restaurant in Agde: carefully selected red, white, rosé and sparkling wines.",
+      "keywords": "wine list agde, le divino wines, red white rosé wines agde restaurant"
     },
     "contact": {
       "title": "Contact & Directions — Le Divino | Restaurant Agde",

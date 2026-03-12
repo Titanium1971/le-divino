@@ -9,6 +9,7 @@
     "menus": "Menús",
     "reservation": "Reserva",
     "gallery": "Galería",
+    "vins": "Vinos",
     "contact": "Contacto"
   },
   "home": {
@@ -78,6 +79,17 @@
     "todayDesserts": "Postres caseros",
     "platsNote": "Servidos con gratinado dauphinois y verduras frescas del mercado",
     "noDishesFallback": "Menú del día bajo petición — contáctenos"
+  },
+  "wines": {
+    "title": "Carta de Vinos",
+    "subtitle": "Descubra nuestra selección",
+    "empty": "Carta de vinos en preparación",
+    "rouge": "Vinos Tintos",
+    "blanc": "Vinos Blancos",
+    "rose": "Vinos Rosados",
+    "petillant": "Espumosos",
+    "glass": "copa",
+    "bottle": "bot."
   },
   "reservation": {
     "title": "Reservar una mesa",
@@ -156,6 +168,11 @@
       "title": "Galería de Fotos — Le Divino | Restaurante Agde",
       "description": "Descubra Le Divino en imágenes: nuestra sala, nuestros platos, nuestro equipo y el ambiente de nuestro restaurante en Agde.",
       "keywords": "fotos restaurante agde, galería le divino, ambiente restaurante, platos franceses fotos"
+    },
+    "vins": {
+      "title": "Carta de Vinos — Le Divino | Restaurante Agde",
+      "description": "Descubra la carta de vinos del restaurante Le Divino en Agde: tintos, blancos, rosados y espumosos seleccionados con esmero.",
+      "keywords": "carta de vinos agde, vinos restaurante le divino, vinos tintos blancos rosados agde"
     },
     "contact": {
       "title": "Contacto & Cómo Llegar — Le Divino | Restaurante Agde",

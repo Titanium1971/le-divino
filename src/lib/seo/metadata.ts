@@ -2,12 +2,13 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { SITE_URL, LOCALES, DEFAULT_LOCALE, getPageUrl } from "./constants";
 
-type PageKey = "home" | "menu" | "menus" | "reservation" | "gallery" | "contact";
+type PageKey = "home" | "menu" | "menus" | "vins" | "reservation" | "gallery" | "contact";
 
 const PAGE_PATH: Record<PageKey, string> = {
   home: "",
   menu: "menu",
   menus: "menus",
+  vins: "vins",
   reservation: "reservation",
   gallery: "galerie",
   contact: "contact",

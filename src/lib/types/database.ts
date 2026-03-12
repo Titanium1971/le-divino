@@ -196,6 +196,50 @@ export const GALLERY_TAGS: { value: GalleryTag; label: string }[] = [
   { value: "ambiance", label: "Ambiance" },
 ];
 
+// ── Wines ──
+
+export type WineColor = "rouge" | "blanc" | "rosé" | "petillant";
+
+export type Wine = {
+  id: string;
+  name: string;
+  description_fr: string | null;
+  description_en: string | null;
+  description_it: string | null;
+  description_es: string | null;
+  description_de: string | null;
+  region: string | null;
+  appellation: string | null;
+  color: WineColor;
+  price_bottle: number | null;
+  price_glass: number | null;
+  available: boolean;
+  sort_order: number;
+  created_at: string;
+};
+
+export type WineFormData = {
+  name: string;
+  description_fr?: string | null;
+  description_en?: string | null;
+  description_it?: string | null;
+  description_es?: string | null;
+  description_de?: string | null;
+  region?: string | null;
+  appellation?: string | null;
+  color: WineColor;
+  price_bottle?: number | null;
+  price_glass?: number | null;
+  available?: boolean;
+};
+
+export const WINE_COLORS: { value: WineColor; label: string }[] = [
+  { value: "rouge", label: "Rouge" },
+  { value: "blanc", label: "Blanc" },
+  { value: "rosé", label: "Rosé" },
+  { value: "petillant", label: "Pétillant" },
+];
+
 export const ALLERGENS = [
   "Gluten",
   "Crustacés",

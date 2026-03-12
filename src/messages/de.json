@@ -9,6 +9,7 @@
     "menus": "Menüs",
     "reservation": "Reservierung",
     "gallery": "Galerie",
+    "vins": "Weinkarte",
     "contact": "Kontakt"
   },
   "home": {
@@ -78,6 +79,17 @@
     "todayDesserts": "Hausgemachte Desserts",
     "platsNote": "Serviert mit Kartoffelgratin und frischem Marktgemüse",
     "noDishesFallback": "Tagesmenü auf Anfrage — kontaktieren Sie uns"
+  },
+  "wines": {
+    "title": "Weinkarte",
+    "subtitle": "Entdecken Sie unsere Auswahl",
+    "empty": "Weinkarte in Vorbereitung",
+    "rouge": "Rotweine",
+    "blanc": "Weißweine",
+    "rose": "Roséweine",
+    "petillant": "Schaumweine",
+    "glass": "Glas",
+    "bottle": "Fl."
   },
   "reservation": {
     "title": "Tisch reservieren",
@@ -156,6 +168,11 @@
       "title": "Fotogalerie — Le Divino | Restaurant Agde",
       "description": "Entdecken Sie Le Divino in Bildern: unser Restaurant, unsere Gerichte, unser Team und die Atmosphäre in Agde.",
       "keywords": "fotos restaurant agde, galerie le divino, restaurant atmosphäre, französische gerichte fotos"
+    },
+    "vins": {
+      "title": "Weinkarte — Le Divino | Restaurant Agde",
+      "description": "Entdecken Sie die Weinkarte des Restaurants Le Divino in Agde: sorgfältig ausgewählte Rot-, Weiß-, Rosé- und Schaumweine.",
+      "keywords": "weinkarte agde, weine restaurant le divino, rotweine weißweine roséweine agde"
     },
     "contact": {
       "title": "Kontakt & Anfahrt — Le Divino | Restaurant Agde",
