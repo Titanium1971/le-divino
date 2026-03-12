@@ -29,13 +29,13 @@ export default async function AdminSettingsPage() {
         }
         initialOpeningHours={
           openingHours ?? {
-            lundi: null,
-            mardi: { midi: "12:00–14:30", soir: "19:00–22:30" },
-            mercredi: { midi: "12:00–14:30", soir: "19:00–22:30" },
-            jeudi: { midi: "12:00–14:30", soir: "19:00–22:30" },
-            vendredi: { midi: "12:00–14:30", soir: "19:00–22:30" },
-            samedi: { midi: "12:00–14:30", soir: "19:00–23:00" },
-            dimanche: { midi: "12:00–14:30", soir: "19:00–22:30" },
+            lundi: "09:00–23:30",
+            mardi: "09:00–23:30",
+            mercredi: "09:00–23:30",
+            jeudi: "09:00–23:30",
+            vendredi: "09:00–01:00",
+            samedi: "09:00–01:00",
+            dimanche: "09:00–15:30",
           }
         }
         initialSocialLinks={
@@ -67,7 +67,7 @@ type RestaurantInfo = {
   website: string;
 };
 
-type DayHours = { midi: string; soir: string } | null;
+type DayHours = string | null;
 
 type OpeningHours = {
   lundi: DayHours;

@@ -22,7 +22,7 @@ type RestaurantInfo = {
   website: string;
 };
 
-type DayHours = { midi: string; soir: string } | null;
+type DayHours = string | null; // e.g. "09:00–23:30" or null (fermé)
 
 type OpeningHours = {
   lundi: DayHours;
@@ -177,16 +177,12 @@ export function SettingsManager({
   function toggleDay(day: keyof OpeningHours) {
     setHours((prev) => ({
       ...prev,
-      [day]: prev[day] ? null : { midi: "12:00–14:30", soir: "19:00–22:30" },
+      [day]: prev[day] ? null : "09:00–23:30",
     }));
   }
 
-  function updateDayHours(day: keyof OpeningHours, service: "midi" | "soir", value: string) {
-    setHours((prev) => {
-      const current = prev[day];
-      if (!current) return prev;
-      return { ...prev, [day]: { ...current, [service]: value } };
-    });
+  function updateDayHours(day: keyof OpeningHours, value: string) {
+    setHours((prev) => ({ ...prev, [day]: value }));
   }
 
   // ── Save all ──
@@ -301,25 +297,13 @@ export function SettingsManager({
                 </div>
 
                 {isOpen && hours[key] && (
-                  <div className="flex flex-1 gap-3">
-                    <div className="flex-1 space-y-1">
-                      <Label className="text-xs text-muted-foreground">Midi</Label>
-                      <Input
-                        value={hours[key]!.midi}
-                        onChange={(e) => updateDayHours(key, "midi", e.target.value)}
-                        placeholder="12:00–14:30"
-                        className="h-8 text-sm"
-                      />
-                    </div>
-                    <div className="flex-1 space-y-1">
-                      <Label className="text-xs text-muted-foreground">Soir</Label>
-                      <Input
-                        value={hours[key]!.soir}
-                        onChange={(e) => updateDayHours(key, "soir", e.target.value)}
-                        placeholder="19:00–22:30"
-                        className="h-8 text-sm"
-                      />
-                    </div>
+                  <div className="flex-1">
+                    <Input
+                      value={hours[key]!}
+                      onChange={(e) => updateDayHours(key, e.target.value)}
+                      placeholder="09:00–23:30"
+                      className="h-8 text-sm"
+                    />
                   </div>
                 )}
 
