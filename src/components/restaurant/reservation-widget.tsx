@@ -12,8 +12,8 @@ const DAY_NAMES_SHORT: Record<string, string[]> = {
   de: ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"],
 };
 
-const LUNCH_SLOTS = ["12:00", "12:30", "13:00"];
-const DINNER_SLOTS = ["19:00", "19:30", "20:00", "20:30"];
+const LUNCH_SLOTS = ["12:00", "12:30", "13:00", "13:30"];
+const DINNER_SLOTS = ["19:00", "19:30", "20:00", "20:30", "21:00", "21:30"];
 
 // JS getDay(): 0=Sunday, 1=Monday, ...
 // Sunday closes at 15:30 → no dinner slots
