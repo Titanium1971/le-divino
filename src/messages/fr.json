@@ -199,6 +199,18 @@
       "home": "Accueil"
     }
   },
+  "qr": {
+    "welcome": "Bienvenue",
+    "tabCarte": "La Carte",
+    "tabMenus": "Menus",
+    "tabVins": "Vins",
+    "tabBoissons": "Boissons",
+    "emptyCarte": "Carte en préparation",
+    "emptyMenus": "Aucun menu disponible",
+    "emptyVins": "Carte des vins en préparation",
+    "emptyBoissons": "Carte des boissons en préparation",
+    "noDishesFallback": "Menu du jour sur demande"
+  },
   "footer": {
     "hours": "Horaires",
     "contact": "Contact",

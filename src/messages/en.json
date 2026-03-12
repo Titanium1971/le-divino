@@ -200,6 +200,18 @@
       "home": "Home"
     }
   },
+  "qr": {
+    "welcome": "Welcome",
+    "tabCarte": "Menu",
+    "tabMenus": "Set Menus",
+    "tabVins": "Wines",
+    "tabBoissons": "Drinks",
+    "emptyCarte": "Menu coming soon",
+    "emptyMenus": "No menus available",
+    "emptyVins": "Wine list coming soon",
+    "emptyBoissons": "Drinks menu coming soon",
+    "noDishesFallback": "Daily menu available upon request"
+  },
   "footer": {
     "hours": "Hours",
     "contact": "Contact",

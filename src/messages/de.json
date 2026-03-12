@@ -200,6 +200,18 @@
       "home": "Startseite"
     }
   },
+  "qr": {
+    "welcome": "Willkommen",
+    "tabCarte": "Speisekarte",
+    "tabMenus": "Menüs",
+    "tabVins": "Weinkarte",
+    "tabBoissons": "Getränke",
+    "emptyCarte": "Speisekarte in Vorbereitung",
+    "emptyMenus": "Derzeit keine Menüs verfügbar",
+    "emptyVins": "Weinkarte in Vorbereitung",
+    "emptyBoissons": "Getränkekarte in Vorbereitung",
+    "noDishesFallback": "Tagesmenü auf Anfrage"
+  },
   "footer": {
     "hours": "Öffnungszeiten",
     "contact": "Kontakt",
