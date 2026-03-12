@@ -164,9 +164,9 @@ export async function SiteFooter() {
           <div className="mt-3 text-center">
             <a
               href="/admin"
-              className="text-[10px] text-brand-cream/20 transition-colors hover:text-brand-cream/50"
+              className="text-xs text-brand-cream/40 transition-colors hover:text-brand-cream/70"
             >
-              ·
+              Administration
             </a>
           </div>
         </div>
