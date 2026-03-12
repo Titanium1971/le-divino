@@ -227,7 +227,6 @@ export function WineFormSheet({ open, onOpenChange, wine, onSaved, onRefresh }: 
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Ex : Château Margaux 2018"
-                required
               />
             </div>
 
