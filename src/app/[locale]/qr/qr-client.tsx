@@ -36,6 +36,9 @@ type Props = {
   wineImageUrls: Record<string, string>;
   drinkGroups: DrinkGroup[];
   drinkImageUrls: Record<string, string>;
+  defaultTab?: TabId;
+  tabOrder?: TabId[];
+  showHeader?: boolean;
 };
 
 // ── i18n maps ──
@@ -68,7 +71,7 @@ const DRINK_I18N: Record<DrinkCategory, string> = {
   autre: "autre",
 };
 
-const TABS: { id: TabId; icon: string; key: string }[] = [
+const ALL_TABS: { id: TabId; icon: string; key: string }[] = [
   { id: "carte", icon: "\ud83c\udf7d\ufe0f", key: "tabCarte" },
   { id: "menus", icon: "\ud83d\udccb", key: "tabMenus" },
   { id: "vins", icon: "\ud83c\udf77", key: "tabVins" },
@@ -84,6 +87,9 @@ export function QrClient({
   wineImageUrls,
   drinkGroups,
   drinkImageUrls,
+  defaultTab,
+  tabOrder,
+  showHeader = true,
 }: Props) {
   const tQr = useTranslations("qr");
   const tMenu = useTranslations("menu");
@@ -92,7 +98,11 @@ export function QrClient({
   const tDrinks = useTranslations("drinks");
   const loc = locale as Locale;
 
-  const [activeTab, setActiveTab] = useState<TabId>("carte");
+  const tabs = tabOrder
+    ? tabOrder.map((id) => ALL_TABS.find((t) => t.id === id)!).filter(Boolean)
+    : ALL_TABS;
+
+  const [activeTab, setActiveTab] = useState<TabId>(defaultTab ?? "carte");
   const [lightboxUrl, setLightboxUrl] = useState<string | null>(null);
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
 
@@ -469,29 +479,31 @@ export function QrClient({
   return (
     <div className="min-h-screen bg-brand-cream font-[family-name:var(--font-raleway)]">
       {/* Header minimal */}
-      <header className="bg-brand-dark px-4 pt-8 pb-6 text-center">
-        <div className="mx-auto h-16 w-16 overflow-hidden rounded-full border-2 border-brand-gold/40">
-          <Image
-            src="/images/logo-divino.jpg"
-            alt="Le Divino"
-            width={64}
-            height={64}
-            className="h-full w-full object-cover"
-            priority
-          />
-        </div>
-        <h1 className="mt-3 text-xl font-light tracking-[0.15em] text-brand-cream uppercase">
-          Le Divino
-        </h1>
-        <p className="mt-1 text-xs font-light tracking-[0.1em] text-brand-gold/80">
-          {tQr("welcome")}
-        </p>
-      </header>
+      {showHeader && (
+        <header className="bg-brand-dark px-4 pt-8 pb-6 text-center">
+          <div className="mx-auto h-16 w-16 overflow-hidden rounded-full border-2 border-brand-gold/40">
+            <Image
+              src="/images/logo-divino.jpg"
+              alt="Le Divino"
+              width={64}
+              height={64}
+              className="h-full w-full object-cover"
+              priority
+            />
+          </div>
+          <h1 className="mt-3 text-xl font-light tracking-[0.15em] text-brand-cream uppercase">
+            Le Divino
+          </h1>
+          <p className="mt-1 text-xs font-light tracking-[0.1em] text-brand-gold/80">
+            {tQr("welcome")}
+          </p>
+        </header>
+      )}
 
       {/* Sticky tabs */}
       <nav className="sticky top-0 z-40 border-b border-brand-dark/10 bg-brand-cream/95 backdrop-blur-sm">
         <div className="flex">
-          {TABS.map((tab) => (
+          {tabs.map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
@@ -519,9 +531,11 @@ export function QrClient({
       </main>
 
       {/* Mini footer */}
-      <footer className="border-t border-brand-dark/10 px-4 py-4 text-center text-[11px] text-brand-dark/40">
-        Le Divino &mdash; 5 place Jean Jaur&egrave;s, 34300 Agde
-      </footer>
+      {showHeader && (
+        <footer className="border-t border-brand-dark/10 px-4 py-4 text-center text-[11px] text-brand-dark/40">
+          Le Divino &mdash; 5 place Jean Jaur&egrave;s, 34300 Agde
+        </footer>
+      )}
 
       {/* Lightbox */}
       {lightboxUrl && (

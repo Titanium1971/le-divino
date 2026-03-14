@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
 import { setRequestLocale } from "next-intl/server";
-import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
+import { getDishesGrouped, getDishImageUrl } from "@/lib/supabase/dishes";
+import { getWines, getWinesGrouped, getWineImageUrl } from "@/lib/supabase/wines";
 import { getDrinks, getDrinksGrouped, getDrinkImageUrl } from "@/lib/supabase/drinks";
-import { DrinksClient } from "./drinks-client";
+import type { Dish, Menu } from "@/lib/types/database";
+import { QrClient } from "@/app/[locale]/qr/qr-client";
 import { generatePageMetadata, breadcrumbJsonLd } from "@/lib/seo/metadata";
+import { getTranslations } from "next-intl/server";
 
 export const dynamic = "force-dynamic";
 
@@ -17,22 +20,87 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return generatePageMetadata(locale, "boissons");
 }
 
-export default async function DrinksPage({ params }: Props) {
+type MenuWithDishes = Menu & {
+  dishes: { category: string; dish: Dish; imageUrl: string | null }[];
+};
+
+export default async function BoissonsPage({ params }: Props) {
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("drinks");
 
   const supabase = await createClient();
-  const drinks = await getDrinks(supabase);
-  const availableDrinks = drinks.filter((d) => d.available);
-  const groups = getDrinksGrouped(availableDrinks);
-  const nonEmptyGroups = groups.filter((g) => g.drinks.length > 0);
 
-  // Build image URLs server-side
-  const imageUrls: Record<string, string> = {};
+  // ── Fetch all data in parallel ──
+  const [dishGroups, menusRaw, wines, drinks] = await Promise.all([
+    getDishesGrouped(supabase),
+    supabase
+      .from("menus")
+      .select(`*, menu_dishes(dishes(*))`)
+      .eq("active", true)
+      .then(({ data }) => data ?? []),
+    getWines(supabase),
+    getDrinks(supabase),
+  ]);
+
+  // ── Dishes (carte only, available) ──
+  const filteredDishGroups = dishGroups
+    .map((g) => ({
+      ...g,
+      dishes: g.dishes.filter((d) => d.available && d.source === "carte"),
+    }))
+    .filter((g) => g.dishes.length > 0);
+
+  const dishImageUrls: Record<string, string> = {};
+  for (const dish of filteredDishGroups.flatMap((g) => g.dishes)) {
+    if (dish.image_path) {
+      dishImageUrls[dish.id] = getDishImageUrl(supabase, dish.image_path);
+    }
+  }
+
+  // ── Menus with their dishes ──
+  const menusWithDishes: MenuWithDishes[] = menusRaw.map((menu) => {
+    const dishes = (menu.menu_dishes ?? [])
+      .map((md: { dishes: Dish }) => md.dishes)
+      .filter(Boolean) as Dish[];
+
+    const seen = new Set<string>();
+    const uniqueDishes = dishes.filter((d) => {
+      if (seen.has(d.id)) return false;
+      seen.add(d.id);
+      return true;
+    });
+
+    return {
+      ...menu,
+      menu_dishes: undefined,
+      dishes: uniqueDishes.map((dish) => ({
+        category: dish.category,
+        dish,
+        imageUrl: dish.image_path ? getDishImageUrl(supabase, dish.image_path) : null,
+      })),
+    } as MenuWithDishes;
+  });
+
+  // ── Wines (available) ──
+  const availableWines = wines.filter((w) => w.available);
+  const wineGroups = getWinesGrouped(availableWines).filter((g) => g.wines.length > 0);
+
+  const wineImageUrls: Record<string, string> = {};
+  for (const wine of availableWines) {
+    if (wine.image_path) {
+      wineImageUrls[wine.id] = getWineImageUrl(supabase, wine.image_path);
+    }
+  }
+
+  // ── Drinks (available) ──
+  const availableDrinks = drinks.filter((d) => d.available);
+  const drinkGroups = getDrinksGrouped(availableDrinks).filter((g) => g.drinks.length > 0);
+
+  const drinkImageUrls: Record<string, string> = {};
   for (const drink of availableDrinks) {
     if (drink.image_path) {
-      imageUrls[drink.id] = getDrinkImageUrl(supabase, drink.image_path);
+      drinkImageUrls[drink.id] = getDrinkImageUrl(supabase, drink.image_path);
     }
   }
 
@@ -44,29 +112,19 @@ export default async function DrinksPage({ params }: Props) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
       />
-      {/* Page header */}
-      <section className="bg-brand-dark pt-32 pb-16">
-        <div className="mx-auto max-w-4xl px-6 text-center">
-          <h1 className="text-4xl font-light tracking-[0.2em] text-brand-cream uppercase md:text-5xl">
-            {t("title")}
-          </h1>
-          <div className="mx-auto mt-4 h-px w-16 bg-brand-gold" />
-          <p className="mt-6 text-sm font-light tracking-[0.15em] uppercase text-brand-gold">
-            {t("subtitle")}
-          </p>
-        </div>
-      </section>
-
-      {/* Drinks content */}
-      <section className="bg-brand-cream py-16">
-        <div className="mx-auto max-w-4xl px-6">
-          {nonEmptyGroups.length === 0 ? (
-            <p className="text-center text-brand-dark/70 font-light">{t("empty")}</p>
-          ) : (
-            <DrinksClient groups={nonEmptyGroups} locale={locale} imageUrls={imageUrls} />
-          )}
-        </div>
-      </section>
+      <QrClient
+        locale={locale}
+        dishGroups={filteredDishGroups}
+        dishImageUrls={dishImageUrls}
+        menus={menusWithDishes}
+        wineGroups={wineGroups}
+        wineImageUrls={wineImageUrls}
+        drinkGroups={drinkGroups}
+        drinkImageUrls={drinkImageUrls}
+        defaultTab="boissons"
+        tabOrder={["boissons", "carte", "menus", "vins"]}
+        showHeader={false}
+      />
     </>
   );
 }
