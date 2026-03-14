@@ -120,7 +120,7 @@ export function ReservationDetailSheet({ reservation, open, onOpenChange, onUpda
             {/* Client info */}
             <div className="space-y-3">
               <h3 className="text-sm font-medium text-muted-foreground">Informations client</h3>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <InfoField label="Nom" value={reservation.name} />
                 <InfoField label="Téléphone" value={reservation.phone} />
                 <InfoField label="Email" value={reservation.email} span={2} />
@@ -132,7 +132,7 @@ export function ReservationDetailSheet({ reservation, open, onOpenChange, onUpda
             {/* Reservation details */}
             <div className="space-y-3">
               <h3 className="text-sm font-medium text-muted-foreground">Détails</h3>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <InfoField label="Date" value={dateFormatted} span={2} />
                 <InfoField label="Heure" value={reservation.time} />
                 <InfoField label="Convives" value={`${reservation.guests} personne${reservation.guests > 1 ? "s" : ""}`} />

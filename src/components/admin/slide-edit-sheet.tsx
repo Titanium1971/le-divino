@@ -128,7 +128,7 @@ export function SlideEditSheet({ open, onOpenChange, slide, onSaved, maxSortOrde
           </SheetDescription>
         </SheetHeader>
 
-        <ScrollArea className="h-[calc(100vh-10rem)] px-4">
+        <ScrollArea className="h-[calc(100dvh-12rem)] px-4">
           <form id="slide-form" onSubmit={handleSubmit} className="space-y-6 pb-8 pt-4">
             {/* Type */}
             <div className="space-y-2">
@@ -170,7 +170,7 @@ export function SlideEditSheet({ open, onOpenChange, slide, onSaved, maxSortOrde
             </div>
 
             {/* Duration & Schedule */}
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="slide-duration">Durée (sec)</Label>
                 <Input

@@ -244,7 +244,7 @@ export function DrinkFormSheet({ open, onOpenChange, drink, onSaved, onRefresh }
           </SheetDescription>
         </SheetHeader>
 
-        <ScrollArea className="h-[calc(100vh-10rem)] px-4">
+        <ScrollArea className="h-[calc(100dvh-12rem)] px-4">
           <form id="drink-form" onSubmit={handleSubmit} className="space-y-6 pb-8 pt-4">
             <div className="space-y-2">
               <Label htmlFor="drink-name">Nom</Label>
@@ -306,7 +306,7 @@ export function DrinkFormSheet({ open, onOpenChange, drink, onSaved, onRefresh }
               </div>
             )}
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Catégorie</Label>
                 <Select value={category} onValueChange={(v) => setCategory(v as DrinkCategory)}>
@@ -439,7 +439,7 @@ export function DrinkFormSheet({ open, onOpenChange, drink, onSaved, onRefresh }
             {/* Description translations */}
             <div className="space-y-2">
               <Label>Description (traductions)</Label>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 <Textarea value={descEn} onChange={(e) => setDescEn(e.target.value)} placeholder="EN" rows={2} />
                 <Textarea value={descIt} onChange={(e) => setDescIt(e.target.value)} placeholder="IT" rows={2} />
                 <Textarea value={descEs} onChange={(e) => setDescEs(e.target.value)} placeholder="ES" rows={2} />

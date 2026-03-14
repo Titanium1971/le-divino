@@ -275,10 +275,10 @@ export function DishFormSheet({ open, onOpenChange, dish, onSaved, onRefresh }: 
           </SheetDescription>
         </SheetHeader>
 
-        <ScrollArea className="h-[calc(100vh-10rem)] px-4">
+        <ScrollArea className="h-[calc(100dvh-12rem)] px-4">
           <form id="dish-form" onSubmit={handleSubmit} className="space-y-6 pb-8 pt-4">
             {/* ── Source, Category & Price ── */}
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div className="space-y-2">
                 <Label>Source</Label>
                 <Select value={source} onValueChange={(v) => setSource(v as DishSource)}>
@@ -344,7 +344,7 @@ export function DishFormSheet({ open, onOpenChange, dish, onSaved, onRefresh }: 
             <div className="space-y-3">
               <Label>Nom du plat</Label>
               <Input value={nameFr} onChange={(e) => setNameFr(e.target.value)} placeholder="Nom (FR)" required />
-              <div className="grid grid-cols-4 gap-2">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                 <Input value={nameEn} onChange={(e) => setNameEn(e.target.value)} placeholder="EN" />
                 <Input value={nameIt} onChange={(e) => setNameIt(e.target.value)} placeholder="IT" />
                 <Input value={nameEs} onChange={(e) => setNameEs(e.target.value)} placeholder="ES" />
@@ -356,7 +356,7 @@ export function DishFormSheet({ open, onOpenChange, dish, onSaved, onRefresh }: 
             <div className="space-y-3">
               <Label>Description</Label>
               <Textarea value={descFr} onChange={(e) => setDescFr(e.target.value)} placeholder="Description (FR)" rows={3} />
-              <div className="grid grid-cols-4 gap-2">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                 <Textarea value={descEn} onChange={(e) => setDescEn(e.target.value)} placeholder="EN" rows={2} />
                 <Textarea value={descIt} onChange={(e) => setDescIt(e.target.value)} placeholder="IT" rows={2} />
                 <Textarea value={descEs} onChange={(e) => setDescEs(e.target.value)} placeholder="ES" rows={2} />

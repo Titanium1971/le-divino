@@ -114,7 +114,7 @@ export function ReservationFormSheet({ open, onOpenChange, onSaved }: Props) {
           </SheetDescription>
         </SheetHeader>
 
-        <ScrollArea className="h-[calc(100vh-10rem)] px-4">
+        <ScrollArea className="h-[calc(100dvh-12rem)] px-4">
           <form id="reservation-form" onSubmit={handleSubmit} className="space-y-5 pb-8 pt-4">
             {/* Nom */}
             <div className="space-y-2">
@@ -129,7 +129,7 @@ export function ReservationFormSheet({ open, onOpenChange, onSaved }: Props) {
             </div>
 
             {/* Téléphone + Email */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="res-phone">Téléphone</Label>
                 <Input
@@ -153,7 +153,7 @@ export function ReservationFormSheet({ open, onOpenChange, onSaved }: Props) {
             </div>
 
             {/* Date + Heure */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="res-date">Date *</Label>
                 <Input
@@ -193,7 +193,7 @@ export function ReservationFormSheet({ open, onOpenChange, onSaved }: Props) {
             </div>
 
             {/* Couverts + Statut */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="res-guests">Couverts *</Label>
                 <Input

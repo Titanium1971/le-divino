@@ -157,7 +157,7 @@ export function GalleryEditSheet({ open, onOpenChange, item, onSaved }: Props) {
           <SheetDescription>Modifiez la légende, le tag et les options de cette photo.</SheetDescription>
         </SheetHeader>
 
-        <ScrollArea className="h-[calc(100vh-10rem)] px-4">
+        <ScrollArea className="h-[calc(100dvh-12rem)] px-4">
           <form id="gallery-edit-form" onSubmit={handleSubmit} className="space-y-6 pb-8 pt-4">
             {/* Image preview + change photo */}
             <div className="space-y-2">

@@ -215,10 +215,10 @@ export function EventFormSheet({ open, onOpenChange, event, onSaved }: Props) {
           </SheetDescription>
         </SheetHeader>
 
-        <ScrollArea className="h-[calc(100vh-10rem)] px-4">
+        <ScrollArea className="h-[calc(100dvh-12rem)] px-4">
           <form id="event-form" onSubmit={handleSubmit} className="space-y-6 pb-8 pt-4">
             {/* ── Type & Date ── */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Type d&apos;événement</Label>
                 <Select value={type} onValueChange={(v) => setType(v as EventType)}>
@@ -247,7 +247,7 @@ export function EventFormSheet({ open, onOpenChange, event, onSaved }: Props) {
             </div>
 
             {/* ── Times ── */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="time-start">Heure début</Label>
                 <Input
