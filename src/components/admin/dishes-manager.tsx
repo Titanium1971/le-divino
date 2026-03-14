@@ -171,18 +171,18 @@ export function DishesManager({ initialGroups }: Props) {
   return (
     <div>
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-light tracking-wide">Gestion des plats</h1>
+          <h1 className="text-xl font-light tracking-wide sm:text-2xl">Gestion des plats</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             {totalDishes} plat{totalDishes !== 1 ? "s" : ""}
           </p>
         </div>
-        <Button onClick={handleAdd}>+ Ajouter un plat</Button>
+        <Button onClick={handleAdd} className="w-full sm:w-auto">+ Ajouter un plat</Button>
       </div>
 
       {/* Category filter */}
-      <div className="mt-4 flex gap-2">
+      <div className="mt-4 flex flex-wrap gap-2">
         <Button
           variant={categoryFilter === "all" ? "default" : "outline"}
           size="sm"
@@ -315,61 +315,63 @@ function DishRow({ dish, onEdit, onDuplicate, onDelete, onToggle, onGenerateImag
 
   return (
     <div
-      className={`flex items-center gap-4 rounded-lg border p-3 transition-colors ${
+      className={`rounded-lg border p-3 transition-colors ${
         !dish.available ? "opacity-50" : ""
       }`}
     >
-      {/* Thumbnail */}
-      <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-md bg-muted">
-        {imageUrl ? (
-          <button
-            onClick={() => onClickImage(imageUrl)}
-            className="relative h-full w-full cursor-zoom-in"
-          >
-            <Image
-              src={imageUrl}
-              alt={dish.name_fr}
-              fill
-              className="object-cover"
-              sizes="48px"
-              unoptimized={!!imageTs}
-            />
-          </button>
-        ) : (
-          <button
-            onClick={onGenerateImage}
-            disabled={generating}
-            className="flex h-full w-full items-center justify-center text-[10px] text-muted-foreground hover:bg-muted/80"
-            title="Générer une photo IA"
-          >
-            {generating ? "..." : "IA"}
-          </button>
-        )}
-      </div>
-
-      {/* Info */}
-      <div className="min-w-0 flex-1">
-        <div className="flex items-center gap-2">
-          <p className="truncate text-sm font-medium">{dish.name_fr}</p>
-          {sourceLabel && (
-            <Badge variant="outline" className="shrink-0 text-[10px]">
-              {sourceLabel}
-            </Badge>
+      <div className="flex items-center gap-3 sm:gap-4">
+        {/* Thumbnail */}
+        <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-md bg-muted">
+          {imageUrl ? (
+            <button
+              onClick={() => onClickImage(imageUrl)}
+              className="relative h-full w-full cursor-zoom-in"
+            >
+              <Image
+                src={imageUrl}
+                alt={dish.name_fr}
+                fill
+                className="object-cover"
+                sizes="48px"
+                unoptimized={!!imageTs}
+              />
+            </button>
+          ) : (
+            <button
+              onClick={onGenerateImage}
+              disabled={generating}
+              className="flex h-full w-full items-center justify-center text-[10px] text-muted-foreground hover:bg-muted/80"
+              title="Générer une photo IA"
+            >
+              {generating ? "..." : "IA"}
+            </button>
           )}
         </div>
-        <p className="truncate text-xs text-muted-foreground">{dish.description_fr}</p>
+
+        {/* Info */}
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-2">
+            <p className="truncate text-sm font-medium">{dish.name_fr}</p>
+            {sourceLabel && (
+              <Badge variant="outline" className="hidden shrink-0 text-[10px] sm:inline-flex">
+                {sourceLabel}
+              </Badge>
+            )}
+          </div>
+          <p className="truncate text-xs text-muted-foreground">{dish.description_fr}</p>
+        </div>
+
+        {/* Price */}
+        <p className="shrink-0 text-sm font-medium">
+          {Number(dish.price) > 0 ? `${Number(dish.price).toFixed(2)} €` : "—"}
+        </p>
+
+        {/* Available toggle */}
+        <Switch checked={dish.available} onCheckedChange={onToggle} aria-label="Disponible" />
       </div>
 
-      {/* Price */}
-      <p className="shrink-0 text-sm font-medium">
-        {Number(dish.price) > 0 ? `${Number(dish.price).toFixed(2)} €` : "—"}
-      </p>
-
-      {/* Available toggle */}
-      <Switch checked={dish.available} onCheckedChange={onToggle} aria-label="Disponible" />
-
-      {/* Actions */}
-      <div className="flex shrink-0 gap-1">
+      {/* Actions — stacked on mobile */}
+      <div className="mt-2 flex flex-wrap gap-1 sm:mt-0 sm:justify-end">
         <Button
           variant="ghost"
           size="sm"

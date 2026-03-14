@@ -109,14 +109,14 @@ export function DrinksManager({ initialDrinks }: Props) {
   return (
     <div>
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-light tracking-wide">Carte des boissons</h1>
+          <h1 className="text-xl font-light tracking-wide sm:text-2xl">Carte des boissons</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             {totalDrinks} boisson{totalDrinks !== 1 ? "s" : ""}
           </p>
         </div>
-        <Button onClick={handleAdd}>+ Ajouter une boisson</Button>
+        <Button onClick={handleAdd} className="w-full sm:w-auto">+ Ajouter une boisson</Button>
       </div>
 
       {/* Category filter */}
@@ -257,10 +257,11 @@ function DrinkRow({ drink, imageTs, onEdit, onDelete, onToggle, onClickImage, ge
 
   return (
     <div
-      className={`flex items-center gap-4 rounded-lg border p-3 transition-colors ${
+      className={`rounded-lg border p-3 transition-colors ${
         !drink.available ? "opacity-50" : ""
       }`}
     >
+      <div className="flex items-center gap-3 sm:gap-4">
       {/* Thumbnail */}
       <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-md bg-muted">
         {imageUrl ? (
@@ -306,9 +307,10 @@ function DrinkRow({ drink, imageTs, onEdit, onDelete, onToggle, onClickImage, ge
 
       {/* Available toggle */}
       <Switch checked={drink.available} onCheckedChange={onToggle} aria-label="Disponible" />
+      </div>
 
       {/* Actions */}
-      <div className="flex shrink-0 gap-1">
+      <div className="mt-2 flex flex-wrap gap-1 sm:mt-0 sm:justify-end">
         <Button variant="ghost" size="sm" onClick={onEdit}>
           Modifier
         </Button>

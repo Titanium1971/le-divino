@@ -109,18 +109,18 @@ export function WinesManager({ initialWines }: Props) {
   return (
     <div>
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-light tracking-wide">Carte des vins</h1>
+          <h1 className="text-xl font-light tracking-wide sm:text-2xl">Carte des vins</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             {totalWines} vin{totalWines !== 1 ? "s" : ""}
           </p>
         </div>
-        <Button onClick={handleAdd}>+ Ajouter un vin</Button>
+        <Button onClick={handleAdd} className="w-full sm:w-auto">+ Ajouter un vin</Button>
       </div>
 
       {/* Color filter */}
-      <div className="mt-4 flex gap-2">
+      <div className="mt-4 flex flex-wrap gap-2">
         <Button
           variant={colorFilter === "all" ? "default" : "outline"}
           size="sm"
@@ -257,10 +257,11 @@ function WineRow({ wine, imageTs, onEdit, onDelete, onToggle, onClickImage, getI
 
   return (
     <div
-      className={`flex items-center gap-4 rounded-lg border p-3 transition-colors ${
+      className={`rounded-lg border p-3 transition-colors ${
         !wine.available ? "opacity-50" : ""
       }`}
     >
+      <div className="flex items-center gap-3 sm:gap-4">
       {/* Thumbnail */}
       <div className="relative h-12 w-8 shrink-0 overflow-hidden rounded-md bg-muted">
         {imageUrl ? (
@@ -316,9 +317,10 @@ function WineRow({ wine, imageTs, onEdit, onDelete, onToggle, onClickImage, getI
 
       {/* Available toggle */}
       <Switch checked={wine.available} onCheckedChange={onToggle} aria-label="Disponible" />
+      </div>
 
       {/* Actions */}
-      <div className="flex shrink-0 gap-1">
+      <div className="mt-2 flex flex-wrap gap-1 sm:mt-0 sm:justify-end">
         <Button variant="ghost" size="sm" onClick={onEdit}>
           Modifier
         </Button>

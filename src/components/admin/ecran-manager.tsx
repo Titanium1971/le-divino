@@ -100,21 +100,21 @@ export function EcranManager({ initialSlides }: Props) {
   return (
     <div>
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-light tracking-wide">Écran 55&quot;</h1>
+          <h1 className="text-xl font-light tracking-wide sm:text-2xl">Écran 55&quot;</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             {slides.length} slide{slides.length !== 1 ? "s" : ""} &middot; {activeCount} actif
             {activeCount !== 1 ? "s" : ""}
           </p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" asChild>
+          <Button variant="outline" asChild className="flex-1 sm:flex-none">
             <a href="/ecran" target="_blank" rel="noopener noreferrer">
               Aperçu
             </a>
           </Button>
-          <Button onClick={handleAdd}>+ Ajouter un slide</Button>
+          <Button onClick={handleAdd} className="flex-1 sm:flex-none">+ Ajouter un slide</Button>
         </div>
       </div>
 
@@ -130,10 +130,11 @@ export function EcranManager({ initialSlides }: Props) {
           {slides.map((slide, index) => (
             <div
               key={slide.id}
-              className={`flex items-center gap-4 rounded-lg border p-3 transition-opacity ${
+              className={`rounded-lg border p-3 transition-opacity ${
                 !slide.active ? "opacity-50" : ""
               }`}
             >
+            <div className="flex items-center gap-3 sm:gap-4">
               {/* Order controls */}
               <div className="flex flex-col gap-0.5">
                 <Button
@@ -194,9 +195,10 @@ export function EcranManager({ initialSlides }: Props) {
                 onCheckedChange={() => handleToggleActive(slide)}
                 aria-label="Actif"
               />
+            </div>
 
               {/* Actions */}
-              <div className="flex shrink-0 gap-1">
+              <div className="mt-2 flex flex-wrap gap-1 sm:mt-0 sm:justify-end">
                 <Button variant="ghost" size="sm" onClick={() => handleEdit(slide)}>
                   Modifier
                 </Button>

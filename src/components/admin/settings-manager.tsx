@@ -548,10 +548,10 @@ export function SettingsManager({
       {/* ══════════════════════════════════════════════
           Global save button
           ══════════════════════════════════════════════ */}
-      <div className="sticky bottom-0 border-t bg-background py-4">
+      <div className="sticky bottom-0 z-10 border-t bg-background py-4">
         {error && <p className="mb-2 text-sm text-destructive">{error}</p>}
         <Button onClick={handleSaveAll} disabled={saving} className="w-full sm:w-auto">
-          {saving ? "Enregistrement..." : saved ? "Enregistré ✓" : "Sauvegarder tous les paramètres"}
+          {saving ? "Enregistrement..." : saved ? "Enregistré ✓" : "Sauvegarder"}
         </Button>
       </div>
     </div>

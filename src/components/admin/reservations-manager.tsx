@@ -278,18 +278,18 @@ export function ReservationsManager({ initialReservations, todayCount }: Props) 
   return (
     <div>
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <h1 className="text-2xl font-light tracking-wide">Gestion des réservations</h1>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+          <h1 className="text-xl font-light tracking-wide sm:text-2xl">Réservations</h1>
           <Badge variant="secondary">{todayCountState} aujourd&apos;hui</Badge>
         </div>
-        <Button onClick={handleAdd}>+ Nouvelle réservation</Button>
+        <Button onClick={handleAdd} className="w-full sm:w-auto">+ Nouvelle réservation</Button>
       </div>
 
-      <Separator className="my-6" />
+      <Separator className="my-4 sm:my-6" />
 
       {/* Filters */}
-      <div className="mb-6 flex items-center gap-4">
+      <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
         <div className="flex items-center gap-2">
           <span className="text-sm text-muted-foreground">Date :</span>
           <Input
@@ -307,7 +307,7 @@ export function ReservationsManager({ initialReservations, todayCount }: Props) 
         <div className="flex items-center gap-2">
           <span className="text-sm text-muted-foreground">Statut :</span>
           <Select value={filterStatus} onValueChange={handleStatusChange}>
-            <SelectTrigger className="w-[160px]">
+            <SelectTrigger className="w-[140px] sm:w-[160px]">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -610,30 +610,32 @@ function ReservationRow({ reservation, onClick, onConfirm, onCancel, onComplete 
 
   return (
     <div
-      className="flex cursor-pointer items-center gap-4 rounded-lg border p-3 transition-colors hover:bg-[#FDF8F3]"
+      className="cursor-pointer rounded-lg border p-3 transition-colors hover:bg-[#FDF8F3]"
       onClick={onClick}
     >
-      {/* Date + time */}
-      <div className="w-20 shrink-0 text-center">
-        <p className="text-sm font-medium">{dateFormatted}</p>
-        <p className="text-xs text-muted-foreground">{reservation.time}</p>
-      </div>
+      <div className="flex items-center gap-3 sm:gap-4">
+        {/* Date + time */}
+        <div className="shrink-0 text-center">
+          <p className="text-sm font-medium">{dateFormatted}</p>
+          <p className="text-xs text-muted-foreground">{reservation.time}</p>
+        </div>
 
-      {/* Name + guests */}
-      <div className="min-w-0 flex-1">
-        <p className="truncate text-sm font-medium">{reservation.name}</p>
-        <p className="text-xs text-muted-foreground">
-          {reservation.guests} convive{reservation.guests > 1 ? "s" : ""}
-        </p>
-      </div>
+        {/* Name + guests */}
+        <div className="min-w-0 flex-1">
+          <p className="truncate text-sm font-medium">{reservation.name}</p>
+          <p className="text-xs text-muted-foreground">
+            {reservation.guests} convive{reservation.guests > 1 ? "s" : ""}
+          </p>
+        </div>
 
-      {/* Status badge */}
-      <Badge variant="outline" className={statusConfig.className}>
-        {statusConfig.label}
-      </Badge>
+        {/* Status badge */}
+        <Badge variant="outline" className={statusConfig.className}>
+          {statusConfig.label}
+        </Badge>
+      </div>
 
       {/* Quick actions */}
-      <div className="flex shrink-0 gap-1" onClick={(e) => e.stopPropagation()}>
+      <div className="mt-2 flex flex-wrap gap-1 sm:mt-0 sm:justify-end" onClick={(e) => e.stopPropagation()}>
         {reservation.status === "pending" && (
           <Button variant="ghost" size="sm" onClick={onConfirm}>
             Confirmer

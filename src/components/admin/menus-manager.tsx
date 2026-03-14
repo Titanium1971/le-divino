@@ -118,14 +118,14 @@ export function MenusManager({ initialMenus, dishGroups: initialDishGroups }: Pr
   return (
     <div>
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-light tracking-wide">Gestion des menus</h1>
+          <h1 className="text-xl font-light tracking-wide sm:text-2xl">Gestion des menus</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             {menus.length} menu{menus.length !== 1 ? "s" : ""}
           </p>
         </div>
-        <Button onClick={handleAdd}>+ Ajouter un menu</Button>
+        <Button onClick={handleAdd} className="w-full sm:w-auto">+ Ajouter un menu</Button>
       </div>
 
       <Separator className="my-6" />
@@ -141,38 +141,40 @@ export function MenusManager({ initialMenus, dishGroups: initialDishGroups }: Pr
             return (
               <div
                 key={menu.id}
-                className={`flex items-center gap-4 rounded-lg border p-4 transition-colors ${
+                className={`rounded-lg border p-4 transition-colors ${
                   !menu.active ? "opacity-50" : ""
                 }`}
               >
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2">
-                    <p className="truncate text-sm font-medium">{menu.name_fr}</p>
-                    {typeLabel && (
-                      <Badge variant="secondary" className="shrink-0 text-[10px]">
-                        {typeLabel}
+                <div className="flex items-center gap-3 sm:gap-4">
+                  <div className="min-w-0 flex-1">
+                    <div className="flex flex-wrap items-center gap-1 sm:gap-2">
+                      <p className="truncate text-sm font-medium">{menu.name_fr}</p>
+                      {typeLabel && (
+                        <Badge variant="secondary" className="shrink-0 text-[10px]">
+                          {typeLabel}
+                        </Badge>
+                      )}
+                      <Badge variant="outline" className="shrink-0 text-[10px]">
+                        {dishCount} plat{dishCount !== 1 ? "s" : ""}
                       </Badge>
-                    )}
-                    <Badge variant="outline" className="shrink-0 text-[10px]">
-                      {dishCount} plat{dishCount !== 1 ? "s" : ""}
-                    </Badge>
+                    </div>
+                    <p className="truncate text-xs text-muted-foreground">
+                      {menu.description_fr}
+                    </p>
                   </div>
-                  <p className="truncate text-xs text-muted-foreground">
-                    {menu.description_fr}
+
+                  <p className="shrink-0 text-sm font-medium">
+                    {Number(menu.price).toFixed(2)}&nbsp;€
                   </p>
+
+                  <Switch
+                    checked={menu.active}
+                    onCheckedChange={() => handleToggleActive(menu)}
+                    aria-label="Actif"
+                  />
                 </div>
 
-                <p className="shrink-0 text-sm font-medium">
-                  {Number(menu.price).toFixed(2)}&nbsp;€
-                </p>
-
-                <Switch
-                  checked={menu.active}
-                  onCheckedChange={() => handleToggleActive(menu)}
-                  aria-label="Actif"
-                />
-
-                <div className="flex shrink-0 gap-1">
+                <div className="mt-2 flex flex-wrap gap-1 sm:mt-0 sm:justify-end">
                   <Button variant="ghost" size="sm" onClick={() => handleEdit(menu)}>
                     Modifier
                   </Button>

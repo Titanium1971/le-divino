@@ -88,14 +88,14 @@ export function EventsManager({ initialEvents }: Props) {
   return (
     <div>
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-light tracking-wide">Gestion des événements</h1>
+          <h1 className="text-xl font-light tracking-wide sm:text-2xl">Gestion des événements</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             {events.length} événement{events.length !== 1 ? "s" : ""}
           </p>
         </div>
-        <Button onClick={handleAdd}>+ Ajouter un événement</Button>
+        <Button onClick={handleAdd} className="w-full sm:w-auto">+ Ajouter un événement</Button>
       </div>
 
       <Separator className="my-6" />
@@ -178,59 +178,49 @@ function EventRow({ event, onEdit, onDelete, onToggle, getImageUrl }: EventRowPr
 
   return (
     <div
-      className={`flex items-center gap-4 rounded-lg border p-3 transition-colors ${
+      className={`rounded-lg border p-3 transition-colors ${
         past ? "opacity-50" : ""
       } ${!event.is_active && !past ? "opacity-50" : ""}`}
     >
-      {/* Thumbnail */}
-      <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-md bg-muted">
-        {event.image_path && (
-          <Image
-            src={getImageUrl(event.image_path)}
-            alt={event.title.fr}
-            fill
-            className="object-cover"
-            sizes="48px"
-          />
-        )}
-      </div>
-
-      {/* Date */}
-      <div className="w-24 shrink-0">
-        <p className="text-sm font-medium">{dateFormatted}</p>
-        <p className="text-xs text-muted-foreground">
-          {event.event_time} – {event.end_time}
-        </p>
-      </div>
-
-      {/* Info */}
-      <div className="min-w-0 flex-1">
-        <div className="flex items-center gap-2">
-          <p className="truncate text-sm font-medium">{event.title.fr}</p>
-          {event.is_featured && (
-            <Badge variant="secondary" className="shrink-0 text-[10px]">
-              Vedette
-            </Badge>
-          )}
-          {event.show_on_screen && (
-            <Badge variant="secondary" className="shrink-0 text-[10px]">
-              Écran
-            </Badge>
+      <div className="flex items-center gap-3 sm:gap-4">
+        {/* Thumbnail */}
+        <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-md bg-muted">
+          {event.image_path && (
+            <Image
+              src={getImageUrl(event.image_path)}
+              alt={event.title.fr}
+              fill
+              className="object-cover"
+              sizes="48px"
+            />
           )}
         </div>
-        <p className="truncate text-xs text-muted-foreground">{event.description?.fr}</p>
+
+        {/* Date */}
+        <div className="shrink-0">
+          <p className="text-sm font-medium">{dateFormatted}</p>
+          <p className="text-xs text-muted-foreground">
+            {event.event_time} – {event.end_time}
+          </p>
+        </div>
+
+        {/* Info */}
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-center gap-1">
+            <p className="truncate text-sm font-medium">{event.title.fr}</p>
+            <Badge variant="outline" className={`shrink-0 text-[10px] ${typeConfig.className}`}>
+              {typeConfig.label}
+            </Badge>
+          </div>
+          <p className="truncate text-xs text-muted-foreground">{event.description?.fr}</p>
+        </div>
+
+        {/* Active toggle */}
+        <Switch checked={event.is_active} onCheckedChange={onToggle} aria-label="Actif" />
       </div>
 
-      {/* Type badge */}
-      <Badge variant="outline" className={typeConfig.className}>
-        {typeConfig.label}
-      </Badge>
-
-      {/* Active toggle */}
-      <Switch checked={event.is_active} onCheckedChange={onToggle} aria-label="Actif" />
-
       {/* Actions */}
-      <div className="flex shrink-0 gap-1">
+      <div className="mt-2 flex flex-wrap gap-1 sm:mt-0 sm:justify-end">
         <Button variant="ghost" size="sm" onClick={onEdit}>
           Modifier
         </Button>

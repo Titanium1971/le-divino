@@ -129,7 +129,7 @@ export function CongesManager({
       {actif && (
         <div className="mt-6 space-y-6 animate-in fade-in-0 slide-in-from-top-2 duration-300">
           {/* Dates */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="conges-debut">Date de début</Label>
               <Input
@@ -183,7 +183,7 @@ export function CongesManager({
           {/* Translations */}
           <div className="space-y-2">
             <Label>Message (traductions)</Label>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
               <Textarea
                 value={messageEn}
                 onChange={(e) => setMessageEn(e.target.value)}

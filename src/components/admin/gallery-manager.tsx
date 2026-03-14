@@ -190,9 +190,9 @@ export function GalleryManager({ initialItems }: Props) {
   return (
     <div>
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-light tracking-wide">Galerie</h1>
+          <h1 className="text-xl font-light tracking-wide sm:text-2xl">Galerie</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             {items.length} photo{items.length !== 1 ? "s" : ""}
           </p>
@@ -206,7 +206,7 @@ export function GalleryManager({ initialItems }: Props) {
             onChange={handleFilesSelected}
             className="hidden"
           />
-          <Button onClick={() => fileRef.current?.click()} disabled={uploading}>
+          <Button onClick={() => fileRef.current?.click()} disabled={uploading} className="w-full sm:w-auto">
             {uploading ? "Upload en cours..." : "+ Ajouter des photos"}
           </Button>
         </div>
@@ -291,7 +291,7 @@ export function GalleryManager({ initialItems }: Props) {
           )}
         </div>
       ) : (
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {filteredItems.map((item, index) => (
             <div
               key={item.id}
