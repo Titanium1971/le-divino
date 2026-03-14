@@ -6,6 +6,7 @@ import {
   getReservations,
   getReservationsByDateRange,
   updateReservationStatus,
+  deleteReservation,
 } from "@/lib/supabase/reservations";
 import { logActivity } from "@/lib/supabase/activity-log";
 import type { Reservation, ReservationStatus } from "@/lib/types/database";
@@ -86,6 +87,10 @@ export function ReservationsManager({ initialReservations, todayCount }: Props) 
 
   // Cancel dialog
   const [cancelTarget, setCancelTarget] = useState<Reservation | null>(null);
+
+  // Delete dialog
+  const [deleteTarget, setDeleteTarget] = useState<Reservation | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   // Form sheet
   const [formSheetOpen, setFormSheetOpen] = useState(false);
@@ -195,6 +200,29 @@ export function ReservationsManager({ initialReservations, todayCount }: Props) 
     });
     setCancelTarget(null);
     await refresh();
+  }
+
+  async function handleDeleteConfirm() {
+    if (!deleteTarget) return;
+    setDeleting(true);
+    try {
+      await deleteReservation(supabase, deleteTarget.id);
+      await logActivity(supabase, {
+        action: "DELETE",
+        entityType: "reservation",
+        entityId: deleteTarget.id,
+        entityName: deleteTarget.name,
+      });
+      setDeleteTarget(null);
+      // Close detail sheet if the deleted reservation is currently open
+      if (selectedReservation?.id === deleteTarget.id) {
+        setSheetOpen(false);
+        setSelectedReservation(null);
+      }
+      await refresh();
+    } finally {
+      setDeleting(false);
+    }
   }
 
   // ── Detail sheet ──
@@ -345,6 +373,7 @@ export function ReservationsManager({ initialReservations, todayCount }: Props) 
                   onConfirm={() => handleQuickConfirm(r)}
                   onCancel={() => setCancelTarget(r)}
                   onComplete={() => handleQuickComplete(r)}
+                  onDelete={() => setDeleteTarget(r)}
                 />
               ))}
             </div>
@@ -406,6 +435,7 @@ export function ReservationsManager({ initialReservations, todayCount }: Props) 
                         onConfirm={() => handleQuickConfirm(r)}
                         onCancel={() => setCancelTarget(r)}
                         onComplete={() => handleQuickComplete(r)}
+                        onDelete={() => setDeleteTarget(r)}
                       />
                     ))}
                   </div>
@@ -575,6 +605,7 @@ export function ReservationsManager({ initialReservations, todayCount }: Props) 
                                 onConfirm={() => handleQuickConfirm(r)}
                                 onCancel={() => setCancelTarget(r)}
                                 onComplete={() => handleQuickComplete(r)}
+                                onDelete={() => setDeleteTarget(r)}
                               />
                             ))}
                           </div>
@@ -601,6 +632,10 @@ export function ReservationsManager({ initialReservations, todayCount }: Props) 
         reservation={selectedReservation}
         open={sheetOpen}
         onOpenChange={setSheetOpen}
+        onDeleted={async () => {
+          setSelectedReservation(null);
+          await refresh();
+        }}
         onUpdated={async () => {
           // Refresh selected reservation
           const updated = reservations.find((r) => r.id === selectedReservation?.id);
@@ -639,6 +674,30 @@ export function ReservationsManager({ initialReservations, todayCount }: Props) 
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Delete confirmation */}
+      <AlertDialog open={!!deleteTarget} onOpenChange={() => setDeleteTarget(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Supprimer cette réservation ?</AlertDialogTitle>
+            <AlertDialogDescription>
+              La réservation de {deleteTarget?.name} pour le{" "}
+              {deleteTarget && new Date(deleteTarget.date + "T00:00:00").toLocaleDateString("fr-FR")}{" "}
+              à {deleteTarget?.time} sera supprimée définitivement. Cette action est irréversible.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={deleting}>Retour</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteConfirm}
+              disabled={deleting}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {deleting ? "Suppression..." : "Supprimer définitivement"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
@@ -651,9 +710,10 @@ type ReservationRowProps = {
   onConfirm: () => void;
   onCancel: () => void;
   onComplete: () => void;
+  onDelete: () => void;
 };
 
-function ReservationRow({ reservation, onClick, onConfirm, onCancel, onComplete }: ReservationRowProps) {
+function ReservationRow({ reservation, onClick, onConfirm, onCancel, onComplete, onDelete }: ReservationRowProps) {
   const statusConfig = STATUS_CONFIG[reservation.status];
   const dateFormatted = new Date(reservation.date + "T00:00:00").toLocaleDateString("fr-FR", {
     day: "numeric",
@@ -703,6 +763,9 @@ function ReservationRow({ reservation, onClick, onConfirm, onCancel, onComplete 
             Terminer
           </Button>
         )}
+        <Button variant="ghost" size="sm" className="text-destructive" onClick={onDelete}>
+          Supprimer
+        </Button>
       </div>
     </div>
   );

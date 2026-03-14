@@ -98,6 +98,14 @@ export async function updateReservationStatus(
   return data as Reservation;
 }
 
+export async function deleteReservation(
+  supabase: SupabaseClient,
+  id: string,
+): Promise<void> {
+  const { error } = await supabase.from("reservations").delete().eq("id", id);
+  if (error) throw error;
+}
+
 export async function updateReservationNotes(
   supabase: SupabaseClient,
   id: string,

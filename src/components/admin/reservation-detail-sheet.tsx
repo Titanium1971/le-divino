@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { updateReservationStatus, updateReservationNotes } from "@/lib/supabase/reservations";
+import { updateReservationStatus, updateReservationNotes, deleteReservation } from "@/lib/supabase/reservations";
+import { logActivity } from "@/lib/supabase/activity-log";
 import type { Reservation, ReservationStatus } from "@/lib/types/database";
 import {
   Sheet,
@@ -41,14 +42,17 @@ type Props = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onUpdated: () => Promise<void>;
+  onDeleted?: () => Promise<void>;
 };
 
-export function ReservationDetailSheet({ reservation, open, onOpenChange, onUpdated }: Props) {
+export function ReservationDetailSheet({ reservation, open, onOpenChange, onUpdated, onDeleted }: Props) {
   const supabase = createClient();
   const [notes, setNotes] = useState("");
   const [savingNotes, setSavingNotes] = useState(false);
   const [updatingStatus, setUpdatingStatus] = useState(false);
   const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   // Sync notes when reservation changes
   const currentNotes = reservation?.notes ?? "";
@@ -88,6 +92,25 @@ export function ReservationDetailSheet({ reservation, open, onOpenChange, onUpda
   async function handleCancel() {
     await handleStatusChange("cancelled");
     setCancelDialogOpen(false);
+  }
+
+  async function handleDelete() {
+    if (!reservation) return;
+    setDeleting(true);
+    try {
+      await deleteReservation(supabase, reservation.id);
+      await logActivity(supabase, {
+        action: "DELETE",
+        entityType: "reservation",
+        entityId: reservation.id,
+        entityName: reservation.name,
+      });
+      setDeleteDialogOpen(false);
+      onOpenChange(false);
+      if (onDeleted) await onDeleted();
+    } finally {
+      setDeleting(false);
+    }
   }
 
   if (!reservation) return null;
@@ -216,6 +239,14 @@ export function ReservationDetailSheet({ reservation, open, onOpenChange, onUpda
                 </Button>
               )}
             </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="w-full text-destructive hover:text-destructive"
+              onClick={() => setDeleteDialogOpen(true)}
+            >
+              Supprimer définitivement
+            </Button>
           </SheetFooter>
         </SheetContent>
       </Sheet>
@@ -238,6 +269,30 @@ export function ReservationDetailSheet({ reservation, open, onOpenChange, onUpda
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
               Confirmer l&apos;annulation
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Delete confirmation */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Supprimer cette réservation ?</AlertDialogTitle>
+            <AlertDialogDescription>
+              La réservation de {reservation.name} pour le{" "}
+              {new Date(reservation.date + "T00:00:00").toLocaleDateString("fr-FR")} à{" "}
+              {reservation.time} sera supprimée définitivement. Cette action est irréversible.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={deleting}>Retour</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDelete}
+              disabled={deleting}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {deleting ? "Suppression..." : "Supprimer définitivement"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
