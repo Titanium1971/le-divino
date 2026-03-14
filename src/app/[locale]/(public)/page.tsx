@@ -4,9 +4,11 @@ import { setRequestLocale } from "next-intl/server";
 import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 import { getDishImageUrl } from "@/lib/supabase/dishes";
+import { getUpcomingEvents, getEventImageUrl } from "@/lib/supabase/events";
 import type { Dish } from "@/lib/types/database";
 import { getConges } from "@/lib/supabase/conges";
 import { HeroSection } from "@/components/restaurant/hero-section";
+import { NextEventBanner } from "@/components/restaurant/next-event-banner";
 import { ReservationWidget } from "@/components/restaurant/reservation-widget";
 import { CongesBanner } from "@/components/restaurant/conges-banner";
 import { GoogleReviews } from "@/components/restaurant/google-reviews";
@@ -57,10 +59,22 @@ export default async function HomePage({ params }: Props) {
     }
   }
 
+  // Fetch next upcoming event
+  const upcomingEvents = await getUpcomingEvents(supabase);
+  const nextEvent = upcomingEvents.length > 0 ? upcomingEvents[0] : null;
+  const nextEventImageUrl = nextEvent?.image_path
+    ? getEventImageUrl(supabase, nextEvent.image_path)
+    : null;
+
   return (
     <>
       {/* ── Hero plein écran ── */}
       <HeroSection />
+
+      {/* ── Prochain événement ── */}
+      {nextEvent && (
+        <NextEventBanner event={nextEvent} imageUrl={nextEventImageUrl} locale={locale} />
+      )}
 
       {/* ── Bannière congés ── */}
       {conges.actif && (

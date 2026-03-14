@@ -11,6 +11,7 @@
     "gallery": "Gallery",
     "vins": "Wines",
     "boissons": "Drinks",
+    "events": "Events",
     "contact": "Contact"
   },
   "home": {
@@ -134,6 +135,11 @@
       "ambiance": "Ambiance"
     }
   },
+  "events": {
+    "title": "Events",
+    "subtitle": "Our upcoming events",
+    "empty": "No upcoming events at the moment"
+  },
   "contact": {
     "title": "Find us",
     "subtitle": "Come visit us",
@@ -193,6 +199,11 @@
       "title": "Our Drinks — Le Divino | Restaurant Agde",
       "description": "Discover the drinks menu at Le Divino restaurant in Agde: soft drinks, cocktails, beers, spirits and hot drinks.",
       "keywords": "drinks restaurant agde, cocktails le divino, drinks menu agde"
+    },
+    "events": {
+      "title": "Events — Le Divino | Restaurant Agde",
+      "description": "Discover upcoming events at Le Divino restaurant in Agde: evenings, concerts, entertainment and special events.",
+      "keywords": "events restaurant agde, le divino evenings, concerts agde, restaurant entertainment"
     },
     "contact": {
       "title": "Contact & Directions — Le Divino | Restaurant Agde",

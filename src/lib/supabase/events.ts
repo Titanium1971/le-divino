@@ -11,6 +11,20 @@ export async function getEvents(supabase: SupabaseClient): Promise<Event[]> {
   return (data ?? []) as Event[];
 }
 
+export async function getUpcomingEvents(supabase: SupabaseClient): Promise<Event[]> {
+  const today = new Date().toISOString().split("T")[0];
+  const { data, error } = await supabase
+    .from("events")
+    .select("*")
+    .eq("is_active", true)
+    .gte("event_date", today)
+    .order("event_date")
+    .order("event_time");
+
+  if (error) throw error;
+  return (data ?? []) as Event[];
+}
+
 export async function createEvent(
   supabase: SupabaseClient,
   data: EventFormData,

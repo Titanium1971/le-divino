@@ -11,6 +11,7 @@
     "gallery": "Galerie",
     "vins": "Weinkarte",
     "boissons": "Getränke",
+    "events": "Events",
     "contact": "Kontakt"
   },
   "home": {
@@ -134,6 +135,11 @@
       "ambiance": "Ambiente"
     }
   },
+  "events": {
+    "title": "Veranstaltungen",
+    "subtitle": "Unsere nächsten Termine",
+    "empty": "Derzeit keine Veranstaltungen geplant"
+  },
   "contact": {
     "title": "So finden Sie uns",
     "subtitle": "Besuchen Sie uns",
@@ -193,6 +199,11 @@
       "title": "Unsere Getränke — Le Divino | Restaurant Agde",
       "description": "Entdecken Sie die Getränkekarte des Restaurants Le Divino in Agde: alkoholfreie Getränke, Cocktails, Biere, Spirituosen und Heißgetränke.",
       "keywords": "getränke restaurant agde, cocktails le divino, getränkekarte agde"
+    },
+    "events": {
+      "title": "Veranstaltungen — Le Divino | Restaurant Agde",
+      "description": "Entdecken Sie die nächsten Veranstaltungen im Restaurant Le Divino in Agde: Abende, Konzerte, Unterhaltung und besondere Events.",
+      "keywords": "veranstaltungen restaurant agde, abende le divino, konzerte agde, unterhaltung restaurant"
     },
     "contact": {
       "title": "Kontakt & Anfahrt — Le Divino | Restaurant Agde",

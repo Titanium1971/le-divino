@@ -5,11 +5,12 @@ import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
 import { LanguageSwitcher } from "./language-switcher";
 
-const NAV_ITEMS = ["home", "menu", "menus", "vins", "boissons", "reservation", "gallery", "contact"] as const;
+const NAV_ITEMS = ["home", "menu", "menus", "vins", "boissons", "events", "reservation", "gallery", "contact"] as const;
 
 function getHref(key: string) {
   if (key === "home") return "/";
   if (key === "gallery") return "/galerie";
+  if (key === "events") return "/evenements";
   return `/${key}`;
 }
 
