@@ -376,18 +376,19 @@ export function ReservationsManager({ initialReservations, todayCount }: Props) 
               <>
                 <div className="flex items-center justify-between">
                   <Button variant="outline" size="sm" onClick={handlePrevDay}>
-                    ← Jour précédent
+                    <span className="hidden sm:inline">← Jour précédent</span>
+                    <span className="sm:hidden">← Jour</span>
                   </Button>
-                  <span className="text-sm font-medium">
+                  <span className="text-xs font-medium sm:text-sm">
                     {selectedDay.toLocaleDateString("fr-FR", {
-                      weekday: "long",
+                      weekday: "short",
                       day: "numeric",
                       month: "long",
-                      year: "numeric",
                     })}
                   </span>
                   <Button variant="outline" size="sm" onClick={handleNextDay}>
-                    Jour suivant →
+                    <span className="hidden sm:inline">Jour suivant →</span>
+                    <span className="sm:hidden">Jour →</span>
                   </Button>
                 </div>
 
@@ -417,9 +418,10 @@ export function ReservationsManager({ initialReservations, todayCount }: Props) 
               <>
                 <div className="flex items-center justify-between">
                   <Button variant="outline" size="sm" onClick={handlePrevWeek}>
-                    ← Semaine précédente
+                    <span className="hidden sm:inline">← Semaine précédente</span>
+                    <span className="sm:hidden">← Sem.</span>
                   </Button>
-                  <span className="text-sm font-medium">
+                  <span className="text-xs font-medium sm:text-sm">
                     {formatDateISO(weekStart)} — {formatDateISO((() => {
                       const end = new Date(weekStart);
                       end.setDate(end.getDate() + 6);
@@ -427,11 +429,59 @@ export function ReservationsManager({ initialReservations, todayCount }: Props) 
                     })())}
                   </span>
                   <Button variant="outline" size="sm" onClick={handleNextWeek}>
-                    Semaine suivante →
+                    <span className="hidden sm:inline">Semaine suivante →</span>
+                    <span className="sm:hidden">Sem. →</span>
                   </Button>
                 </div>
 
-                <div className="grid grid-cols-7 gap-2">
+                {/* Mobile: vertical stack per day */}
+                <div className="space-y-3 sm:hidden">
+                  {getWeekDays().map((day, i) => {
+                    const dayStr = formatDateISO(day);
+                    const dayRes = calendarReservations.filter((r) => r.date === dayStr);
+                    const isToday = dayStr === new Date().toISOString().split("T")[0];
+
+                    return (
+                      <div
+                        key={dayStr}
+                        className={`rounded-lg border p-3 ${
+                          isToday ? "border-primary/40 bg-primary/5" : ""
+                        }`}
+                      >
+                        <div className="mb-2 flex items-center justify-between">
+                          <p className={`text-sm font-medium ${isToday ? "text-primary" : ""}`}>
+                            {getDayNames()[i]} {day.getDate()}/{String(day.getMonth() + 1).padStart(2, "0")}
+                          </p>
+                          <span className="text-xs text-muted-foreground">
+                            {dayRes.length} résa{dayRes.length > 1 ? "s" : ""}
+                          </span>
+                        </div>
+                        {dayRes.length === 0 ? (
+                          <p className="text-xs italic text-muted-foreground">Aucune réservation</p>
+                        ) : (
+                          <div className="space-y-1.5">
+                            {dayRes.map((r) => (
+                              <button
+                                key={r.id}
+                                onClick={() => handleRowClick(r)}
+                                className={`flex w-full items-center gap-3 rounded p-2 text-left text-xs transition-opacity hover:opacity-80 ${
+                                  STATUS_CONFIG[r.status].className
+                                }`}
+                              >
+                                <span className="font-semibold">{r.time}</span>
+                                <span className="flex-1 truncate">{r.name}</span>
+                                <span className="shrink-0 opacity-70">{r.guests} pers.</span>
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Desktop: 7-column grid */}
+                <div className="hidden gap-2 sm:grid sm:grid-cols-7">
                   {getWeekDays().map((day, i) => {
                     const dayStr = formatDateISO(day);
                     const dayRes = calendarReservations.filter((r) => r.date === dayStr);
@@ -477,9 +527,10 @@ export function ReservationsManager({ initialReservations, todayCount }: Props) 
               <>
                 <div className="flex items-center justify-between">
                   <Button variant="outline" size="sm" onClick={handlePrevWeek}>
-                    ← Semaine précédente
+                    <span className="hidden sm:inline">← Semaine précédente</span>
+                    <span className="sm:hidden">← Sem.</span>
                   </Button>
-                  <span className="text-sm font-medium">
+                  <span className="text-xs font-medium sm:text-sm">
                     {formatDateISO(weekStart)} — {formatDateISO((() => {
                       const end = new Date(weekStart);
                       end.setDate(end.getDate() + 6);
@@ -487,7 +538,8 @@ export function ReservationsManager({ initialReservations, todayCount }: Props) 
                     })())}
                   </span>
                   <Button variant="outline" size="sm" onClick={handleNextWeek}>
-                    Semaine suivante →
+                    <span className="hidden sm:inline">Semaine suivante →</span>
+                    <span className="sm:hidden">Sem. →</span>
                   </Button>
                 </div>
 
