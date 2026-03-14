@@ -63,10 +63,14 @@ export function DishFormSheet({ open, onOpenChange, dish, onSaved, onRefresh }: 
   const [saving, setSaving] = useState(false);
   const [translating, setTranslating] = useState(false);
   const [generatingAI, setGeneratingAI] = useState(false);
+  const [generatingContent, setGeneratingContent] = useState(false);
+  const [generatedImageBase64, setGeneratedImageBase64] = useState<string | null>(null);
   const [deletingImage, setDeletingImage] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const displayImage = localPreview ?? remoteUrl;
+  const displayImage = generatedImageBase64
+    ? `data:image/png;base64,${generatedImageBase64}`
+    : localPreview ?? remoteUrl;
 
   // Reset form when dish changes
   useEffect(() => {
@@ -87,6 +91,7 @@ export function DishFormSheet({ open, onOpenChange, dish, onSaved, onRefresh }: 
       setAvailable(dish.available);
       setImageFile(null);
       setLocalPreview(null);
+      setGeneratedImageBase64(null);
       setRemoteUrl(dish.image_path ? getDishImageUrl(supabase, dish.image_path) : null);
       setImageKey(0);
     } else {
@@ -106,6 +111,7 @@ export function DishFormSheet({ open, onOpenChange, dish, onSaved, onRefresh }: 
       setAvailable(true);
       setImageFile(null);
       setLocalPreview(null);
+      setGeneratedImageBase64(null);
       setRemoteUrl(null);
       setImageKey(0);
     }
@@ -117,6 +123,36 @@ export function DishFormSheet({ open, onOpenChange, dish, onSaved, onRefresh }: 
     if (!file) return;
     setImageFile(file);
     setLocalPreview(URL.createObjectURL(file));
+  }
+
+  async function handleGenerateContent() {
+    if (!nameFr) {
+      setError("Saisissez un nom de plat avant de générer.");
+      return;
+    }
+    setGeneratingContent(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/admin/generate-dish-content", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: nameFr, category }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Erreur de génération");
+
+      if (data.name) setNameFr(data.name);
+      if (data.description_fr) setDescFr(data.description_fr);
+      if (data.imageBase64) {
+        setGeneratedImageBase64(data.imageBase64);
+        setLocalPreview(null);
+        setImageFile(null);
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Erreur lors de la génération IA.");
+    } finally {
+      setGeneratingContent(false);
+    }
   }
 
   async function handleTranslate() {
@@ -242,7 +278,18 @@ export function DishFormSheet({ open, onOpenChange, dish, onSaved, onRefresh }: 
         saved = await createDish(supabase, formData);
       }
 
-      if (imageFile) {
+      if (generatedImageBase64) {
+        try {
+          const byteArray = Uint8Array.from(atob(generatedImageBase64), (c) => c.charCodeAt(0));
+          const blob = new Blob([byteArray], { type: "image/png" });
+          const file = new File([blob], `${saved.id}.png`, { type: "image/png" });
+          const path = await uploadDishImage(supabase, file, saved.id);
+          await updateDish(supabase, saved.id, { image_path: path });
+          setGeneratedImageBase64(null);
+        } catch (imgErr) {
+          console.error("Upload generated image failed:", imgErr);
+        }
+      } else if (imageFile) {
         const path = await uploadDishImage(supabase, imageFile, saved.id);
         await updateDish(supabase, saved.id, { image_path: path });
       }
@@ -323,6 +370,56 @@ export function DishFormSheet({ open, onOpenChange, dish, onSaved, onRefresh }: 
                 />
               </div>
             </div>
+
+            {/* ── AI Generation ── */}
+            <div className="flex items-center justify-between rounded-md border border-dashed border-amber-500/50 bg-amber-50/50 p-3">
+              <div className="flex-1 pr-3">
+                <p className="text-sm font-medium text-amber-900">Générer avec IA</p>
+                <p className="text-xs text-amber-700">
+                  Description carte, nom accrocheur et photo.
+                </p>
+              </div>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={handleGenerateContent}
+                disabled={generatingContent || !nameFr}
+                className="shrink-0 border-amber-500 text-amber-700 hover:bg-amber-100"
+              >
+                {generatingContent ? "Génération..." : "Générer"}
+              </Button>
+            </div>
+
+            {/* AI Generated image preview */}
+            {generatedImageBase64 && (
+              <div className="space-y-2">
+                <Label>Image générée par IA</Label>
+                <div className="flex items-start gap-4">
+                  <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-md border bg-muted">
+                    <img
+                      src={`data:image/png;base64,${generatedImageBase64}`}
+                      alt="Aperçu IA"
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <p className="text-xs text-muted-foreground">
+                      L&apos;image sera uploadée à la sauvegarde.
+                    </p>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="text-destructive"
+                      onClick={() => setGeneratedImageBase64(null)}
+                    >
+                      Retirer l&apos;image
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* ── Translate button ── */}
             <div className="flex items-center justify-between rounded-md border border-dashed p-3">

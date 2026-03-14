@@ -62,6 +62,8 @@ export function WineFormSheet({ open, onOpenChange, wine, onSaved, onRefresh }: 
   const [saving, setSaving] = useState(false);
   const [translating, setTranslating] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [generating, setGenerating] = useState(false);
+  const [generatedImageBase64, setGeneratedImageBase64] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -102,8 +104,35 @@ export function WineFormSheet({ open, onOpenChange, wine, onSaved, onRefresh }: 
       setAvailable(true);
       setImagePath(null);
     }
+    setGeneratedImageBase64(null);
     setError(null);
   }, [wine, open]);
+
+  async function handleGenerate() {
+    if (!name) {
+      setError("Saisissez un nom de vin avant de générer.");
+      return;
+    }
+    setGenerating(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/admin/generate-wine-content", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, color }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Erreur de génération");
+
+      if (data.name) setName(data.name);
+      if (data.description_fr) setDescFr(data.description_fr);
+      if (data.imageBase64) setGeneratedImageBase64(data.imageBase64);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Erreur lors de la génération IA.");
+    } finally {
+      setGenerating(false);
+    }
+  }
 
   async function handleTranslate() {
     if (!descFr) return;
@@ -202,6 +231,20 @@ export function WineFormSheet({ open, onOpenChange, wine, onSaved, onRefresh }: 
         savedId = created.id;
       }
 
+      // Upload generated AI image if present
+      if (generatedImageBase64) {
+        try {
+          const byteArray = Uint8Array.from(atob(generatedImageBase64), (c) => c.charCodeAt(0));
+          const blob = new Blob([byteArray], { type: "image/png" });
+          const file = new File([blob], `${savedId}.png`, { type: "image/png" });
+          const path = await uploadWineImage(supabase, file, savedId);
+          await updateWine(supabase, savedId, { image_path: path });
+          setGeneratedImageBase64(null);
+        } catch (imgErr) {
+          console.error("Upload generated image failed:", imgErr);
+        }
+      }
+
       await logActivity(supabase, {
         action: isEdit ? "UPDATE" : "CREATE",
         entityType: "wine",
@@ -242,6 +285,56 @@ export function WineFormSheet({ open, onOpenChange, wine, onSaved, onRefresh }: 
                 placeholder="Ex : Château Margaux 2018"
               />
             </div>
+
+            {/* AI Generation */}
+            <div className="flex items-center justify-between rounded-md border border-dashed border-amber-500/50 bg-amber-50/50 p-3">
+              <div className="flex-1 pr-3">
+                <p className="text-sm font-medium text-amber-900">Générer avec IA</p>
+                <p className="text-xs text-amber-700">
+                  Description sommelier, nom complet et photo.
+                </p>
+              </div>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={handleGenerate}
+                disabled={generating || !name}
+                className="shrink-0 border-amber-500 text-amber-700 hover:bg-amber-100"
+              >
+                {generating ? "Génération..." : "Générer"}
+              </Button>
+            </div>
+
+            {/* AI Generated image preview */}
+            {generatedImageBase64 && (
+              <div className="space-y-2">
+                <Label>Image générée par IA</Label>
+                <div className="flex items-start gap-4">
+                  <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-md border bg-muted">
+                    <img
+                      src={`data:image/png;base64,${generatedImageBase64}`}
+                      alt="Aperçu IA"
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <p className="text-xs text-muted-foreground">
+                      L&apos;image sera uploadée à la sauvegarde.
+                    </p>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="text-destructive"
+                      onClick={() => setGeneratedImageBase64(null)}
+                    >
+                      Retirer l&apos;image
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            )}
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">

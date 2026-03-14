@@ -59,6 +59,7 @@ export function MenuFormSheet({ open, onOpenChange, menu, menuDishes, dishGroups
   const [selectedDishIds, setSelectedDishIds] = useState<Set<string>>(new Set());
   const [saving, setSaving] = useState(false);
   const [translating, setTranslating] = useState(false);
+  const [generating, setGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -106,6 +107,31 @@ export function MenuFormSheet({ open, onOpenChange, menu, menuDishes, dishGroups
       }
       return next;
     });
+  }
+
+  async function handleGenerate() {
+    if (!nameFr) {
+      setError("Saisissez un nom de menu avant de générer.");
+      return;
+    }
+    setGenerating(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/admin/generate-menu-content", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: nameFr, type }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Erreur de génération");
+
+      if (data.name) setNameFr(data.name);
+      if (data.description_fr) setDescFr(data.description_fr);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Erreur lors de la génération IA.");
+    } finally {
+      setGenerating(false);
+    }
   }
 
   async function handleTranslate() {
@@ -248,6 +274,26 @@ export function MenuFormSheet({ open, onOpenChange, menu, menuDishes, dishGroups
                 placeholder="Description du menu"
                 rows={2}
               />
+            </div>
+
+            {/* AI Generation */}
+            <div className="flex items-center justify-between rounded-md border border-dashed border-amber-500/50 bg-amber-50/50 p-3">
+              <div className="flex-1 pr-3">
+                <p className="text-sm font-medium text-amber-900">Générer avec IA</p>
+                <p className="text-xs text-amber-700">
+                  Nom accrocheur et description carte.
+                </p>
+              </div>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={handleGenerate}
+                disabled={generating || !nameFr}
+                className="shrink-0 border-amber-500 text-amber-700 hover:bg-amber-100"
+              >
+                {generating ? "Génération..." : "Générer"}
+              </Button>
             </div>
 
             {/* Translate button */}

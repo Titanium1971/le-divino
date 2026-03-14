@@ -63,6 +63,8 @@ export function EventFormSheet({ open, onOpenChange, event, onSaved }: Props) {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [translating, setTranslating] = useState(false);
+  const [generating, setGenerating] = useState(false);
+  const [generatedImageBase64, setGeneratedImageBase64] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -91,6 +93,7 @@ export function EventFormSheet({ open, onOpenChange, event, onSaved }: Props) {
       setImageFile(null);
       setImagePreview(null);
     }
+    setGeneratedImageBase64(null);
     setError(null);
   }, [event, open, supabase]);
 
@@ -107,6 +110,36 @@ export function EventFormSheet({ open, onOpenChange, event, onSaved }: Props) {
     if (!file) return;
     setImageFile(file);
     setImagePreview(URL.createObjectURL(file));
+  }
+
+  async function handleGenerate() {
+    if (!title.fr) {
+      setError("Saisissez un titre avant de générer.");
+      return;
+    }
+    setGenerating(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/admin/generate-event-content", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: title.fr, eventType: type }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Erreur de génération");
+
+      if (data.name) setTitle((prev) => ({ ...prev, fr: data.name }));
+      if (data.description_fr) setDescription((prev) => ({ ...prev, fr: data.description_fr }));
+      if (data.imageBase64) {
+        setGeneratedImageBase64(data.imageBase64);
+        setImageFile(null);
+        setImagePreview(`data:image/png;base64,${data.imageBase64}`);
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Erreur lors de la génération IA.");
+    } finally {
+      setGenerating(false);
+    }
   }
 
   async function handleTranslate() {
@@ -190,7 +223,18 @@ export function EventFormSheet({ open, onOpenChange, event, onSaved }: Props) {
         saved = await createEvent(supabase, formData);
       }
 
-      if (imageFile) {
+      if (generatedImageBase64) {
+        try {
+          const byteArray = Uint8Array.from(atob(generatedImageBase64), (c) => c.charCodeAt(0));
+          const blob = new Blob([byteArray], { type: "image/png" });
+          const file = new File([blob], `${saved.id}.png`, { type: "image/png" });
+          const path = await uploadEventImage(supabase, file, saved.id);
+          await updateEvent(supabase, saved.id, { image_path: path });
+          setGeneratedImageBase64(null);
+        } catch (imgErr) {
+          console.error("Upload generated image failed:", imgErr);
+        }
+      } else if (imageFile) {
         const path = await uploadEventImage(supabase, imageFile, saved.id);
         await updateEvent(supabase, saved.id, { image_path: path });
       }
@@ -268,6 +312,26 @@ export function EventFormSheet({ open, onOpenChange, event, onSaved }: Props) {
                   required
                 />
               </div>
+            </div>
+
+            {/* ── AI Generation ── */}
+            <div className="flex items-center justify-between rounded-md border border-dashed border-amber-500/50 bg-amber-50/50 p-3">
+              <div className="flex-1 pr-3">
+                <p className="text-sm font-medium text-amber-900">Générer avec IA</p>
+                <p className="text-xs text-amber-700">
+                  Description engageante et affiche événement.
+                </p>
+              </div>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={handleGenerate}
+                disabled={generating || !title.fr}
+                className="shrink-0 border-amber-500 text-amber-700 hover:bg-amber-100"
+              >
+                {generating ? "Génération..." : "Générer"}
+              </Button>
             </div>
 
             {/* ── Translate button ── */}
@@ -366,15 +430,20 @@ export function EventFormSheet({ open, onOpenChange, event, onSaved }: Props) {
                   >
                     {imagePreview ? "Changer la photo" : "Ajouter une photo"}
                   </Button>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    disabled
-                    className="opacity-50"
-                  >
-                    Générer affiche IA (bientôt)
-                  </Button>
+                  {generatedImageBase64 && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="text-destructive"
+                      onClick={() => {
+                        setGeneratedImageBase64(null);
+                        setImagePreview(null);
+                      }}
+                    >
+                      Retirer l&apos;image IA
+                    </Button>
+                  )}
                 </div>
               </div>
             </div>
