@@ -92,7 +92,7 @@ export function SettingsManager({
   const [error, setError] = useState<string | null>(null);
 
   // ── QR code ──
-  const qrUrl = "https://www.ledivino-agde.fr/boissons";
+  const qrUrl = "https://www.ledivino-agde.fr/fr/qr";
   const [pdfSize, setPdfSize] = useState<"7x7" | "10x10" | "a4">("10x10");
 
   const handleDownloadSVG = useCallback(() => {

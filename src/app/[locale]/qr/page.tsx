@@ -113,6 +113,8 @@ export default async function QrPage({ params }: Props) {
       wineImageUrls={wineImageUrls}
       drinkGroups={drinkGroups}
       drinkImageUrls={drinkImageUrls}
+      defaultTab="boissons"
+      tabOrder={["boissons", "carte", "menus", "vins"]}
     />
   );
 }
