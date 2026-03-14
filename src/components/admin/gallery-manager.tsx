@@ -107,6 +107,11 @@ export function GalleryManager({ initialItems }: Props) {
     }
   }
 
+  function handleAdd() {
+    setEditingItem(null);
+    setSheetOpen(true);
+  }
+
   function handleEdit(item: GalleryItem) {
     setEditingItem(item);
     setSheetOpen(true);
@@ -197,7 +202,7 @@ export function GalleryManager({ initialItems }: Props) {
             {items.length} photo{items.length !== 1 ? "s" : ""}
           </p>
         </div>
-        <div>
+        <div className="flex gap-2">
           <input
             ref={fileRef}
             type="file"
@@ -206,8 +211,11 @@ export function GalleryManager({ initialItems }: Props) {
             onChange={handleFilesSelected}
             className="hidden"
           />
-          <Button onClick={() => fileRef.current?.click()} disabled={uploading} className="w-full sm:w-auto">
-            {uploading ? "Upload en cours..." : "+ Ajouter des photos"}
+          <Button onClick={handleAdd} className="w-full sm:w-auto">
+            + Ajouter une photo
+          </Button>
+          <Button variant="outline" onClick={() => fileRef.current?.click()} disabled={uploading} className="w-full sm:w-auto">
+            {uploading ? "Upload..." : "Import rapide"}
           </Button>
         </div>
       </div>
@@ -299,7 +307,7 @@ export function GalleryManager({ initialItems }: Props) {
                 !item.published ? "opacity-50" : ""
               }`}
             >
-              {/* Thumbnail with hover overlay */}
+              {/* Thumbnail */}
               <div className="relative aspect-[4/3] bg-[#F0EAE2]">
                 {item.image_path ? (
                   <Image
@@ -307,7 +315,7 @@ export function GalleryManager({ initialItems }: Props) {
                     alt={item.caption?.fr || ""}
                     fill
                     className="object-cover"
-                    sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 33vw, 25vw"
                     unoptimized
                     onError={(e) => {
                       (e.target as HTMLImageElement).style.display = "none";
@@ -319,21 +327,6 @@ export function GalleryManager({ initialItems }: Props) {
                     Pas d&apos;image
                   </div>
                 )}
-                {/* Hover overlay */}
-                <div className="absolute inset-0 flex items-center justify-center gap-2 bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
-                  <button
-                    onClick={() => handleEdit(item)}
-                    className="rounded-md bg-white px-3 py-1.5 text-xs font-medium text-[#2D1219] shadow-sm transition-colors hover:bg-[#F5EFE8]"
-                  >
-                    Modifier
-                  </button>
-                  <button
-                    onClick={() => setDeleteTarget(item)}
-                    className="rounded-md bg-white px-3 py-1.5 text-xs font-medium text-red-600 shadow-sm transition-colors hover:bg-red-50"
-                  >
-                    Supprimer
-                  </button>
-                </div>
               </div>
 
               {/* Info */}
@@ -358,8 +351,8 @@ export function GalleryManager({ initialItems }: Props) {
                 </div>
               </div>
 
-              {/* Actions */}
-              <div className="flex items-center justify-between border-t border-[#E8DDD4] px-2 py-1">
+              {/* Actions — always visible */}
+              <div className="flex items-center justify-between border-t border-[#E8DDD4] px-2 py-1.5">
                 <div className="flex gap-1">
                   <Button
                     variant="ghost"
@@ -379,6 +372,22 @@ export function GalleryManager({ initialItems }: Props) {
                   >
                     &#9660;
                   </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-7 px-2 text-xs"
+                    onClick={() => handleEdit(item)}
+                  >
+                    Modifier
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-7 px-2 text-xs text-destructive hover:text-destructive"
+                    onClick={() => setDeleteTarget(item)}
+                  >
+                    Supprimer
+                  </Button>
                 </div>
 
                 <Switch
@@ -397,6 +406,7 @@ export function GalleryManager({ initialItems }: Props) {
         open={sheetOpen}
         onOpenChange={setSheetOpen}
         item={editingItem}
+        nextSortOrder={items.length > 0 ? Math.max(...items.map((i) => i.sort_order)) + 1 : 0}
         onSaved={async () => {
           setSheetOpen(false);
           await refresh();

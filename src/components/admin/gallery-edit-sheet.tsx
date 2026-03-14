@@ -3,7 +3,13 @@
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
-import { updateGalleryItem, uploadGalleryImage, getGalleryImageUrl } from "@/lib/supabase/gallery";
+import {
+  createGalleryItem,
+  updateGalleryItem,
+  uploadGalleryImage,
+  getGalleryImageUrl,
+} from "@/lib/supabase/gallery";
+import { logActivity } from "@/lib/supabase/activity-log";
 import type { GalleryItem, GalleryTag, I18nField, Locale } from "@/lib/types/database";
 import { GALLERY_TAGS } from "@/lib/types/database";
 import {
@@ -42,21 +48,29 @@ type Props = {
   onOpenChange: (open: boolean) => void;
   item: GalleryItem | null;
   onSaved: () => Promise<void>;
+  /** Used for create mode — next sort_order */
+  nextSortOrder?: number;
 };
 
-export function GalleryEditSheet({ open, onOpenChange, item, onSaved }: Props) {
+export function GalleryEditSheet({ open, onOpenChange, item, onSaved, nextSortOrder = 0 }: Props) {
   const supabase = createClient();
-  const changePhotoRef = useRef<HTMLInputElement>(null);
+  const fileRef = useRef<HTMLInputElement>(null);
+  const isEdit = !!item;
 
   const [caption, setCaption] = useState<I18nField>(emptyI18n());
   const [tag, setTag] = useState<GalleryTag>("restaurant");
   const [isFeatured, setIsFeatured] = useState(false);
   const [showOnScreen, setShowOnScreen] = useState(false);
+  const [published, setPublished] = useState(true);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [localPreview, setLocalPreview] = useState<string | null>(null);
+  const [remoteUrl, setRemoteUrl] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [translating, setTranslating] = useState(false);
-  const [uploadingPhoto, setUploadingPhoto] = useState(false);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [generating, setGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const displayImage = localPreview ?? remoteUrl;
 
   useEffect(() => {
     if (item) {
@@ -64,13 +78,19 @@ export function GalleryEditSheet({ open, onOpenChange, item, onSaved }: Props) {
       setTag(item.tag);
       setIsFeatured(item.is_featured ?? false);
       setShowOnScreen(item.show_on_screen ?? false);
-      setPreviewUrl(item.image_path ? getGalleryImageUrl(supabase, item.image_path) : null);
+      setPublished(item.published);
+      setImageFile(null);
+      setLocalPreview(null);
+      setRemoteUrl(item.image_path ? getGalleryImageUrl(supabase, item.image_path) : null);
     } else {
       setCaption(emptyI18n());
       setTag("restaurant");
       setIsFeatured(false);
       setShowOnScreen(false);
-      setPreviewUrl(null);
+      setPublished(true);
+      setImageFile(null);
+      setLocalPreview(null);
+      setRemoteUrl(null);
     }
     setError(null);
   }, [item, open, supabase]);
@@ -83,20 +103,32 @@ export function GalleryEditSheet({ open, onOpenChange, item, onSaved }: Props) {
     setter((prev) => ({ ...prev, [locale]: value }));
   }
 
-  async function handleChangePhoto(e: React.ChangeEvent<HTMLInputElement>) {
+  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
-    if (!file || !item) return;
+    if (!file) return;
+    setImageFile(file);
+    setLocalPreview(URL.createObjectURL(file));
+  }
 
-    setUploadingPhoto(true);
+  async function handleGenerate() {
+    setGenerating(true);
+    setError(null);
     try {
-      const path = await uploadGalleryImage(supabase, file, item.id);
-      await updateGalleryItem(supabase, item.id, { image_path: path });
-      setPreviewUrl(getGalleryImageUrl(supabase, path));
+      const res = await fetch("/api/admin/generate-gallery-content", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ hint: caption.fr || "", tag }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Erreur de génération");
+
+      if (data.caption_fr) {
+        setCaption((prev) => ({ ...prev, fr: data.caption_fr }));
+      }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Erreur lors du changement de photo.");
+      setError(err instanceof Error ? err.message : "Erreur lors de la génération IA.");
     } finally {
-      setUploadingPhoto(false);
-      if (changePhotoRef.current) changePhotoRef.current.value = "";
+      setGenerating(false);
     }
   }
 
@@ -129,18 +161,50 @@ export function GalleryEditSheet({ open, onOpenChange, item, onSaved }: Props) {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!item) return;
+
+    if (!isEdit && !imageFile) {
+      setError("Ajoutez une photo pour créer un élément de galerie.");
+      return;
+    }
 
     setSaving(true);
     setError(null);
 
     try {
-      await updateGalleryItem(supabase, item.id, {
-        caption,
-        tag,
-        is_featured: isFeatured,
-        show_on_screen: showOnScreen,
+      let savedItem: GalleryItem;
+
+      if (isEdit) {
+        savedItem = await updateGalleryItem(supabase, item.id, {
+          caption,
+          tag,
+          is_featured: isFeatured,
+          show_on_screen: showOnScreen,
+          published,
+        });
+      } else {
+        savedItem = await createGalleryItem(supabase, {
+          image_path: "",
+          caption,
+          tag,
+          sort_order: nextSortOrder,
+          is_featured: isFeatured,
+          show_on_screen: showOnScreen,
+          published,
+        });
+      }
+
+      if (imageFile) {
+        const path = await uploadGalleryImage(supabase, imageFile, savedItem.id);
+        await updateGalleryItem(supabase, savedItem.id, { image_path: path });
+      }
+
+      await logActivity(supabase, {
+        action: isEdit ? "UPDATE" : "CREATE",
+        entityType: "gallery",
+        entityId: savedItem.id,
+        entityName: caption.fr || "Photo",
       });
+
       await onSaved();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erreur lors de la sauvegarde.");
@@ -153,47 +217,64 @@ export function GalleryEditSheet({ open, onOpenChange, item, onSaved }: Props) {
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent className="w-full sm:max-w-2xl">
         <SheetHeader>
-          <SheetTitle>Modifier la photo</SheetTitle>
-          <SheetDescription>Modifiez la légende, le tag et les options de cette photo.</SheetDescription>
+          <SheetTitle>{isEdit ? "Modifier la photo" : "Ajouter une photo"}</SheetTitle>
+          <SheetDescription>
+            {isEdit
+              ? "Modifiez la légende, le tag et les options de cette photo."
+              : "Ajoutez une photo avec sa légende et ses options."}
+          </SheetDescription>
         </SheetHeader>
 
         <ScrollArea className="h-[calc(100dvh-12rem)] px-4">
-          <form id="gallery-edit-form" onSubmit={handleSubmit} className="space-y-6 pb-8 pt-4">
-            {/* Image preview + change photo */}
+          <form id="gallery-form" onSubmit={handleSubmit} className="space-y-6 pb-8 pt-4">
+            {/* Image preview + upload */}
             <div className="space-y-2">
-              {previewUrl && (
-                <div className="relative aspect-video w-full overflow-hidden rounded-lg border bg-muted">
-                  <Image
-                    src={previewUrl}
-                    alt={caption.fr || ""}
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 768px) 100vw, 600px"
-                    unoptimized
-                  />
+              <Label>Photo</Label>
+              <div className="flex items-start gap-4">
+                <div className="relative aspect-video w-40 shrink-0 overflow-hidden rounded-lg border bg-muted sm:w-52">
+                  {displayImage ? (
+                    <Image
+                      src={displayImage}
+                      alt={caption.fr || ""}
+                      fill
+                      className="object-cover"
+                      sizes="208px"
+                      unoptimized
+                    />
+                  ) : (
+                    <div className="flex h-full items-center justify-center text-xs text-muted-foreground">
+                      Aucune image
+                    </div>
+                  )}
                 </div>
-              )}
-              <input
-                ref={changePhotoRef}
-                type="file"
-                accept="image/*"
-                onChange={handleChangePhoto}
-                className="hidden"
-              />
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() => changePhotoRef.current?.click()}
-                disabled={uploadingPhoto}
-              >
-                {uploadingPhoto ? "Chargement..." : "Changer la photo"}
-              </Button>
+                <div className="flex flex-col gap-2">
+                  <input
+                    ref={fileRef}
+                    type="file"
+                    accept="image/jpeg,image/jpg,image/png,image/webp,image/gif"
+                    onChange={handleFileChange}
+                    className="hidden"
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => fileRef.current?.click()}
+                  >
+                    {displayImage ? "Changer la photo" : "Choisir une photo"}
+                  </Button>
+                  {!isEdit && !imageFile && (
+                    <p className="text-xs text-muted-foreground">
+                      Requis pour ajouter une photo.
+                    </p>
+                  )}
+                </div>
+              </div>
             </div>
 
             {/* Tag */}
             <div className="space-y-2">
-              <Label>Tag</Label>
+              <Label>Catégorie</Label>
               <Select value={tag} onValueChange={(v) => setTag(v as GalleryTag)}>
                 <SelectTrigger>
                   <SelectValue />
@@ -206,6 +287,26 @@ export function GalleryEditSheet({ open, onOpenChange, item, onSaved }: Props) {
                   ))}
                 </SelectContent>
               </Select>
+            </div>
+
+            {/* AI Generation */}
+            <div className="flex items-center justify-between rounded-md border border-dashed border-amber-500/50 bg-amber-50/50 p-3">
+              <div className="flex-1 pr-3">
+                <p className="text-sm font-medium text-amber-900">Générer avec IA</p>
+                <p className="text-xs text-amber-700">
+                  Légende élégante pour la galerie.
+                </p>
+              </div>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={handleGenerate}
+                disabled={generating}
+                className="shrink-0 border-amber-500 text-amber-700 hover:bg-amber-100"
+              >
+                {generating ? "Génération..." : "Générer"}
+              </Button>
             </div>
 
             {/* Caption i18n */}
@@ -226,25 +327,33 @@ export function GalleryEditSheet({ open, onOpenChange, item, onSaved }: Props) {
                       onChange={(e) => updateI18n(setCaption, l.key, e.target.value)}
                       placeholder={`Légende (${l.label})`}
                     />
-                    {l.key === "fr" && caption.fr.trim() !== "" && (
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        className="mt-2"
-                        onClick={handleTranslate}
-                        disabled={translating}
-                      >
-                        {translating ? "Traduction..." : "✨ Traduire FR → EN/IT/ES/DE"}
-                      </Button>
-                    )}
                   </TabsContent>
                 ))}
               </Tabs>
             </div>
 
+            {/* Translate button */}
+            <div className="flex items-center justify-between rounded-md border border-dashed p-3">
+              <p className="text-xs text-muted-foreground">
+                Traduire la légende automatiquement.
+              </p>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={handleTranslate}
+                disabled={translating || !caption.fr}
+              >
+                {translating ? "Traduction..." : "Traduire FR \u2192 EN/IT/ES/DE"}
+              </Button>
+            </div>
+
             {/* Toggles */}
             <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <Label>Publiée</Label>
+                <Switch checked={published} onCheckedChange={setPublished} />
+              </div>
               <div className="flex items-center justify-between">
                 <div>
                   <Label>Photo vedette</Label>
@@ -268,8 +377,8 @@ export function GalleryEditSheet({ open, onOpenChange, item, onSaved }: Props) {
 
         {/* Submit */}
         <div className="border-t px-4 pt-4">
-          <Button type="submit" form="gallery-edit-form" disabled={saving} className="w-full">
-            {saving ? "Enregistrement..." : "Sauvegarder"}
+          <Button type="submit" form="gallery-form" disabled={saving} className="w-full">
+            {saving ? "Enregistrement..." : isEdit ? "Sauvegarder" : "Ajouter la photo"}
           </Button>
         </div>
       </SheetContent>
