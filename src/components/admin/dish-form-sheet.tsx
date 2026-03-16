@@ -122,6 +122,7 @@ export function DishFormSheet({ open, onOpenChange, dish, onSaved, onRefresh }: 
     const file = e.target.files?.[0];
     if (!file) return;
     setImageFile(file);
+    setGeneratedImageBase64(null);
     setLocalPreview(URL.createObjectURL(file));
   }
 
