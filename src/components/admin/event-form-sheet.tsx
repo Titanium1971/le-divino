@@ -109,6 +109,7 @@ export function EventFormSheet({ open, onOpenChange, event, onSaved }: Props) {
     const file = e.target.files?.[0];
     if (!file) return;
     setImageFile(file);
+    setGeneratedImageBase64(null);
     setImagePreview(URL.createObjectURL(file));
   }
 
