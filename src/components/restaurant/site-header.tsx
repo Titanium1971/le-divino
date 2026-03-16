@@ -42,22 +42,22 @@ export function SiteHeader() {
           : "bg-transparent"
       }`}
     >
-      <div className="mx-auto flex h-24 max-w-7xl items-center justify-between px-6">
+      <div className="mx-auto flex h-24 max-w-[90rem] items-center justify-between px-6 lg:px-10">
         {/* Logo */}
         <Link
           href="/"
-          className="text-xl font-normal tracking-[0.25em] text-brand-cream uppercase"
+          className="text-xl font-normal tracking-[0.25em] text-brand-cream uppercase shrink-0"
         >
           LE DIVINO
         </Link>
 
         {/* Desktop nav */}
-        <nav className="hidden items-center gap-10 md:flex">
+        <nav className="hidden items-center gap-5 lg:gap-7 xl:gap-9 md:flex">
           {NAV_ITEMS.map((key) => (
             <Link
               key={key}
               href={getHref(key)}
-              className={`text-[13px] font-normal tracking-[0.2em] uppercase transition-colors duration-300 hover:text-brand-gold ${
+              className={`text-[12px] lg:text-[13px] font-normal tracking-[0.15em] lg:tracking-[0.2em] uppercase whitespace-nowrap transition-colors duration-300 hover:text-brand-gold ${
                 isActive(key) ? "text-brand-gold" : "text-brand-cream"
               }`}
             >
