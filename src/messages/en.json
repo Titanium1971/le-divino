@@ -100,9 +100,15 @@
     "soft": "Soft Drinks",
     "cocktail": "Cocktails",
     "biere": "Beers",
+    "biere_pression": "Draft Beers",
+    "biere_bouteille": "Bottled Beers",
     "spiritueux": "Spirits",
     "hot": "Hot Drinks",
-    "autre": "Others"
+    "autre": "Others",
+    "galopin": "Galopin",
+    "size_25cl": "25 cl",
+    "size_50cl": "50 cl",
+    "size_1l": "1 L"
   },
   "reservation": {
     "title": "Book a table",

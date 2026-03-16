@@ -10,6 +10,8 @@ const CATEGORY_I18N_KEY: Record<DrinkCategory, string> = {
   soft: "soft",
   cocktail: "cocktail",
   biere: "biere",
+  biere_pression: "biere_pression",
+  biere_bouteille: "biere_bouteille",
   spiritueux: "spiritueux",
   hot: "hot",
   autre: "autre",
@@ -90,10 +92,39 @@ export function DrinksClient({ groups, locale, imageUrls }: Props) {
                         )}
                       </div>
                       <div className="shrink-0 text-right">
-                        {drink.price != null && Number(drink.price) > 0 && (
-                          <p className="text-sm font-medium text-brand-bordeaux">
-                            {Number(drink.price).toFixed(2)} &euro;
-                          </p>
+                        {drink.category === "biere_pression" ? (
+                          <div className="flex flex-wrap gap-x-3 gap-y-0.5 justify-end">
+                            {drink.price_galopin != null && Number(drink.price_galopin) > 0 && (
+                              <span className="text-xs text-brand-dark/70">
+                                <span className="text-brand-bordeaux font-medium">{Number(drink.price_galopin).toFixed(2)}&nbsp;&euro;</span>{" "}
+                                <span className="text-[10px]">{t("galopin")}</span>
+                              </span>
+                            )}
+                            {drink.price_25cl != null && Number(drink.price_25cl) > 0 && (
+                              <span className="text-xs text-brand-dark/70">
+                                <span className="text-brand-bordeaux font-medium">{Number(drink.price_25cl).toFixed(2)}&nbsp;&euro;</span>{" "}
+                                <span className="text-[10px]">{t("size_25cl")}</span>
+                              </span>
+                            )}
+                            {drink.price_50cl != null && Number(drink.price_50cl) > 0 && (
+                              <span className="text-xs text-brand-dark/70">
+                                <span className="text-brand-bordeaux font-medium">{Number(drink.price_50cl).toFixed(2)}&nbsp;&euro;</span>{" "}
+                                <span className="text-[10px]">{t("size_50cl")}</span>
+                              </span>
+                            )}
+                            {drink.price_1l != null && Number(drink.price_1l) > 0 && (
+                              <span className="text-xs text-brand-dark/70">
+                                <span className="text-brand-bordeaux font-medium">{Number(drink.price_1l).toFixed(2)}&nbsp;&euro;</span>{" "}
+                                <span className="text-[10px]">{t("size_1l")}</span>
+                              </span>
+                            )}
+                          </div>
+                        ) : (
+                          drink.price != null && Number(drink.price) > 0 && (
+                            <p className="text-sm font-medium text-brand-bordeaux">
+                              {Number(drink.price).toFixed(2)} &euro;
+                            </p>
+                          )
                         )}
                       </div>
                     </div>

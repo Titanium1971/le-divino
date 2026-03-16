@@ -100,9 +100,15 @@
     "soft": "Refrescos",
     "cocktail": "Cócteles",
     "biere": "Cervezas",
+    "biere_pression": "Cervezas de Barril",
+    "biere_bouteille": "Cervezas en Botella",
     "spiritueux": "Licores",
     "hot": "Bebidas Calientes",
-    "autre": "Otros"
+    "autre": "Otros",
+    "galopin": "Galopin",
+    "size_25cl": "25 cl",
+    "size_50cl": "50 cl",
+    "size_1l": "1 L"
   },
   "reservation": {
     "title": "Reservar una mesa",

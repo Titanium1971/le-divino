@@ -100,9 +100,15 @@
     "soft": "Alkoholfreie Getränke",
     "cocktail": "Cocktails",
     "biere": "Biere",
+    "biere_pression": "Fassbiere",
+    "biere_bouteille": "Flaschenbiere",
     "spiritueux": "Spirituosen",
     "hot": "Heißgetränke",
-    "autre": "Sonstiges"
+    "autre": "Sonstiges",
+    "galopin": "Galopin",
+    "size_25cl": "25 cl",
+    "size_50cl": "50 cl",
+    "size_1l": "1 L"
   },
   "reservation": {
     "title": "Tisch reservieren",

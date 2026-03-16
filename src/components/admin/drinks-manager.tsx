@@ -299,11 +299,30 @@ function DrinkRow({ drink, imageTs, onEdit, onDelete, onToggle, onClickImage, ge
       </div>
 
       {/* Price */}
-      <p className="shrink-0 text-sm font-medium">
-        {drink.price != null && Number(drink.price) > 0
-          ? `${Number(drink.price).toFixed(2)} €`
-          : "—"}
-      </p>
+      <div className="shrink-0 text-sm font-medium text-right">
+        {drink.category === "biere_pression" ? (
+          <div className="flex flex-wrap gap-x-2 gap-y-0.5 justify-end text-xs">
+            {drink.price_galopin != null && Number(drink.price_galopin) > 0 && (
+              <span>{Number(drink.price_galopin).toFixed(2)}€ <span className="text-muted-foreground">Gal.</span></span>
+            )}
+            {drink.price_25cl != null && Number(drink.price_25cl) > 0 && (
+              <span>{Number(drink.price_25cl).toFixed(2)}€ <span className="text-muted-foreground">25cl</span></span>
+            )}
+            {drink.price_50cl != null && Number(drink.price_50cl) > 0 && (
+              <span>{Number(drink.price_50cl).toFixed(2)}€ <span className="text-muted-foreground">50cl</span></span>
+            )}
+            {drink.price_1l != null && Number(drink.price_1l) > 0 && (
+              <span>{Number(drink.price_1l).toFixed(2)}€ <span className="text-muted-foreground">1L</span></span>
+            )}
+          </div>
+        ) : (
+          <span>
+            {drink.price != null && Number(drink.price) > 0
+              ? `${Number(drink.price).toFixed(2)} €`
+              : "—"}
+          </span>
+        )}
+      </div>
 
       {/* Available toggle */}
       <Switch checked={drink.available} onCheckedChange={onToggle} aria-label="Disponible" />

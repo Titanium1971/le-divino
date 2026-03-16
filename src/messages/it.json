@@ -100,9 +100,15 @@
     "soft": "Analcolici",
     "cocktail": "Cocktail",
     "biere": "Birre",
+    "biere_pression": "Birre alla Spina",
+    "biere_bouteille": "Birre in Bottiglia",
     "spiritueux": "Distillati",
     "hot": "Bevande Calde",
-    "autre": "Altro"
+    "autre": "Altro",
+    "galopin": "Galopin",
+    "size_25cl": "25 cl",
+    "size_50cl": "50 cl",
+    "size_1l": "1 L"
   },
   "reservation": {
     "title": "Prenota un tavolo",

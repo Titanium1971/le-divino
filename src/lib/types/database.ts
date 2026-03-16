@@ -252,7 +252,7 @@ export const WINE_COLORS: { value: WineColor; label: string }[] = [
 
 // ── Drinks ──
 
-export type DrinkCategory = "soft" | "cocktail" | "biere" | "spiritueux" | "hot" | "autre";
+export type DrinkCategory = "soft" | "cocktail" | "biere" | "biere_pression" | "biere_bouteille" | "spiritueux" | "hot" | "autre";
 
 export type Drink = {
   id: string;
@@ -265,6 +265,10 @@ export type Drink = {
   category: DrinkCategory;
   image_path: string | null;
   price: number | null;
+  price_galopin: number | null;
+  price_25cl: number | null;
+  price_50cl: number | null;
+  price_1l: number | null;
   available: boolean;
   sort_order: number;
   created_at: string;
@@ -280,13 +284,18 @@ export type DrinkFormData = {
   category: DrinkCategory;
   image_path?: string | null;
   price?: number | null;
+  price_galopin?: number | null;
+  price_25cl?: number | null;
+  price_50cl?: number | null;
+  price_1l?: number | null;
   available?: boolean;
 };
 
 export const DRINK_CATEGORIES: { value: DrinkCategory; label: string }[] = [
   { value: "soft", label: "Softs" },
   { value: "cocktail", label: "Cocktails" },
-  { value: "biere", label: "Bières" },
+  { value: "biere_pression", label: "Bières Pression" },
+  { value: "biere_bouteille", label: "Bières Bouteille" },
   { value: "spiritueux", label: "Spiritueux" },
   { value: "hot", label: "Boissons Chaudes" },
   { value: "autre", label: "Autres" },

@@ -66,6 +66,8 @@ const DRINK_I18N: Record<DrinkCategory, string> = {
   soft: "soft",
   cocktail: "cocktail",
   biere: "biere",
+  biere_pression: "biere_pression",
+  biere_bouteille: "biere_bouteille",
   spiritueux: "spiritueux",
   hot: "hot",
   autre: "autre",
@@ -452,10 +454,35 @@ export function QrClient({
                         <h4 className="text-[15px] font-normal text-brand-dark leading-tight">
                           {drink.name}
                         </h4>
-                        {drink.price != null && Number(drink.price) > 0 && (
-                          <span className="shrink-0 text-sm font-medium text-brand-bordeaux">
-                            {Number(drink.price).toFixed(2)}&nbsp;&euro;
-                          </span>
+                        {drink.category === "biere_pression" ? (
+                          <div className="flex flex-wrap gap-x-2 gap-y-0.5 justify-end">
+                            {drink.price_galopin != null && Number(drink.price_galopin) > 0 && (
+                              <span className="text-[11px] text-brand-bordeaux font-medium">
+                                {Number(drink.price_galopin).toFixed(2)}&euro; <span className="text-[9px] text-brand-dark/60">Gal.</span>
+                              </span>
+                            )}
+                            {drink.price_25cl != null && Number(drink.price_25cl) > 0 && (
+                              <span className="text-[11px] text-brand-bordeaux font-medium">
+                                {Number(drink.price_25cl).toFixed(2)}&euro; <span className="text-[9px] text-brand-dark/60">25cl</span>
+                              </span>
+                            )}
+                            {drink.price_50cl != null && Number(drink.price_50cl) > 0 && (
+                              <span className="text-[11px] text-brand-bordeaux font-medium">
+                                {Number(drink.price_50cl).toFixed(2)}&euro; <span className="text-[9px] text-brand-dark/60">50cl</span>
+                              </span>
+                            )}
+                            {drink.price_1l != null && Number(drink.price_1l) > 0 && (
+                              <span className="text-[11px] text-brand-bordeaux font-medium">
+                                {Number(drink.price_1l).toFixed(2)}&euro; <span className="text-[9px] text-brand-dark/60">1L</span>
+                              </span>
+                            )}
+                          </div>
+                        ) : (
+                          drink.price != null && Number(drink.price) > 0 && (
+                            <span className="shrink-0 text-sm font-medium text-brand-bordeaux">
+                              {Number(drink.price).toFixed(2)}&nbsp;&euro;
+                            </span>
+                          )
                         )}
                       </div>
                       {desc && (

@@ -50,6 +50,10 @@ export function DrinkFormSheet({ open, onOpenChange, drink, onSaved, onRefresh }
   const [descDe, setDescDe] = useState("");
   const [category, setCategory] = useState<DrinkCategory>("soft");
   const [price, setPrice] = useState("");
+  const [priceGalopin, setPriceGalopin] = useState("");
+  const [price25cl, setPrice25cl] = useState("");
+  const [price50cl, setPrice50cl] = useState("");
+  const [price1l, setPrice1l] = useState("");
   const [available, setAvailable] = useState(true);
   const [imagePath, setImagePath] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
@@ -70,6 +74,10 @@ export function DrinkFormSheet({ open, onOpenChange, drink, onSaved, onRefresh }
       setDescDe(drink.description_de ?? "");
       setCategory(drink.category);
       setPrice(drink.price != null ? String(Number(drink.price)) : "");
+      setPriceGalopin(drink.price_galopin != null ? String(Number(drink.price_galopin)) : "");
+      setPrice25cl(drink.price_25cl != null ? String(Number(drink.price_25cl)) : "");
+      setPrice50cl(drink.price_50cl != null ? String(Number(drink.price_50cl)) : "");
+      setPrice1l(drink.price_1l != null ? String(Number(drink.price_1l)) : "");
       setAvailable(drink.available);
       setImagePath(drink.image_path);
     } else {
@@ -81,6 +89,10 @@ export function DrinkFormSheet({ open, onOpenChange, drink, onSaved, onRefresh }
       setDescDe("");
       setCategory("soft");
       setPrice("");
+      setPriceGalopin("");
+      setPrice25cl("");
+      setPrice50cl("");
+      setPrice1l("");
       setAvailable(true);
       setImagePath(null);
     }
@@ -216,6 +228,10 @@ export function DrinkFormSheet({ open, onOpenChange, drink, onSaved, onRefresh }
         description_de: descDe.trim() || null,
         category,
         price: price ? parseFloat(price) : null,
+        price_galopin: priceGalopin ? parseFloat(priceGalopin) : null,
+        price_25cl: price25cl ? parseFloat(price25cl) : null,
+        price_50cl: price50cl ? parseFloat(price50cl) : null,
+        price_1l: price1l ? parseFloat(price1l) : null,
         available,
       };
 
@@ -362,6 +378,63 @@ export function DrinkFormSheet({ open, onOpenChange, drink, onSaved, onRefresh }
                 />
               </div>
             </div>
+
+            {/* Prix multiples pour bières pression */}
+            {category === "biere_pression" && (
+              <div className="space-y-2">
+                <Label className="text-amber-700">Prix par format (bière pression)</Label>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-1">
+                    <Label htmlFor="price-galopin" className="text-xs text-muted-foreground">Galopin</Label>
+                    <Input
+                      id="price-galopin"
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      value={priceGalopin}
+                      onChange={(e) => setPriceGalopin(e.target.value)}
+                      placeholder="0.00"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <Label htmlFor="price-25cl" className="text-xs text-muted-foreground">25 cl</Label>
+                    <Input
+                      id="price-25cl"
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      value={price25cl}
+                      onChange={(e) => setPrice25cl(e.target.value)}
+                      placeholder="0.00"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <Label htmlFor="price-50cl" className="text-xs text-muted-foreground">50 cl</Label>
+                    <Input
+                      id="price-50cl"
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      value={price50cl}
+                      onChange={(e) => setPrice50cl(e.target.value)}
+                      placeholder="0.00"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <Label htmlFor="price-1l" className="text-xs text-muted-foreground">1 L</Label>
+                    <Input
+                      id="price-1l"
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      value={price1l}
+                      onChange={(e) => setPrice1l(e.target.value)}
+                      placeholder="0.00"
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
 
             <div className="flex items-center justify-between">
               <Label htmlFor="drink-available">Disponible</Label>
