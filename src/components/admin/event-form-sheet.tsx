@@ -64,6 +64,7 @@ export function EventFormSheet({ open, onOpenChange, event, onSaved }: Props) {
   const [saving, setSaving] = useState(false);
   const [translating, setTranslating] = useState(false);
   const [generating, setGenerating] = useState(false);
+  const [regeneratingImage, setRegeneratingImage] = useState(false);
   const [generatedImageBase64, setGeneratedImageBase64] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -182,6 +183,34 @@ export function EventFormSheet({ open, onOpenChange, event, onSaved }: Props) {
       setError(err instanceof Error ? err.message : "Erreur lors de la traduction automatique.");
     } finally {
       setTranslating(false);
+    }
+  }
+
+  async function handleRegenerateImage() {
+    if (!title.fr) {
+      setError("Saisissez un titre avant de régénérer l'image.");
+      return;
+    }
+    setRegeneratingImage(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/admin/generate-event-content", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: title.fr, eventType: type }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Erreur de génération");
+
+      if (data.imageBase64) {
+        setGeneratedImageBase64(data.imageBase64);
+        setImageFile(null);
+        setImagePreview(`data:image/png;base64,${data.imageBase64}`);
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Erreur lors de la régénération de l'image.");
+    } finally {
+      setRegeneratingImage(false);
     }
   }
 
@@ -430,6 +459,16 @@ export function EventFormSheet({ open, onOpenChange, event, onSaved }: Props) {
                     onClick={() => fileRef.current?.click()}
                   >
                     {imagePreview ? "Changer la photo" : "Ajouter une photo"}
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={handleRegenerateImage}
+                    disabled={regeneratingImage || !title.fr}
+                    className="border-amber-500 text-amber-700 hover:bg-amber-100"
+                  >
+                    {regeneratingImage ? "Génération IA..." : "Générer avec IA"}
                   </Button>
                   {generatedImageBase64 && (
                     <Button

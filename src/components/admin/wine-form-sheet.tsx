@@ -63,6 +63,7 @@ export function WineFormSheet({ open, onOpenChange, wine, onSaved, onRefresh }: 
   const [translating, setTranslating] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [generating, setGenerating] = useState(false);
+  const [regeneratingImage, setRegeneratingImage] = useState(false);
   const [generatedImageBase64, setGeneratedImageBase64] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -157,6 +158,32 @@ export function WineFormSheet({ open, onOpenChange, wine, onSaved, onRefresh }: 
       setError(err instanceof Error ? err.message : "Erreur de traduction.");
     } finally {
       setTranslating(false);
+    }
+  }
+
+  async function handleRegenerateImage() {
+    if (!name) {
+      setError("Saisissez un nom de vin avant de régénérer l'image.");
+      return;
+    }
+    setRegeneratingImage(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/admin/generate-wine-content", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, color }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Erreur de génération");
+
+      if (data.imageBase64) {
+        setGeneratedImageBase64(data.imageBase64);
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Erreur lors de la régénération de l'image.");
+    } finally {
+      setRegeneratingImage(false);
     }
   }
 
@@ -480,6 +507,16 @@ export function WineFormSheet({ open, onOpenChange, wine, onSaved, onRefresh }: 
                       </Button>
                       <Button
                         type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={handleRegenerateImage}
+                        disabled={regeneratingImage || !name}
+                        className="border-amber-500 text-amber-700 hover:bg-amber-100"
+                      >
+                        {regeneratingImage ? "Génération IA..." : "Générer avec IA"}
+                      </Button>
+                      <Button
+                        type="button"
                         variant="ghost"
                         size="sm"
                         className="text-destructive"
@@ -490,15 +527,27 @@ export function WineFormSheet({ open, onOpenChange, wine, onSaved, onRefresh }: 
                     </div>
                   </div>
                 ) : (
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => fileInputRef.current?.click()}
-                    disabled={uploading}
-                  >
-                    {uploading ? "Upload..." : "Ajouter une photo"}
-                  </Button>
+                  <div className="flex flex-col gap-2">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={uploading}
+                    >
+                      {uploading ? "Upload..." : "Ajouter une photo"}
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={handleRegenerateImage}
+                      disabled={regeneratingImage || !name}
+                      className="border-amber-500 text-amber-700 hover:bg-amber-100"
+                    >
+                      {regeneratingImage ? "Génération IA..." : "Générer avec IA"}
+                    </Button>
+                  </div>
                 )}
                 <input
                   ref={fileInputRef}
