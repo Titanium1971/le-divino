@@ -42,16 +42,26 @@ export function NextEventBanner({ event, imageUrl, locale }: Props) {
       <div className="mx-auto flex max-w-6xl flex-col items-center gap-8 px-6 py-16 md:flex-row md:gap-12 md:py-20">
         {/* Image */}
         {imageUrl && (
-          <div className="relative aspect-[4/3] w-full max-w-sm shrink-0 overflow-hidden rounded-sm md:w-80">
-            <Image
-              src={imageUrl}
-              alt={title}
-              fill
-              className="object-cover"
-              sizes="(max-width: 768px) 100vw, 320px"
-              unoptimized
-            />
-            <div className="absolute inset-0 bg-brand-dark/10" />
+          <div className="relative aspect-[4/3] w-full max-w-sm shrink-0 md:w-80">
+            {/* Shadow */}
+            <div className="absolute -inset-1 rounded-md bg-brand-gold/10 blur-xl" />
+            <div className="relative overflow-hidden rounded-md shadow-[0_8px_32px_rgba(0,0,0,0.5),0_2px_8px_rgba(0,0,0,0.3)]">
+              <div className="relative aspect-[4/3]">
+                <Image
+                  src={imageUrl}
+                  alt={title}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, 320px"
+                  unoptimized
+                />
+              </div>
+              {/* Glossy overlay */}
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white/15 via-transparent to-brand-dark/20" />
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-transparent" />
+              {/* Subtle border glow */}
+              <div className="pointer-events-none absolute inset-0 rounded-md ring-1 ring-inset ring-white/10" />
+            </div>
           </div>
         )}
 
