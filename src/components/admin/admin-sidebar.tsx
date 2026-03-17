@@ -13,6 +13,7 @@ const navItems = [
   { href: "/admin/boissons", label: "Boissons", icon: "◔" },
   { href: "/admin/reservations", label: "Réservations", icon: "◉" },
   { href: "/admin/events", label: "Événements", icon: "◎" },
+  { href: "/admin/posters", label: "Affiches IA", icon: "⬡" },
   { href: "/admin/gallery", label: "Galerie", icon: "○" },
   { href: "/admin/ecran", label: "Écran 55\"", icon: "▢" },
   { href: "/admin/settings", label: "Paramètres", icon: "⚙" },

@@ -27,6 +27,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { PosterGeneratorSheet } from "./poster-generator-sheet";
 
 const LOCALES: { key: Locale; label: string }[] = [
   { key: "fr", label: "FR" },
@@ -65,6 +66,7 @@ export function EventFormSheet({ open, onOpenChange, event, onSaved }: Props) {
   const [translating, setTranslating] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [regeneratingImage, setRegeneratingImage] = useState(false);
+  const [posterSheetOpen, setPosterSheetOpen] = useState(false);
   const [generatedImageBase64, setGeneratedImageBase64] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -470,6 +472,15 @@ export function EventFormSheet({ open, onOpenChange, event, onSaved }: Props) {
                   >
                     {regeneratingImage ? "Génération IA..." : "Générer avec IA"}
                   </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setPosterSheetOpen(true)}
+                    className="border-[#C5A55A]/50 text-[#C5A55A] hover:bg-[#C5A55A]/10"
+                  >
+                    ⬡ Créer une affiche
+                  </Button>
                   {generatedImageBase64 && (
                     <Button
                       type="button"
@@ -487,6 +498,13 @@ export function EventFormSheet({ open, onOpenChange, event, onSaved }: Props) {
                 </div>
               </div>
             </div>
+
+            {/* Poster Generator Sheet */}
+            <PosterGeneratorSheet
+              open={posterSheetOpen}
+              onOpenChange={setPosterSheetOpen}
+              event={event}
+            />
 
             {/* ── Toggles ── */}
             <div className="space-y-4">
