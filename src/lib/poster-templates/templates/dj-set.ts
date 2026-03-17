@@ -14,6 +14,6 @@ export const djSet: PosterTemplate = {
     { key: "time", label: "Heure", type: "time", required: false, defaultFromEvent: "event_time" },
   ],
   colorScheme: { primary: "#0F172A", accent: "#38BDF8", background: "linear-gradient(135deg, #0F172A, #1E1B4B)", text: "#FAF6F0" },
-  aiPromptTemplate: `Affiche de soirée DJ "{{eventName}}" au restaurant Le Divino à Agde. {{djName ? 'DJ : ' + djName + '.' : ''}} Platines vinyles, lumières LED néon bleu et cyan, ambiance lounge nocturne, silhouettes dansantes, bar élégant en arrière-plan. Style nightlife premium.`,
+  aiPromptTemplate: `Premium DJ party poster for "{{eventName}}" at restaurant Le Divino in Agde, France. {{djName ? 'Featuring DJ: ' + djName + '.' : ''}} Vinyl turntables, blue and cyan neon LED lights, nocturnal lounge atmosphere, dancing silhouettes, elegant bar in background. Premium nightlife style. The poster MUST display the following text with elegant, highly legible typography: the title "{{eventName}}" prominently at the top, {{djName ? '"' + djName + '" as DJ name,' : ''}} {{date ? 'the date "{{date}}",' : ''}} {{time ? 'the time "{{time}}",' : ''}} and "Le Divino" at the bottom. Use strong contrast for all text.`,
   overlayStyle: "full-overlay",
 };

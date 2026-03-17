@@ -504,6 +504,11 @@ export function EventFormSheet({ open, onOpenChange, event, onSaved }: Props) {
               open={posterSheetOpen}
               onOpenChange={setPosterSheetOpen}
               event={event}
+              onPosterSelected={(base64) => {
+                setGeneratedImageBase64(base64);
+                setImageFile(null);
+                setImagePreview(`data:image/png;base64,${base64}`);
+              }}
             />
 
             {/* ── Toggles ── */}

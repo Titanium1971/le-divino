@@ -15,6 +15,6 @@ export const wineTasting: PosterTemplate = {
     { key: "price", label: "Tarif", type: "price", required: false, placeholder: "Ex : 35€/personne" },
   ],
   colorScheme: { primary: "#6B1A1A", accent: "#C5A55A", background: "linear-gradient(135deg, #1A0A0E, #6B1A1A)", text: "#FAF6F0" },
-  aiPromptTemplate: `Affiche élégante pour une dégustation de vins "{{eventName}}" au restaurant Le Divino à Agde. {{wineRegion ? 'Vins de ' + wineRegion + '.' : ''}} Bouteilles de vin, verres en cristal, vignoble méditerranéen, lumière ambrée, tonneau en bois. Tons bordeaux et or, ambiance raffinée et gastronomique.`,
+  aiPromptTemplate: `Elegant wine tasting poster for "{{eventName}}" at restaurant Le Divino in Agde, France. {{wineRegion ? 'Wines from ' + wineRegion + '.' : ''}} Wine bottles, crystal glasses, Mediterranean vineyard, amber lighting, wooden barrel. Burgundy and gold tones, refined gastronomic atmosphere. The poster MUST display the following text with elegant, highly legible typography: the title "{{eventName}}" prominently at the top, {{wineRegion ? '"' + wineRegion + '" as wine region,' : ''}} {{date ? 'the date "{{date}}",' : ''}} {{time ? 'the time "{{time}}",' : ''}} {{price ? 'the price "{{price}}",' : ''}} and "Le Divino" at the bottom. Use strong contrast for all text.`,
   overlayStyle: "split-left",
 };

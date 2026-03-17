@@ -14,6 +14,6 @@ export const karaokeNight: PosterTemplate = {
     { key: "tagline", label: "Accroche", type: "text", required: false, placeholder: "Ex : Venez chanter avec nous !" },
   ],
   colorScheme: { primary: "#6B21A8", accent: "#E879F9", background: "linear-gradient(135deg, #1A0A0E, #6B21A8)", text: "#FAF6F0" },
-  aiPromptTemplate: `Affiche festive pour une soirée karaoké "{{eventName}}" au restaurant Le Divino à Agde. Micro vintage, lumières néon violettes et roses, ambiance fun et conviviale, scène de restaurant élégant, notes de musique, reflets sur verres de vin. Style moderne et dynamique.`,
+  aiPromptTemplate: `Festive karaoke night poster for "{{eventName}}" at restaurant Le Divino in Agde, France. Vintage microphone, purple and pink neon lights, fun and friendly atmosphere, elegant restaurant stage, music notes, wine glass reflections. Modern dynamic style. The poster MUST display the following text with elegant, highly legible typography: the title "{{eventName}}" prominently at the top, {{date ? 'the date "{{date}}",' : ''}} {{time ? 'the time "{{time}}",' : ''}} {{tagline ? '"{{tagline}}" as tagline,' : ''}} and "Le Divino" at the bottom. Use strong contrast for all text.`,
   overlayStyle: "vignette",
 };

@@ -15,6 +15,6 @@ export const concertLive: PosterTemplate = {
     { key: "tagline", label: "Accroche", type: "text", required: false, placeholder: "Ex : Une soirée inoubliable" },
   ],
   colorScheme: { primary: "#1E3A5F", accent: "#C5A55A", background: "linear-gradient(135deg, #1A0A0E, #1E3A5F)", text: "#FAF6F0" },
-  aiPromptTemplate: `Affiche professionnelle pour un concert live "{{eventName}}" au restaurant Le Divino à Agde. {{artistName ? 'Artiste : ' + artistName + '.' : ''}} Ambiance chaleureuse méditerranéenne, scène avec lumières dorées et bordeaux, guitare ou instruments, terrasse en arrière-plan, typographie élégante, tons bleu nuit et or. Style affiche de concert haut de gamme.`,
+  aiPromptTemplate: `Professional concert poster for "{{eventName}}" at restaurant Le Divino in Agde, France. {{artistName ? 'Featuring artist: ' + artistName + '.' : ''}} Warm Mediterranean atmosphere, stage with golden and burgundy lights, guitar or instruments, terrace in background. Navy blue and gold tones. Premium concert poster style. The poster MUST display the following text with elegant, highly legible typography: the title "{{eventName}}" prominently at the top, {{artistName ? '"' + artistName + '" as the artist name,' : ''}} {{date ? 'the date "{{date}}",' : ''}} {{time ? 'the time "{{time}}",' : ''}} {{tagline ? '"{{tagline}}" as tagline,' : ''}} and "Le Divino" at the bottom. Use strong contrast for all text.`,
   overlayStyle: "gradient-bottom",
 };

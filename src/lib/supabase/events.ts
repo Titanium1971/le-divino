@@ -12,7 +12,11 @@ export async function getEvents(supabase: SupabaseClient): Promise<Event[]> {
 }
 
 export async function getUpcomingEvents(supabase: SupabaseClient): Promise<Event[]> {
-  const today = new Date().toISOString().split("T")[0];
+  const now = new Date();
+  const today = now.toISOString().split("T")[0];
+  const currentTime = now.toTimeString().slice(0, 5); // "HH:MM"
+
+  // Fetch today + future events
   const { data, error } = await supabase
     .from("events")
     .select("*")
@@ -22,7 +26,17 @@ export async function getUpcomingEvents(supabase: SupabaseClient): Promise<Event
     .order("event_time");
 
   if (error) throw error;
-  return (data ?? []) as Event[];
+
+  // Filter out today's events whose end_time has passed
+  const filtered = (data ?? []).filter((event) => {
+    if (event.event_date !== today) return true;
+    // If the event is today, check end_time (or event_time as fallback)
+    const endTime = event.end_time || event.event_time;
+    if (!endTime) return true;
+    return endTime > currentTime;
+  });
+
+  return filtered as Event[];
 }
 
 export async function createEvent(

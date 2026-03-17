@@ -1,37 +1,71 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GEMINI_API_KEY || "");
+const API_KEY = process.env.GOOGLE_GEMINI_API_KEY || "";
+const genAI = new GoogleGenerativeAI(API_KEY);
 
 /**
- * Generate a poster image using Gemini's Imagen 3 model.
+ * Generate a poster image using Gemini 2.5 Flash Image via REST API.
  * Returns base64-encoded image data.
  */
 export async function generatePosterImage(
   prompt: string,
   aspectRatio: "9:16" | "16:9" = "9:16",
 ): Promise<string> {
-  const model = genAI.getGenerativeModel({
-    model: "imagen-3.0-generate-002",
+  const model = "gemini-2.5-flash-image";
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${API_KEY}`;
+
+  // Try with IMAGE only modality (more reliable for poster generation)
+  const response = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      contents: [{ parts: [{ text: prompt }] }],
+      generationConfig: {
+        responseModalities: ["IMAGE"],
+        imageConfig: {
+          aspectRatio,
+        },
+      },
+    }),
   });
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const response = await (model as any).generateImages({
-    prompt,
-    config: {
-      numberOfImages: 1,
-      aspectRatio,
-    },
-  });
-
-  const image = response.generatedImages?.[0];
-  if (!image?.image?.imageBytes) {
-    throw new Error("Aucune image générée par Imagen 3");
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({}));
+    throw new Error(
+      error?.error?.message || "Erreur API Gemini: " + response.status,
+    );
   }
 
-  // imageBytes is already base64 from the SDK
-  return typeof image.image.imageBytes === "string"
-    ? image.image.imageBytes
-    : Buffer.from(image.image.imageBytes).toString("base64");
+  const data = await response.json();
+  console.log("Gemini response:", JSON.stringify(data).slice(0, 500));
+
+  if (data?.promptFeedback?.blockReason) {
+    throw new Error("Prompt bloqué: " + data.promptFeedback.blockReason);
+  }
+
+  const candidate = data?.candidates?.[0];
+  if (!candidate) {
+    throw new Error("Aucun candidat — " + JSON.stringify(data).slice(0, 300));
+  }
+
+  if (candidate.finishReason && !["STOP", "IMAGE"].includes(candidate.finishReason)) {
+    throw new Error("Génération arrêtée: " + candidate.finishReason);
+  }
+
+  const parts = candidate.content?.parts;
+  if (!parts || parts.length === 0) {
+    throw new Error("Réponse vide — " + JSON.stringify(candidate).slice(0, 300));
+  }
+
+  const imagePart = parts.find(
+    (p: { inlineData?: { mimeType: string; data: string } }) => p.inlineData,
+  );
+  if (!imagePart?.inlineData?.data) {
+    const texts = parts.map((p: { text?: string }) => p.text || "").join(" ");
+    throw new Error("Pas d\'image. Texte: " + texts.slice(0, 200));
+  }
+
+  return imagePart.inlineData.data;
 }
 
 /**
@@ -42,20 +76,18 @@ export async function suggestPosterPrompt(
   variables: Record<string, string>,
   eventType?: string,
 ): Promise<string> {
-  const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+  const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
   // Replace template variables
   let assembled = templatePrompt;
   for (const [key, value] of Object.entries(variables)) {
     assembled = assembled.replace(new RegExp(`\\{\\{${key}\\}\\}`, "g"), value || "");
-    // Handle conditional expressions like {{artistName ? 'text' + artistName : ''}}
     const conditionalRegex = new RegExp(
       `\\{\\{${key}\\s*\\?\\s*[^}]+\\}\\}`,
       "g",
     );
     assembled = assembled.replace(conditionalRegex, value ? value : "");
   }
-  // Clean remaining unresolved placeholders
   assembled = assembled.replace(/\{\{[^}]+\}\}/g, "");
 
   const result = await model.generateContent({
@@ -69,14 +101,14 @@ export async function suggestPosterPrompt(
 Voici un prompt de base pour générer une affiche :
 "${assembled}"
 
-${eventType ? `Type d'événement : ${eventType}` : ""}
+${eventType ? "Type d'événement : " + eventType : ""}
 
 Améliore ce prompt pour obtenir une affiche de qualité professionnelle. Le prompt doit :
-- Être en anglais (pour Imagen 3)
+- Être en anglais (pour Gemini Image Generation)
 - Décrire précisément le style visuel, les couleurs, la composition
 - Mentionner le restaurant Le Divino et l'ambiance méditerranéenne
 - Être concis (max 200 mots)
-- NE PAS inclure de texte à afficher sur l'affiche (pas de titre, pas de date, pas de nom)
+- Prévoir un espace pour du texte lisible (titre, date, heure) avec une typographie élégante
 
 Réponds UNIQUEMENT avec le prompt amélioré, sans explication ni formatage.`,
           },
@@ -98,9 +130,7 @@ export function assemblePrompt(
   let assembled = templatePrompt;
 
   for (const [key, value] of Object.entries(variables)) {
-    // Simple replacement
     assembled = assembled.replace(new RegExp(`\\{\\{${key}\\}\\}`, "g"), value || "");
-    // Conditional expressions: {{key ? 'text' + key + '.' : ''}}
     const conditionalRegex = new RegExp(
       `\\{\\{${key}\\s*\\?\\s*([^:]+):\\s*([^}]+)\\}\\}`,
       "g",
@@ -108,7 +138,6 @@ export function assemblePrompt(
     assembled = assembled.replace(conditionalRegex, value ? `$1`.replace(key, value) : "");
   }
 
-  // Clean remaining unresolved placeholders
   assembled = assembled.replace(/\{\{[^}]+\}\}/g, "").replace(/\s{2,}/g, " ").trim();
 
   return assembled;

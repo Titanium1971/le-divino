@@ -14,6 +14,6 @@ export const privateParty: PosterTemplate = {
     { key: "hostName", label: "Hôte / Organisateur", type: "text", required: false, placeholder: "Ex : Famille Dupont" },
   ],
   colorScheme: { primary: "#1A0A0E", accent: "#C5A55A", background: "linear-gradient(135deg, #1A0A0E, #2D1B1E)", text: "#FAF6F0" },
-  aiPromptTemplate: `Affiche élégante pour une soirée privée "{{eventName}}" au restaurant Le Divino à Agde. {{hostName ? 'Organisé par ' + hostName + '.' : ''}} Salle privée intime, bougies, nappes blanches, lustre en cristal, fleurs, ambiance exclusive. Tons noir, or et bordeaux. Style invitation de luxe.`,
+  aiPromptTemplate: `Elegant private party poster for "{{eventName}}" at restaurant Le Divino in Agde, France. {{hostName ? 'Hosted by ' + hostName + '.' : ''}} Intimate private room, candles, white tablecloths, crystal chandelier, flowers, exclusive atmosphere. Black, gold and burgundy tones. Luxury invitation style. The poster MUST display the following text with elegant, highly legible typography: the title "{{eventName}}" prominently at the top, {{hostName ? '"Hosted by {{hostName}}",' : ''}} {{date ? 'the date "{{date}}",' : ''}} {{time ? 'the time "{{time}}",' : ''}} and "Le Divino" at the bottom. Use strong contrast for all text.`,
   overlayStyle: "gradient-bottom",
 };

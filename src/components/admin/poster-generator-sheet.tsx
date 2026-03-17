@@ -27,11 +27,12 @@ type Props = {
   onOpenChange: (open: boolean) => void;
   event?: Event | null;
   onSaved?: () => Promise<void>;
+  onPosterSelected?: (imageBase64: string) => void;
 };
 
 type Step = "template" | "configure" | "generate";
 
-export function PosterGeneratorSheet({ open, onOpenChange, event, onSaved }: Props) {
+export function PosterGeneratorSheet({ open, onOpenChange, event, onSaved, onPosterSelected }: Props) {
   const templates = getAllTemplates();
 
   const [step, setStep] = useState<Step>("template");
@@ -351,6 +352,21 @@ export function PosterGeneratorSheet({ open, onOpenChange, event, onSaved }: Pro
                         📥 Télécharger
                       </Button>
                     </div>
+
+                    {onPosterSelected && (
+                      <Button
+                        type="button"
+                        onClick={() => {
+                          if (imageBase64) {
+                            onPosterSelected(imageBase64);
+                            onOpenChange(false);
+                          }
+                        }}
+                        className="w-full bg-green-600 text-white hover:bg-green-700"
+                      >
+                        Utiliser comme image de l&apos;événement
+                      </Button>
+                    )}
 
                     <Button
                       type="button"

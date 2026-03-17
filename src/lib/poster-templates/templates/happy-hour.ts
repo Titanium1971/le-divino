@@ -13,6 +13,6 @@ export const happyHour: PosterTemplate = {
     { key: "promoText", label: "Offre promotionnelle", type: "textarea", required: false, placeholder: "Ex : Cocktails à -50%, tapas offertes..." },
   ],
   colorScheme: { primary: "#EA580C", accent: "#FDE68A", background: "linear-gradient(135deg, #F97316, #EA580C)", text: "#FAF6F0" },
-  aiPromptTemplate: `Affiche vibrante pour un Happy Hour "{{eventName}}" au restaurant Le Divino à Agde. Cocktails colorés, coucher de soleil méditerranéen, terrasse animée, glaçons et agrumes, ambiance afterwork décontractée. Tons orange sunset et doré. Style tropical chic.`,
+  aiPromptTemplate: `Vibrant Happy Hour poster for "{{eventName}}" at restaurant Le Divino in Agde, France. Colorful cocktails, Mediterranean sunset, lively terrace, ice cubes and citrus fruits, relaxed afterwork atmosphere. Orange sunset and golden tones. Tropical chic style. The poster MUST display the following text with elegant, highly legible typography: the title "{{eventName}}" prominently at the top, {{timeRange ? 'the schedule "{{timeRange}}",' : ''}} {{promoText ? '"{{promoText}}" as promotional offer,' : ''}} and "Le Divino" at the bottom. Use strong contrast for all text.`,
   overlayStyle: "vignette",
 };
