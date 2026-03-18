@@ -236,7 +236,7 @@ export async function renderPosterComposite(
     }
   }
 
-  // Return base64 without prefix
-  const dataUrl = canvas.toDataURL("image/png");
-  return dataUrl.replace(/^data:image\/png;base64,/, "");
+  // Return base64 without prefix — use JPEG for smaller file size
+  const dataUrl = canvas.toDataURL("image/jpeg", 0.92);
+  return dataUrl.replace(/^data:image\/jpeg;base64,/, "");
 }

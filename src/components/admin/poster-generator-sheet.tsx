@@ -235,9 +235,9 @@ export function PosterGeneratorSheet({ open, onOpenChange, event, onSaved, onPos
     }
 
     const link = document.createElement("a");
-    link.href = `data:image/png;base64,${downloadBase64}`;
+    link.href = `data:image/jpeg;base64,${downloadBase64}`;
     const name = variables.eventName || variables.title || "affiche";
-    link.download = `Le_Divino_${name.replace(/\s+/g, "_")}_${orientation}.png`;
+    link.download = `Le_Divino_${name.replace(/\s+/g, "_")}_${orientation}.jpg`;
     link.click();
   }
 

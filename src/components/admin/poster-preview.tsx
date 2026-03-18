@@ -34,7 +34,7 @@ export function PosterPreview({
   // Live canvas preview: re-render when background, variables, or font change
   useEffect(() => {
     if (compositeBase64) {
-      setPreviewSrc(`data:image/png;base64,${compositeBase64}`);
+      setPreviewSrc(`data:image/jpeg;base64,${compositeBase64}`);
       return;
     }
 
@@ -55,7 +55,7 @@ export function PosterPreview({
     })
       .then((base64) => {
         if (renderRef.current === id) {
-          setPreviewSrc(`data:image/png;base64,${base64}`);
+          setPreviewSrc(`data:image/jpeg;base64,${base64}`);
         }
       })
       .catch((err) => {

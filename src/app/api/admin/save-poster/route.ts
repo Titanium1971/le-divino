@@ -1,6 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 
+export const config = {
+  api: {
+    bodyParser: {
+      sizeLimit: "10mb",
+    },
+  },
+};
+
 export async function POST(request: NextRequest) {
   const supabase = await createClient();
 
@@ -24,14 +32,14 @@ export async function POST(request: NextRequest) {
   try {
     // Upload composite image to Supabase storage
     const byteArray = Uint8Array.from(atob(compositeBase64), (c) => c.charCodeAt(0));
-    const blob = new Blob([byteArray], { type: "image/png" });
+    const blob = new Blob([byteArray], { type: "image/jpeg" });
 
     const posterId = crypto.randomUUID();
-    const path = `${posterId}.png`;
+    const path = `${posterId}.jpg`;
 
     const { error: uploadError } = await supabase.storage
       .from("posters")
-      .upload(path, blob, { upsert: true, contentType: "image/png" });
+      .upload(path, blob, { upsert: true, contentType: "image/jpeg" });
 
     if (uploadError) {
       console.error("Upload error:", uploadError);
