@@ -33,6 +33,7 @@ type Props = {
 };
 
 type Step = "template" | "configure" | "generate";
+type GenerationMode = "canvas" | "full";
 
 export function PosterGeneratorSheet({ open, onOpenChange, event, onSaved, onPosterSelected }: Props) {
   const templates = getAllTemplates();
@@ -40,6 +41,7 @@ export function PosterGeneratorSheet({ open, onOpenChange, event, onSaved, onPos
   const [step, setStep] = useState<Step>("template");
   const [selectedTemplate, setSelectedTemplate] = useState<PosterTemplate | null>(null);
   const [orientation, setOrientation] = useState<PosterOrientation>("portrait");
+  const [generationMode, setGenerationMode] = useState<GenerationMode>("canvas");
   const [variables, setVariables] = useState<Record<string, string>>({});
   const [prompt, setPrompt] = useState("");
   const [fontId, setFontId] = useState("playfair-display");
@@ -58,6 +60,7 @@ export function PosterGeneratorSheet({ open, onOpenChange, event, onSaved, onPos
     setStep("template");
     setSelectedTemplate(null);
     setOrientation("portrait");
+    setGenerationMode("canvas");
     setVariables({});
     setPrompt("");
     setFontId("playfair-display");
@@ -138,6 +141,7 @@ export function PosterGeneratorSheet({ open, onOpenChange, event, onSaved, onPos
           templateId: selectedTemplate.id,
           orientation,
           prompt,
+          mode: generationMode,
         }),
       });
       const data = await res.json();
@@ -197,6 +201,40 @@ export function PosterGeneratorSheet({ open, onOpenChange, event, onSaved, onPos
     }
   }
 
+  // Finalize for "full" mode: image is already complete, just save it
+  async function handleFinalizeFull() {
+    if (!backgroundBase64 || !selectedTemplate) return;
+    setSaving(true);
+    setError(null);
+
+    try {
+      setCompositeBase64(backgroundBase64);
+
+      const res = await fetch("/api/admin/save-poster", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          compositeBase64: backgroundBase64,
+          templateId: selectedTemplate.id,
+          orientation,
+          variables,
+          prompt,
+          eventId: event?.id || null,
+          fontId: null,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Erreur de sauvegarde");
+
+      setPosterId(data.posterId);
+      setSuccessMessage("Affiche finalisée et sauvegardée !");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Erreur");
+    } finally {
+      setSaving(false);
+    }
+  }
+
   async function handlePushToScreen() {
     if (!posterId) return;
     setPushingToScreen(true);
@@ -219,11 +257,11 @@ export function PosterGeneratorSheet({ open, onOpenChange, event, onSaved, onPos
 
   async function handleDownload() {
     const base64 = compositeBase64 || backgroundBase64;
-    if (!base64 || !selectedTemplate) return;
+    if (!base64) return;
 
-    // If not finalized yet, render full resolution first
     let downloadBase64 = base64;
-    if (!compositeBase64) {
+    // In canvas mode, render full resolution composite if not finalized yet
+    if (generationMode === "canvas" && !compositeBase64 && selectedTemplate) {
       downloadBase64 = await renderPosterComposite({
         backgroundBase64: backgroundBase64!,
         variables,
@@ -363,10 +401,50 @@ export function PosterGeneratorSheet({ open, onOpenChange, event, onSaved, onPos
 
                 <Separator />
 
-                {/* Font picker */}
-                <PosterFontPicker selectedFontId={fontId} onFontChange={setFontId} />
+                {/* Generation mode selector */}
+                <div className="space-y-2">
+                  <Label className="text-xs text-muted-foreground">Mode de génération</Label>
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setGenerationMode("canvas")}
+                      className={`rounded-lg border-2 p-3 text-left transition-all ${
+                        generationMode === "canvas"
+                          ? "border-[#C5A55A] bg-[#C5A55A]/10"
+                          : "border-muted hover:border-muted-foreground/30"
+                      }`}
+                    >
+                      <span className="block text-sm font-medium">Fond + Texte</span>
+                      <span className="block text-[10px] text-muted-foreground mt-0.5">
+                        IA génère le fond, texte ajouté avec police au choix
+                      </span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setGenerationMode("full")}
+                      className={`rounded-lg border-2 p-3 text-left transition-all ${
+                        generationMode === "full"
+                          ? "border-[#C5A55A] bg-[#C5A55A]/10"
+                          : "border-muted hover:border-muted-foreground/30"
+                      }`}
+                    >
+                      <span className="block text-sm font-medium">Complète (IA)</span>
+                      <span className="block text-[10px] text-muted-foreground mt-0.5">
+                        IA génère l&apos;affiche entière avec les textes
+                      </span>
+                    </button>
+                  </div>
+                </div>
 
                 <Separator />
+
+                {/* Font picker — only for canvas mode */}
+                {generationMode === "canvas" && (
+                  <>
+                    <PosterFontPicker selectedFontId={fontId} onFontChange={setFontId} />
+                    <Separator />
+                  </>
+                )}
 
                 {/* Prompt editor */}
                 <PosterPromptEditor
@@ -384,15 +462,27 @@ export function PosterGeneratorSheet({ open, onOpenChange, event, onSaved, onPos
             {/* ── Step 3: Preview & Actions ── */}
             {step === "generate" && (
               <>
-                <PosterPreview
-                  backgroundBase64={backgroundBase64}
-                  compositeBase64={compositeBase64}
-                  orientation={orientation}
-                  generating={generating}
-                  template={selectedTemplate}
-                  variables={variables}
-                  fontId={fontId}
-                />
+                {generationMode === "canvas" ? (
+                  <PosterPreview
+                    backgroundBase64={backgroundBase64}
+                    compositeBase64={compositeBase64}
+                    orientation={orientation}
+                    generating={generating}
+                    template={selectedTemplate}
+                    variables={variables}
+                    fontId={fontId}
+                  />
+                ) : (
+                  <PosterPreview
+                    backgroundBase64={null}
+                    compositeBase64={backgroundBase64}
+                    orientation={orientation}
+                    generating={generating}
+                    template={null}
+                    variables={{}}
+                    fontId={fontId}
+                  />
+                )}
 
                 {!generating && backgroundBase64 && (
                   <div className="space-y-3">
@@ -402,8 +492,8 @@ export function PosterGeneratorSheet({ open, onOpenChange, event, onSaved, onPos
                       </p>
                     )}
 
-                    {/* Font picker in generate step too for live preview */}
-                    {!compositeBase64 && (
+                    {/* Font picker in generate step — only for canvas mode */}
+                    {generationMode === "canvas" && !compositeBase64 && (
                       <>
                         <PosterFontPicker selectedFontId={fontId} onFontChange={(id) => {
                           setFontId(id);
@@ -413,8 +503,8 @@ export function PosterGeneratorSheet({ open, onOpenChange, event, onSaved, onPos
                       </>
                     )}
 
-                    {/* Variable editing for text adjustments */}
-                    {!compositeBase64 && selectedTemplate && (
+                    {/* Variable editing for text adjustments — only for canvas mode */}
+                    {generationMode === "canvas" && !compositeBase64 && selectedTemplate && (
                       <details className="rounded-lg border p-3">
                         <summary className="cursor-pointer text-sm font-medium text-muted-foreground">
                           Modifier les textes
@@ -447,7 +537,7 @@ export function PosterGeneratorSheet({ open, onOpenChange, event, onSaved, onPos
                         onClick={handleGenerate}
                         disabled={generating}
                       >
-                        🔄 Nouveau fond
+                        {generationMode === "full" ? "🔄 Régénérer" : "🔄 Nouveau fond"}
                       </Button>
                       <Button
                         type="button"
@@ -459,10 +549,10 @@ export function PosterGeneratorSheet({ open, onOpenChange, event, onSaved, onPos
                     </div>
 
                     {/* Finalize button */}
-                    {!compositeBase64 && (
+                    {!posterId && (
                       <Button
                         type="button"
-                        onClick={handleFinalize}
+                        onClick={generationMode === "full" ? handleFinalizeFull : handleFinalize}
                         disabled={saving}
                         className="w-full bg-[#C5A55A] text-white hover:bg-[#B08D3A]"
                       >
@@ -471,14 +561,15 @@ export function PosterGeneratorSheet({ open, onOpenChange, event, onSaved, onPos
                     )}
 
                     {/* Post-finalize actions */}
-                    {compositeBase64 && (
+                    {posterId && (
                       <>
                         {onPosterSelected && (
                           <Button
                             type="button"
                             onClick={() => {
-                              if (compositeBase64) {
-                                onPosterSelected(compositeBase64);
+                              const finalBase64 = compositeBase64 || backgroundBase64;
+                              if (finalBase64) {
+                                onPosterSelected(finalBase64);
                                 onOpenChange(false);
                               }
                             }}
@@ -526,10 +617,10 @@ export function PosterGeneratorSheet({ open, onOpenChange, event, onSaved, onPos
               disabled={generating || !prompt}
               className="w-full bg-[#C5A55A] text-white hover:bg-[#B08D3A]"
             >
-              {generating ? "Génération en cours..." : "✨ Générer le fond"}
+              {generating ? "Génération en cours..." : generationMode === "full" ? "✨ Générer l'affiche" : "✨ Générer le fond"}
             </Button>
           )}
-          {step === "generate" && !generating && compositeBase64 && (
+          {step === "generate" && !generating && posterId && (
             <Button
               type="button"
               onClick={handleDone}
