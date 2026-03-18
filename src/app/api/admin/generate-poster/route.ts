@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
   }
 
-  const { templateId, orientation, prompt, mode } = await request.json();
+  const { templateId, orientation, prompt, mode, variables } = await request.json();
 
   if (!templateId || !prompt) {
     return NextResponse.json(
@@ -40,7 +40,19 @@ export async function POST(request: NextRequest) {
         .replace(/Do NOT include any text.*?typography[^.]*\./gi, "")
         .replace(/Leave.*?negative space.*?\./gi, "")
         .trim();
-      finalPrompt += "\n\nInclude all text elements with elegant, legible typography. The text should be perfectly readable and beautifully integrated into the poster design.";
+
+      // Inject variable values as text content for the AI to render
+      if (variables && typeof variables === "object") {
+        const textEntries = Object.entries(variables as Record<string, string>)
+          .filter(([, v]) => v && v.trim())
+          .map(([k, v]) => `- ${k}: "${v}"`)
+          .join("\n");
+        if (textEntries) {
+          finalPrompt += `\n\nIMPORTANT: Include the following text elements on the poster with elegant, perfectly legible typography. Each text must be rendered exactly as written, with no spelling errors or missing characters:\n${textEntries}`;
+        }
+      }
+
+      finalPrompt += "\n\nThe text must be perfectly readable, beautifully integrated into the design, and use a luxurious, elegant font style. Add \"Le Divino\" as branding at the bottom.";
     } else {
       // Background-only: text is composited client-side via Canvas
       finalPrompt += "\n\nCRITICAL: Do NOT render any text, letters, words, numbers, or typography on the image. The image must be purely visual with no written content.";

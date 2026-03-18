@@ -142,6 +142,7 @@ export function PosterGeneratorSheet({ open, onOpenChange, event, onSaved, onPos
           orientation,
           prompt,
           mode: generationMode,
+          variables: generationMode === "full" ? variables : undefined,
         }),
       });
       const data = await res.json();
