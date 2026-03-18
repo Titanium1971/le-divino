@@ -227,12 +227,14 @@ export function EventFormSheet({ open, onOpenChange, event, onSaved }: Props) {
     setError(null);
 
     try {
-      const slug = title.fr
+      const baseSlug = title.fr
         .toLowerCase()
         .normalize("NFD")
         .replace(/[\u0300-\u036f]/g, "")
         .replace(/[^a-z0-9]+/g, "-")
         .replace(/(^-|-$)/g, "");
+      // Add date suffix to ensure uniqueness
+      const slug = `${baseSlug}-${date}`;
 
       const formData: EventFormData = {
         title,
