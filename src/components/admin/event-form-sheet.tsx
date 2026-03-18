@@ -258,8 +258,8 @@ export function EventFormSheet({ open, onOpenChange, event, onSaved }: Props) {
       if (generatedImageBase64) {
         try {
           const byteArray = Uint8Array.from(atob(generatedImageBase64), (c) => c.charCodeAt(0));
-          const blob = new Blob([byteArray], { type: "image/png" });
-          const file = new File([blob], `${saved.id}.png`, { type: "image/png" });
+          const blob = new Blob([byteArray], { type: "image/jpeg" });
+          const file = new File([blob], `${saved.id}.jpg`, { type: "image/jpeg" });
           const path = await uploadEventImage(supabase, file, saved.id);
           await updateEvent(supabase, saved.id, { image_path: path });
           setGeneratedImageBase64(null);
@@ -273,7 +273,13 @@ export function EventFormSheet({ open, onOpenChange, event, onSaved }: Props) {
 
       await onSaved();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Erreur lors de la sauvegarde.");
+      console.error("Event save error:", err);
+      const msg = err instanceof Error ? err.message : String(err);
+      if (msg.includes("duplicate") || msg.includes("unique")) {
+        setError("Un événement avec ce titre existe déjà. Modifiez le titre.");
+      } else {
+        setError(`Erreur : ${msg}`);
+      }
     } finally {
       setSaving(false);
     }
@@ -507,7 +513,7 @@ export function EventFormSheet({ open, onOpenChange, event, onSaved }: Props) {
               onPosterSelected={(base64) => {
                 setGeneratedImageBase64(base64);
                 setImageFile(null);
-                setImagePreview(`data:image/png;base64,${base64}`);
+                setImagePreview(`data:image/jpeg;base64,${base64}`);
               }}
             />
 
