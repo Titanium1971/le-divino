@@ -35,24 +35,41 @@ export async function POST(request: NextRequest) {
   try {
     let finalPrompt = prompt;
     if (mode === "full") {
-      // Full mode: remove any "no text" instructions and let AI render text
+      // Full mode: strip ALL "no text" related sentences from the prompt
       finalPrompt = finalPrompt
-        .replace(/Do NOT include any text.*?typography[^.]*\./gi, "")
-        .replace(/Leave.*?negative space.*?\./gi, "")
+        .replace(/Do NOT include any text[^.]*\./gi, "")
+        .replace(/The image must be purely visual[^.]*\./gi, "")
+        .replace(/Leave[^.]*negative space[^.]*\./gi, "")
+        .replace(/Keep[^.]*open[^.]*overlay[^.]*\./gi, "")
+        .replace(/Keep[^.]*center[^.]*open[^.]*\./gi, "")
+        .replace(/\s{2,}/g, " ")
         .trim();
 
-      // Inject variable values as text content for the AI to render
+      // Build text block from variables
+      const textLines: string[] = [];
       if (variables && typeof variables === "object") {
-        const textEntries = Object.entries(variables as Record<string, string>)
-          .filter(([, v]) => v && v.trim())
-          .map(([k, v]) => `- ${k}: "${v}"`)
-          .join("\n");
-        if (textEntries) {
-          finalPrompt += `\n\nIMPORTANT: Include the following text elements on the poster with elegant, perfectly legible typography. Each text must be rendered exactly as written, with no spelling errors or missing characters:\n${textEntries}`;
+        const vars = variables as Record<string, string>;
+        if (vars.eventName || vars.title) textLines.push(`Title: "${vars.eventName || vars.title}"`);
+        if (vars.subtitle || vars.theme) textLines.push(`Subtitle: "${vars.subtitle || vars.theme}"`);
+        if (vars.artistName || vars.djName) textLines.push(`Artist: "${vars.artistName || vars.djName}"`);
+        if (vars.date) textLines.push(`Date: "${vars.date}"`);
+        if (vars.time || vars.timeRange) textLines.push(`Time: "${vars.time || vars.timeRange}"`);
+        if (vars.price) textLines.push(`Price: "${vars.price}"`);
+        if (vars.description) textLines.push(`Description: "${vars.description}"`);
+        // Catch any remaining filled variables
+        for (const [k, v] of Object.entries(vars)) {
+          if (v && v.trim() && !["eventName", "title", "subtitle", "theme", "artistName", "djName", "date", "time", "timeRange", "price", "description"].includes(k)) {
+            textLines.push(`${k}: "${v}"`);
+          }
         }
       }
 
-      finalPrompt += "\n\nThe text must be perfectly readable, beautifully integrated into the design, and use a luxurious, elegant font style. Add \"Le Divino\" as branding at the bottom.";
+      finalPrompt += `\n\nThis is a COMPLETE poster — you MUST render the following text on the image with beautiful, perfectly legible typography:\n`;
+      if (textLines.length > 0) {
+        finalPrompt += textLines.join("\n") + "\n";
+      }
+      finalPrompt += `- Branding: "Le Divino" at the bottom\n`;
+      finalPrompt += `\nRender each text EXACTLY as written — no spelling errors, no missing characters, no deformed letters. Use elegant, high-contrast fonts that are easy to read against the background.`;
     } else {
       // Background-only: text is composited client-side via Canvas
       finalPrompt += "\n\nCRITICAL: Do NOT render any text, letters, words, numbers, or typography on the image. The image must be purely visual with no written content.";
