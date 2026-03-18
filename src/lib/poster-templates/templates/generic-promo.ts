@@ -14,6 +14,6 @@ export const genericPromo: PosterTemplate = {
     { key: "ctaText", label: "Appel à l'action", type: "text", required: false, placeholder: "Ex : Réservez maintenant !" },
   ],
   colorScheme: { primary: "#1A0A0E", accent: "#C5A55A", background: "linear-gradient(135deg, #1A0A0E, #6B1A1A)", text: "#FAF6F0" },
-  aiPromptTemplate: `Professional promotional poster for "{{title}}" at restaurant Le Divino in Agde, France. Elegant Mediterranean restaurant, warm atmosphere, golden light. Burgundy and gold tones, premium style. The poster MUST display the following text with elegant, highly legible typography: the title "{{title}}" prominently at the top, {{subtitle ? '"{{subtitle}}" as subtitle,' : ''}} {{description ? '"{{description}}" as description,' : ''}} {{ctaText ? '"{{ctaText}}" as call to action in bold,' : ''}} and "Le Divino" at the bottom. Use strong contrast for all text.`,
+  aiPromptTemplate: `Professional promotional visual background for a restaurant event poster. Elegant Mediterranean restaurant, warm atmosphere, golden light. Burgundy and gold tones, premium style. Do NOT include any text, letters, words, numbers, or typography in the image. Leave the bottom 35% of the image less busy and slightly darker for text overlay. The image must be purely visual.`,
   overlayStyle: "gradient-bottom",
 };

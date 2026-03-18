@@ -15,6 +15,6 @@ export const brunchSpecial: PosterTemplate = {
     { key: "menuHighlight", label: "Points forts du menu", type: "textarea", required: false, placeholder: "Ex : Viennoiseries maison, œufs Benedict, champagne..." },
   ],
   colorScheme: { primary: "#92400E", accent: "#FDE68A", background: "linear-gradient(135deg, #FEF3C7, #92400E)", text: "#1A0A0E" },
-  aiPromptTemplate: `Gourmet brunch poster for "{{eventName}}" at restaurant Le Divino in Agde, France. Table set on sunny terrace, golden pastries, eggs Benedict, fresh orange juice, champagne. Warm morning light, relaxed Mediterranean atmosphere. Premium food photography style. The poster MUST display the following text with elegant, highly legible typography: the title "{{eventName}}" prominently at the top, {{date ? 'the date "{{date}}",' : ''}} {{timeRange ? 'the schedule "{{timeRange}}",' : ''}} {{price ? 'the price "{{price}}",' : ''}} {{menuHighlight ? '"{{menuHighlight}}" as menu highlights,' : ''}} and "Le Divino" at the bottom. Use strong contrast for all text.`,
+  aiPromptTemplate: `Gourmet brunch visual background for a restaurant event poster. Table set on sunny terrace, golden pastries, eggs Benedict, fresh orange juice, champagne. Warm morning light, relaxed Mediterranean atmosphere. Premium food photography style. Do NOT include any text, letters, words, numbers, or typography in the image. Keep the image clean with clear focal area; text will be positioned at top and bottom. The image must be purely visual.`,
   overlayStyle: "minimal",
 };

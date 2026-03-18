@@ -14,6 +14,6 @@ export const djSet: PosterTemplate = {
     { key: "time", label: "Heure", type: "time", required: false, defaultFromEvent: "event_time" },
   ],
   colorScheme: { primary: "#0F172A", accent: "#38BDF8", background: "linear-gradient(135deg, #0F172A, #1E1B4B)", text: "#FAF6F0" },
-  aiPromptTemplate: `Premium DJ party poster for "{{eventName}}" at restaurant Le Divino in Agde, France. {{djName ? 'Featuring DJ: ' + djName + '.' : ''}} Vinyl turntables, blue and cyan neon LED lights, nocturnal lounge atmosphere, dancing silhouettes, elegant bar in background. Premium nightlife style. The poster MUST display the following text with elegant, highly legible typography: the title "{{eventName}}" prominently at the top, {{djName ? '"' + djName + '" as DJ name,' : ''}} {{date ? 'the date "{{date}}",' : ''}} {{time ? 'the time "{{time}}",' : ''}} and "Le Divino" at the bottom. Use strong contrast for all text.`,
+  aiPromptTemplate: `Premium DJ party visual background for a restaurant event poster. Vinyl turntables, blue and cyan neon LED lights, nocturnal lounge atmosphere, dancing silhouettes, elegant bar in background. Premium nightlife style. Do NOT include any text, letters, words, numbers, or typography in the image. Keep the overall image slightly darker and muted, suitable for overlaid text across the full surface. The image must be purely visual.`,
   overlayStyle: "full-overlay",
 };

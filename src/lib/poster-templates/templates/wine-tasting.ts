@@ -15,6 +15,6 @@ export const wineTasting: PosterTemplate = {
     { key: "price", label: "Tarif", type: "price", required: false, placeholder: "Ex : 35€/personne" },
   ],
   colorScheme: { primary: "#6B1A1A", accent: "#C5A55A", background: "linear-gradient(135deg, #1A0A0E, #6B1A1A)", text: "#FAF6F0" },
-  aiPromptTemplate: `Elegant wine tasting poster for "{{eventName}}" at restaurant Le Divino in Agde, France. {{wineRegion ? 'Wines from ' + wineRegion + '.' : ''}} Wine bottles, crystal glasses, Mediterranean vineyard, amber lighting, wooden barrel. Burgundy and gold tones, refined gastronomic atmosphere. The poster MUST display the following text with elegant, highly legible typography: the title "{{eventName}}" prominently at the top, {{wineRegion ? '"' + wineRegion + '" as wine region,' : ''}} {{date ? 'the date "{{date}}",' : ''}} {{time ? 'the time "{{time}}",' : ''}} {{price ? 'the price "{{price}}",' : ''}} and "Le Divino" at the bottom. Use strong contrast for all text.`,
+  aiPromptTemplate: `Elegant wine tasting visual background for a restaurant event poster. Wine bottles, crystal glasses, Mediterranean vineyard, amber lighting, wooden barrel. Burgundy and gold tones, refined gastronomic atmosphere. Do NOT include any text, letters, words, numbers, or typography in the image. Keep the left 40% of the image less detailed and darker for text placement. The image must be purely visual.`,
   overlayStyle: "split-left",
 };

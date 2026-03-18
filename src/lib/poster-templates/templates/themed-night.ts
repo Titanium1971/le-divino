@@ -15,6 +15,6 @@ export const themedNight: PosterTemplate = {
     { key: "dressCode", label: "Dress code", type: "text", required: false, placeholder: "Ex : Tenue de soirée exigée" },
   ],
   colorScheme: { primary: "#4C1D95", accent: "#C5A55A", background: "linear-gradient(135deg, #1A0A0E, #4C1D95)", text: "#FAF6F0" },
-  aiPromptTemplate: `Immersive themed night poster for "{{eventName}}" (theme: {{theme}}) at restaurant Le Divino in Agde, France. Elaborate thematic decoration, mood lighting, transformed restaurant hall. Luxurious and creative event style. The poster MUST display the following text with elegant, highly legible typography: the title "{{eventName}}" prominently at the top, the theme "{{theme}}", {{date ? 'the date "{{date}}",' : ''}} {{time ? 'the time "{{time}}",' : ''}} {{dressCode ? 'the dress code "{{dressCode}}",' : ''}} and "Le Divino" at the bottom. Use strong contrast for all text.`,
+  aiPromptTemplate: `Immersive themed night visual background for a restaurant event poster. {{theme ? 'Theme: ' + theme + '.' : ''}} Elaborate thematic decoration, mood lighting, transformed restaurant hall. Luxurious and creative event style. Do NOT include any text, letters, words, numbers, or typography in the image. Keep the overall image slightly darker and muted, suitable for overlaid text across the full surface. The image must be purely visual.`,
   overlayStyle: "full-overlay",
 };

@@ -14,6 +14,6 @@ export const privateParty: PosterTemplate = {
     { key: "hostName", label: "Hôte / Organisateur", type: "text", required: false, placeholder: "Ex : Famille Dupont" },
   ],
   colorScheme: { primary: "#1A0A0E", accent: "#C5A55A", background: "linear-gradient(135deg, #1A0A0E, #2D1B1E)", text: "#FAF6F0" },
-  aiPromptTemplate: `Elegant private party poster for "{{eventName}}" at restaurant Le Divino in Agde, France. {{hostName ? 'Hosted by ' + hostName + '.' : ''}} Intimate private room, candles, white tablecloths, crystal chandelier, flowers, exclusive atmosphere. Black, gold and burgundy tones. Luxury invitation style. The poster MUST display the following text with elegant, highly legible typography: the title "{{eventName}}" prominently at the top, {{hostName ? '"Hosted by {{hostName}}",' : ''}} {{date ? 'the date "{{date}}",' : ''}} {{time ? 'the time "{{time}}",' : ''}} and "Le Divino" at the bottom. Use strong contrast for all text.`,
+  aiPromptTemplate: `Elegant private party visual background for a restaurant event poster. Intimate private room, candles, white tablecloths, crystal chandelier, flowers, exclusive atmosphere. Black, gold and burgundy tones. Luxury invitation style. Do NOT include any text, letters, words, numbers, or typography in the image. Leave the bottom 35% of the image less busy and slightly darker for text overlay. The image must be purely visual.`,
   overlayStyle: "gradient-bottom",
 };

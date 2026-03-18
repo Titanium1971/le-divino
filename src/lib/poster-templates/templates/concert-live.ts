@@ -15,6 +15,6 @@ export const concertLive: PosterTemplate = {
     { key: "tagline", label: "Accroche", type: "text", required: false, placeholder: "Ex : Une soirée inoubliable" },
   ],
   colorScheme: { primary: "#1E3A5F", accent: "#C5A55A", background: "linear-gradient(135deg, #1A0A0E, #1E3A5F)", text: "#FAF6F0" },
-  aiPromptTemplate: `Professional concert poster for "{{eventName}}" at restaurant Le Divino in Agde, France. {{artistName ? 'Featuring artist: ' + artistName + '.' : ''}} Warm Mediterranean atmosphere, stage with golden and burgundy lights, guitar or instruments, terrace in background. Navy blue and gold tones. Premium concert poster style. The poster MUST display the following text with elegant, highly legible typography: the title "{{eventName}}" prominently at the top, {{artistName ? '"' + artistName + '" as the artist name,' : ''}} {{date ? 'the date "{{date}}",' : ''}} {{time ? 'the time "{{time}}",' : ''}} {{tagline ? '"{{tagline}}" as tagline,' : ''}} and "Le Divino" at the bottom. Use strong contrast for all text.`,
+  aiPromptTemplate: `Professional concert visual background for a restaurant event poster. Warm Mediterranean atmosphere, stage with golden and burgundy lights, guitar or instruments, terrace in background. Navy blue and gold tones. Premium concert poster style. Do NOT include any text, letters, words, numbers, or typography in the image. Leave the bottom 35% of the image less busy and slightly darker for text overlay. The image must be purely visual.`,
   overlayStyle: "gradient-bottom",
 };
