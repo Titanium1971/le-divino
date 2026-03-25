@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Raleway } from "next/font/google";
-import { GoogleAnalytics } from "@next/third-parties/google";
 import { CookieBanner } from "@/components/restaurant/cookie-banner";
 import { SITE_URL, LOCALES, DEFAULT_LOCALE, buildRestaurantJsonLd } from "@/lib/seo/constants";
 import { createClient } from "@/lib/supabase/server";
@@ -9,7 +8,6 @@ import "./globals.css";
 
 export const dynamic = "force-dynamic";
 
-const gaId = process.env.NEXT_PUBLIC_GA_ID;
 
 const raleway = Raleway({
   subsets: ["latin"],
@@ -48,7 +46,6 @@ export default async function RootLayout({
       </head>
       <body className={`${raleway.variable} font-sans antialiased`}>
         {children}
-        {gaId && <GoogleAnalytics gaId={gaId} />}
         <CookieBanner />
       </body>
     </html>

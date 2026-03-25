@@ -10,6 +10,7 @@ type CookieConsent = {
 };
 
 const STORAGE_KEY = "cookie_consent";
+const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
 
 function getStoredConsent(): CookieConsent | null {
   if (typeof window === "undefined") return null;
@@ -26,13 +27,49 @@ function saveConsent(consent: CookieConsent) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(consent));
 }
 
-/** Disable GA by setting the opt-out window property */
-function applyAnalyticsChoice(allowed: boolean) {
+/**
+ * Inject GA4 scripts into the page only when the user has consented.
+ * This ensures zero third-party scripts are loaded before explicit consent,
+ * which is the strictest CNIL interpretation.
+ */
+function loadGA4() {
+  if (!GA_ID || typeof window === "undefined") return;
+  // Prevent double-loading
+  if (document.querySelector(`script[src*="googletagmanager.com/gtag"]`)) return;
+
+  // 1. Load gtag.js script
+  const script = document.createElement("script");
+  script.src = `https://www.googletagmanager.com/gtag/js?id=${GA_ID}`;
+  script.async = true;
+  document.head.appendChild(script);
+
+  // 2. Initialize gtag dataLayer
+  window.dataLayer = window.dataLayer || [];
+  function gtag(...args: unknown[]) {
+    window.dataLayer!.push(args);
+  }
+  gtag("js", new Date());
+  gtag("config", GA_ID, { anonymize_ip: true });
+}
+
+/** Remove GA4 cookies and prevent further tracking */
+function removeGA4() {
   if (typeof window === "undefined") return;
-  // GA4 respects this property to disable tracking
-  const gaId = process.env.NEXT_PUBLIC_GA_ID;
-  if (gaId) {
-    (window as Record<string, unknown>)[`ga-disable-${gaId}`] = !allowed;
+  // Delete GA cookies
+  const cookies = document.cookie.split(";");
+  for (const cookie of cookies) {
+    const name = cookie.split("=")[0].trim();
+    if (name.startsWith("_ga")) {
+      document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=${window.location.hostname}`;
+      document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=.${window.location.hostname}`;
+    }
+  }
+}
+
+// Extend window for gtag dataLayer
+declare global {
+  interface Window {
+    dataLayer?: unknown[];
   }
 }
 
@@ -44,11 +81,12 @@ export function CookieBanner() {
   useEffect(() => {
     const stored = getStoredConsent();
     if (stored) {
-      applyAnalyticsChoice(stored.analytics);
+      if (stored.analytics) {
+        loadGA4();
+      }
       setVisible(false);
     } else {
-      // No consent yet — block analytics by default
-      applyAnalyticsChoice(false);
+      // No consent yet — no script loaded at all
       setVisible(true);
     }
   }, []);
@@ -60,7 +98,7 @@ export function CookieBanner() {
       timestamp: new Date().toISOString(),
     };
     saveConsent(consent);
-    applyAnalyticsChoice(true);
+    loadGA4();
     setVisible(false);
   }, []);
 
@@ -71,7 +109,7 @@ export function CookieBanner() {
       timestamp: new Date().toISOString(),
     };
     saveConsent(consent);
-    applyAnalyticsChoice(false);
+    removeGA4();
     setVisible(false);
   }, []);
 
@@ -82,7 +120,11 @@ export function CookieBanner() {
       timestamp: new Date().toISOString(),
     };
     saveConsent(consent);
-    applyAnalyticsChoice(analyticsEnabled);
+    if (analyticsEnabled) {
+      loadGA4();
+    } else {
+      removeGA4();
+    }
     setVisible(false);
   }, [analyticsEnabled]);
 
