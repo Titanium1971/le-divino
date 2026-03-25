@@ -30,7 +30,7 @@ export default function MentionsLegalesPage() {
               </li>
               <li>
                 <span className="text-brand-cream/60">Forme juridique :</span>{" "}
-                Entreprise individuelle
+                Société par actions simplifiée (SAS)
               </li>
               <li>
                 <span className="text-brand-cream/60">SIRET :</span>{" "}
