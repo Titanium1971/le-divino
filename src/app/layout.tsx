@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Raleway } from "next/font/google";
 import { GoogleAnalytics } from "@next/third-parties/google";
+import { CookieBanner } from "@/components/restaurant/cookie-banner";
 import { SITE_URL, LOCALES, DEFAULT_LOCALE, buildRestaurantJsonLd } from "@/lib/seo/constants";
 import { createClient } from "@/lib/supabase/server";
 import { getHoraires } from "@/lib/supabase/horaires";
@@ -48,6 +49,7 @@ export default async function RootLayout({
       <body className={`${raleway.variable} font-sans antialiased`}>
         {children}
         {gaId && <GoogleAnalytics gaId={gaId} />}
+        <CookieBanner />
       </body>
     </html>
   );

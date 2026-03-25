@@ -159,7 +159,31 @@ export async function SiteFooter() {
       {/* Bottom bar */}
       <div className="border-t border-brand-cream/20">
         <div className="mx-auto max-w-6xl px-6 py-6">
-          <p className="text-center text-[11px] font-light tracking-wider text-brand-cream/60" suppressHydrationWarning>
+          {/* Legal links */}
+          <div className="flex flex-wrap justify-center gap-4 text-[11px] font-light tracking-wider">
+            <Link
+              href="/mentions-legales"
+              className="text-brand-cream/60 transition-colors hover:text-brand-gold"
+            >
+              Mentions Légales
+            </Link>
+            <span className="text-brand-cream/30">|</span>
+            <Link
+              href="/politique-confidentialite"
+              className="text-brand-cream/60 transition-colors hover:text-brand-gold"
+            >
+              Politique de Confidentialité
+            </Link>
+            <span className="text-brand-cream/30">|</span>
+            <Link
+              href="/politique-cookies"
+              className="text-brand-cream/60 transition-colors hover:text-brand-gold"
+            >
+              Politique de Gestion des Cookies
+            </Link>
+          </div>
+
+          <p className="mt-4 text-center text-[11px] font-light tracking-wider text-brand-cream/60" suppressHydrationWarning>
             &copy; {new Date().getFullYear()} {restaurantConfig.name}. {t("rights")}.
           </p>
           <div className="mt-3 text-center">
