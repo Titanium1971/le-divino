@@ -66,7 +66,8 @@ export default function MentionsLegalesPage() {
                 <span className="text-brand-cream/60">
                   Directeur de la publication :
                 </span>{" "}
-                Le gérant de l&apos;établissement Le Divino
+                {/* TODO: Remplacer par le nom réel du directeur de publication */}
+                [Nom du directeur de publication à compléter]
               </li>
             </ul>
           </div>

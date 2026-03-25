@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useTranslations } from "next-intl";
 
 export function ContactForm() {
@@ -77,6 +78,23 @@ export function ContactForm() {
             {t("form_submit")}
           </button>
         </div>
+        <p className="mt-4 text-[11px] font-light leading-relaxed text-brand-dark/50">
+          Les données saisies sont utilisées uniquement pour répondre à votre
+          demande, conformément à notre{" "}
+          <Link
+            href="/politique-confidentialite"
+            className="underline hover:text-brand-dark/80 transition-colors"
+          >
+            Politique de confidentialité
+          </Link>
+          . Durée de conservation : 12 mois. Pour exercer vos droits :{" "}
+          <a
+            href="mailto:contact@ledivino-agde.fr"
+            className="underline hover:text-brand-dark/80 transition-colors"
+          >
+            contact@ledivino-agde.fr
+          </a>
+        </p>
       </form>
     </div>
   );
