@@ -91,7 +91,11 @@ export const PUBLIC_PAGES = [
   { path: "boissons", priority: 0.75, changeFrequency: "weekly" as const },
   { path: "reservation", priority: 0.8, changeFrequency: "monthly" as const },
   { path: "galerie", priority: 0.7, changeFrequency: "weekly" as const },
+  { path: "evenements", priority: 0.7, changeFrequency: "weekly" as const },
   { path: "contact", priority: 0.7, changeFrequency: "yearly" as const },
+  { path: "mentions-legales", priority: 0.3, changeFrequency: "yearly" as const },
+  { path: "politique-confidentialite", priority: 0.3, changeFrequency: "yearly" as const },
+  { path: "politique-cookies", priority: 0.3, changeFrequency: "yearly" as const },
 ] as const;
 
 export const LOCALES = ["fr", "en", "it", "es", "de"] as const;
