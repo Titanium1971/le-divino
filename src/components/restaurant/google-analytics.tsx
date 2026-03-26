@@ -25,17 +25,20 @@ function getStoredConsent(): CookieConsent | null {
 function loadGA4() {
   if (!GA_ID || document.getElementById("ga4-script")) return;
 
-  // Init dataLayer and gtag function
-  const w = window as unknown as Record<string, unknown>;
-  w.dataLayer = (w.dataLayer as unknown[]) || [];
-  function gtag(...args: unknown[]) {
-    (w.dataLayer as unknown[]).push(args);
-  }
-  gtag("js", new Date());
-  gtag("config", GA_ID, { anonymize_ip: true });
+  // Init dataLayer + gtag via inline script (standard Google pattern)
+  const initScript = document.createElement("script");
+  initScript.id = "ga4-init";
+  initScript.textContent = `
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', '${GA_ID}', { anonymize_ip: true });
+  `;
+  document.head.appendChild(initScript);
 
-  // Load gtag.js script
+  // Load gtag.js library
   const script = document.createElement("script");
+  script.id = "ga4-script";
   script.src = `https://www.googletagmanager.com/gtag/js?id=${GA_ID}`;
   script.async = true;
   document.head.appendChild(script);
