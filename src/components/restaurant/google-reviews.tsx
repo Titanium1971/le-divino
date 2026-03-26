@@ -125,7 +125,7 @@ export function GoogleReviews() {
                 {review.photoUrl ? (
                   <Image
                     src={review.photoUrl}
-                    alt={review.author}
+                    alt={`Photo de ${review.author} avis Google restaurant Le Divino Agde`}
                     width={36}
                     height={36}
                     className="rounded-full"

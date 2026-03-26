@@ -21,21 +21,21 @@
       "cta": "Tisch reservieren"
     },
     "welcome": {
-      "title": "Willkommen im Le Divino",
-      "description": "Im Herzen von Agde empfängt Sie Le Divino in einem warmen und eleganten Ambiente. Entdecken Sie authentische französische Küche, zubereitet aus frischen, saisonalen Produkten, veredelt durch die Expertise unseres Küchenchefs."
+      "title": "Willkommen im Le Divino, Restaurant in Agde",
+      "description": "Im Herzen der Innenstadt von Agde, an der Place Jean Jaurès, empfängt Sie Le Divino in einem warmen und eleganten Ambiente. Entdecken Sie traditionelle französische und mediterrane Küche, zubereitet aus frischen, saisonalen Produkten, veredelt durch die Expertise unseres Küchenchefs. Nur 5 Minuten vom Cap d'Agde entfernt, ist unser Restaurant mit schattiger Terrasse die ideale Adresse für ein unvergessliches Mittag- oder Abendessen."
     },
     "highlights": {
       "cuisine": {
         "title": "Regionale Küche",
-        "description": "Großzügige Gerichte, zubereitet mit lokalen und saisonalen Produkten."
+        "description": "Großzügige Gerichte der traditionellen französischen Küche, zubereitet mit lokalen und saisonalen Produkten, in Agde."
       },
       "ambiance": {
         "title": "Elegantes Ambiente",
-        "description": "Ein raffiniertes Dekor, das mediterrane Authentizität und modernen Komfort vereint."
+        "description": "Ein raffiniertes Dekor, das mediterrane Authentizität und modernen Komfort vereint, mit einer schönen Terrasse an der Place Jean Jaurès."
       },
       "service": {
         "title": "Aufmerksamer Service",
-        "description": "Ein leidenschaftliches Team zu Ihrem Service für ein unvergessliches Erlebnis."
+        "description": "Ein leidenschaftliches Team zu Ihrem Service für ein unvergessliches Erlebnis in unserem Restaurant im Zentrum von Agde."
       }
     },
     "specialties": {
@@ -175,49 +175,49 @@
   },
   "seo": {
     "home": {
-      "title": "Le Divino — Restaurant Agde | Traditionelle Französische Küche",
-      "description": "Restaurant Le Divino in Agde: traditionelle französische Küche, frische saisonale Produkte, elegantes Ambiente. Reservieren Sie Ihren Tisch.",
-      "keywords": "restaurant agde, französische küche, le divino, traditionelles restaurant, agde frankreich"
+      "title": "Le Divino — Terrassenrestaurant Agde Stadtzentrum | Traditionelle Französische Küche",
+      "description": "Restaurant Le Divino in Agde Stadtzentrum, place Jean Jaurès. Traditionelle französische und mediterrane Küche, schattige Terrasse. 5 Min. von Cap d'Agde. Reservieren Sie: 04 48 17 78 75.",
+      "keywords": "restaurant agde, restaurant agde stadtzentrum, terrassenrestaurant agde, französische küche agde, bestes restaurant agde, restaurant cap d'agde, traditionelles restaurant agde, wo essen agde"
     },
     "menu": {
-      "title": "Speisekarte — Le Divino | Restaurant Agde",
-      "description": "Entdecken Sie die Speisekarte des Restaurants Le Divino in Agde: Vorspeisen, Hauptgerichte, Desserts und Menüs aus frischen lokalen Produkten.",
-      "keywords": "speisekarte restaurant agde, le divino menü, französische gerichte, menüs, spezialitäten agde"
+      "title": "Speisekarte — Restaurant Le Divino Agde | Vorspeisen, Fisch, Fleisch, Desserts",
+      "description": "Entdecken Sie die Speisekarte des Restaurants Le Divino in Agde: traditionelle französische Küche, frische saisonale Produkte. Menüs ab 24,90€. Terrassenrestaurant im Zentrum.",
+      "keywords": "speisekarte restaurant agde, le divino menü agde, französische gerichte agde, menüs restaurant agde, französische küche spezialitäten agde"
     },
     "menus": {
-      "title": "Menüs — Le Divino | Restaurant Agde",
-      "description": "Entdecken Sie die Menüs des Restaurants Le Divino in Agde: Tagesmenüs mit Vorspeisen, Hauptgerichten und hausgemachten Desserts.",
-      "keywords": "menüs restaurant agde, le divino menüs, tagesmenü agde, marktmenü"
+      "title": "Menüs — Restaurant Le Divino Agde | Marktmenü",
+      "description": "Menüs im Restaurant Le Divino in Agde: Vorspeise + Hauptgericht ab 24,90€, komplettes Menü 29,90€. Frische Marktprodukte, traditionelle französische Küche.",
+      "keywords": "menüs restaurant agde, marktmenü agde, tagesmenü agde, le divino menüs, günstiges restaurant agde"
     },
     "reservation": {
-      "title": "Reservierung — Le Divino | Restaurant Agde",
-      "description": "Reservieren Sie Ihren Tisch im Restaurant Le Divino in Agde. Mittag- oder Abendessen, wählen Sie Ihren Zeitraum online.",
-      "keywords": "reservierung restaurant agde, tisch reservieren le divino, restaurant agde reservierung"
+      "title": "Tisch Reservieren — Restaurant Le Divino Agde | Terrasse Place Jean Jaurès",
+      "description": "Reservieren Sie Ihren Tisch im Restaurant Le Divino in Agde Stadtzentrum. Schattige Terrasse, französische Küche, Gruppen willkommen. Online oder unter 04 48 17 78 75.",
+      "keywords": "reservierung restaurant agde, tisch reservieren agde, terrassenrestaurant agde reservierung, le divino reservierung, gruppenrestaurant agde"
     },
     "gallery": {
-      "title": "Fotogalerie — Le Divino | Restaurant Agde",
-      "description": "Entdecken Sie Le Divino in Bildern: unser Restaurant, unsere Gerichte, unser Team und die Atmosphäre in Agde.",
-      "keywords": "fotos restaurant agde, galerie le divino, restaurant atmosphäre, französische gerichte fotos"
+      "title": "Fotos — Restaurant Le Divino Agde | Terrasse, Gerichte, Atmosphäre",
+      "description": "Entdecken Sie Le Divino in Bildern: Terrasse am place Jean Jaurès, französische Gerichte, gemütliche Atmosphäre. Restaurant in Agde Stadtzentrum.",
+      "keywords": "fotos restaurant agde, galerie le divino, terrasse restaurant agde, atmosphäre restaurant agde, französische gerichte agde"
     },
     "vins": {
-      "title": "Weinkarte — Le Divino | Restaurant Agde",
-      "description": "Entdecken Sie die Weinkarte des Restaurants Le Divino in Agde: sorgfältig ausgewählte Rot-, Weiß-, Rosé- und Schaumweine.",
-      "keywords": "weinkarte agde, weine restaurant le divino, rotweine weißweine roséweine agde"
+      "title": "Weinkarte — Restaurant Le Divino Agde | Auswahl Languedoc & Frankreich",
+      "description": "Weinkarte des Restaurants Le Divino in Agde: Rotweine, Weißweine, Roséweine und Schaumweine. Auswahl aus dem Languedoc und ganz Frankreich.",
+      "keywords": "weinkarte agde, languedoc weine restaurant agde, weine restaurant le divino, rotweine weißweine roséweine agde"
     },
     "boissons": {
-      "title": "Unsere Getränke — Le Divino | Restaurant Agde",
-      "description": "Entdecken Sie die Getränkekarte des Restaurants Le Divino in Agde: alkoholfreie Getränke, Cocktails, Biere, Spirituosen und Heißgetränke.",
-      "keywords": "getränke restaurant agde, cocktails le divino, getränkekarte agde"
+      "title": "Getränke — Restaurant Le Divino Agde | Cocktails, Biere, Alkoholfreies",
+      "description": "Getränkekarte des Restaurants Le Divino in Agde: Cocktails, Craft-Biere, alkoholfreie Getränke, Heißgetränke. Auf unserer Terrasse genießen.",
+      "keywords": "getränke restaurant agde, cocktails agde, craft-biere agde, getränkekarte le divino, terrasse agde"
     },
     "events": {
-      "title": "Veranstaltungen — Le Divino | Restaurant Agde",
-      "description": "Entdecken Sie die nächsten Veranstaltungen im Restaurant Le Divino in Agde: Abende, Konzerte, Unterhaltung und besondere Events.",
-      "keywords": "veranstaltungen restaurant agde, abende le divino, konzerte agde, unterhaltung restaurant"
+      "title": "Veranstaltungen — Restaurant Le Divino Agde | Themenabende & Unterhaltung",
+      "description": "Veranstaltungen im Restaurant Le Divino in Agde: Themenabende, Konzerte, Unterhaltung. Programm ansehen und reservieren.",
+      "keywords": "veranstaltungen restaurant agde, abende agde, konzerte restaurant agde, unterhaltung le divino, ausgehen agde"
     },
     "contact": {
-      "title": "Kontakt & Anfahrt — Le Divino | Restaurant Agde",
-      "description": "Kontaktieren Sie Le Divino: 5 place Jean Jaurès, 34300 Agde. Öffnungszeiten, Telefon, E-Mail und Anfahrt.",
-      "keywords": "kontakt le divino agde, adresse restaurant agde, öffnungszeiten le divino, anfahrt restaurant agde"
+      "title": "Kontakt & Anfahrt — Restaurant Le Divino Agde | Place Jean Jaurès, Kostenloser Parkplatz",
+      "description": "Restaurant Le Divino, 5 place Jean Jaurès, 34300 Agde. 5 Min. von Cap d'Agde. Kostenloser Parkplatz 2 Min. entfernt. Tel: 04 48 17 78 75.",
+      "keywords": "kontakt le divino agde, adresse restaurant agde, restaurant place jean jaurès agde, parkplatz restaurant agde, anfahrt cap d'agde"
     },
     "breadcrumb": {
       "home": "Startseite"

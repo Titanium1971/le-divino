@@ -30,7 +30,7 @@ export async function SiteFooter() {
       <div className="relative h-64 overflow-hidden">
         <Image
           src="/images/exterior-terrace.jpg"
-          alt="Terrasse Le Divino"
+          alt="Terrasse du restaurant Le Divino place Jean Jaurès Agde"
           fill
           className="object-cover"
           sizes="100vw"
@@ -46,7 +46,7 @@ export async function SiteFooter() {
           <div>
             <Image
               src="/images/logo-divino.jpg"
-              alt="Logo Le Divino"
+              alt="Logo Le Divino restaurant Agde"
               width={80}
               height={80}
               className="rounded-full"

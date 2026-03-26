@@ -35,6 +35,12 @@ const HIGHLIGHT_IMAGES: Record<string, string> = {
   service: "/images/interieur-salle-bar.jpg",
 };
 
+const HIGHLIGHT_ALTS: Record<string, string> = {
+  cuisine: "Bar et cuisine du restaurant Le Divino à Agde",
+  ambiance: "Salle et bar du restaurant Le Divino ambiance chaleureuse Agde",
+  service: "Intérieur et salle du restaurant Le Divino Agde centre-ville",
+};
+
 export default async function HomePage({ params }: Props) {
   const { locale } = await params;
   setRequestLocale(locale);
@@ -127,7 +133,7 @@ export default async function HomePage({ params }: Props) {
             <div className="aspect-[21/9]">
               <Image
                 src="/images/salle-bord-eau.jpg"
-                alt="Salle du restaurant Le Divino"
+                alt="Salle du restaurant Le Divino en bord d'eau à Agde centre-ville"
                 fill
                 className="object-cover"
                 sizes="(max-width: 768px) 100vw, 1024px"
@@ -150,7 +156,7 @@ export default async function HomePage({ params }: Props) {
                 <div className="aspect-[4/3]">
                   <Image
                     src={HIGHLIGHT_IMAGES[key]}
-                    alt={t(`highlights.${key}.title`)}
+                    alt={HIGHLIGHT_ALTS[key]}
                     fill
                     className="object-cover transition-transform duration-700 group-hover:scale-105"
                     sizes="(max-width: 768px) 100vw, 33vw"

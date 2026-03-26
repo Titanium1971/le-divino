@@ -113,7 +113,7 @@ export default async function EventsPage({ params }: Props) {
                                 <div className="relative aspect-[16/9] w-full shrink-0 md:aspect-auto md:w-72">
                                   <Image
                                     src={imageUrl}
-                                    alt={title}
+                                    alt={`${title} — événement au restaurant Le Divino Agde`}
                                     fill
                                     className="object-cover transition-transform duration-700 group-hover:scale-105"
                                     sizes="(max-width: 768px) 100vw, 288px"

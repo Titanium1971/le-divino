@@ -21,21 +21,21 @@
       "cta": "Book a table"
     },
     "welcome": {
-      "title": "Welcome to Le Divino",
-      "description": "In the heart of Agde, Le Divino welcomes you in a warm and elegant setting. Discover authentic French cuisine, crafted from fresh, seasonal products, elevated by our chef's expertise."
+      "title": "Welcome to Le Divino, restaurant in Agde",
+      "description": "In the heart of Agde city centre, on Place Jean Jaurès, Le Divino welcomes you in a warm and elegant setting. Discover traditional French and Mediterranean cuisine, crafted from fresh, seasonal products, elevated by our chef's expertise. Just 5 minutes from Cap d'Agde, our restaurant with its shaded terrace is the perfect spot for a memorable lunch or dinner."
     },
     "highlights": {
       "cuisine": {
         "title": "Local cuisine",
-        "description": "Generous dishes prepared with local and seasonal products."
+        "description": "Generous traditional French dishes prepared with local and seasonal products, in Agde."
       },
       "ambiance": {
         "title": "Elegant setting",
-        "description": "A refined decor blending Mediterranean authenticity and modern comfort."
+        "description": "A refined decor blending Mediterranean authenticity and modern comfort, with a lovely terrace on Place Jean Jaurès."
       },
       "service": {
         "title": "Attentive service",
-        "description": "A passionate team at your service for a memorable experience."
+        "description": "A passionate team at your service for a memorable experience at our restaurant in Agde city centre."
       }
     },
     "specialties": {
@@ -175,49 +175,49 @@
   },
   "seo": {
     "home": {
-      "title": "Le Divino — Restaurant Agde | Traditional French Cuisine",
-      "description": "Le Divino restaurant in Agde: traditional French cuisine, fresh seasonal products, elegant setting by the Hérault river. Book your table.",
-      "keywords": "restaurant agde, french cuisine, le divino, traditional restaurant, agde france, fine dining agde"
+      "title": "Le Divino — Terrace Restaurant Agde City Centre | Traditional French Cuisine",
+      "description": "Le Divino restaurant in Agde city centre, place Jean Jaurès. Traditional French and Mediterranean cuisine, shaded terrace. 5 min from Cap d'Agde. Book now: 04 48 17 78 75.",
+      "keywords": "restaurant agde, restaurant agde city centre, terrace restaurant agde, french cuisine agde, best restaurant agde, restaurant cap d'agde, traditional restaurant agde, where to eat agde"
     },
     "menu": {
-      "title": "Menu — Le Divino | Restaurant Agde",
-      "description": "Explore Le Divino's menu in Agde: starters, main courses, desserts and set menus crafted with fresh local produce.",
-      "keywords": "menu restaurant agde, le divino menu, french dishes, set menus, agde restaurant menu"
+      "title": "Menu — Le Divino Restaurant Agde | Starters, Fish, Meat, Desserts",
+      "description": "Discover Le Divino's menu in Agde: traditional French cuisine, fresh seasonal produce. Set menus from 24.90€. Terrace restaurant in the city centre.",
+      "keywords": "menu restaurant agde, le divino menu agde, french dishes agde, set menus restaurant agde, french cuisine specialties agde"
     },
     "menus": {
-      "title": "Set Menus — Le Divino | Restaurant Agde",
-      "description": "Discover Le Divino's set menus in Agde: daily market menus with starters, main courses and homemade desserts.",
-      "keywords": "set menus restaurant agde, le divino set menus, daily menu agde, market menu"
+      "title": "Set Menus — Le Divino Restaurant Agde | Market Menu",
+      "description": "Set menus at Le Divino restaurant in Agde: starter + main from 24.90€, full menu 29.90€. Fresh market produce, traditional French cuisine.",
+      "keywords": "set menus restaurant agde, market menu agde, daily menu agde, le divino set menus, affordable restaurant agde"
     },
     "reservation": {
-      "title": "Reservation — Le Divino | Restaurant Agde",
-      "description": "Book your table at Le Divino restaurant in Agde. Lunch or dinner, choose your time slot online.",
-      "keywords": "reservation restaurant agde, book table le divino, restaurant agde booking"
+      "title": "Book a Table — Le Divino Restaurant Agde | Terrace Place Jean Jaurès",
+      "description": "Book your table at Le Divino restaurant in Agde city centre. Shaded terrace, French cuisine, groups welcome. Book online or call 04 48 17 78 75.",
+      "keywords": "book restaurant agde, reserve table agde, terrace restaurant agde booking, le divino reservation, group restaurant agde"
     },
     "gallery": {
-      "title": "Photo Gallery — Le Divino | Restaurant Agde",
-      "description": "Discover Le Divino in pictures: our dining room, dishes, team and the atmosphere of our restaurant in Agde.",
-      "keywords": "photos restaurant agde, le divino gallery, restaurant atmosphere, french dishes photos"
+      "title": "Photos — Le Divino Restaurant Agde | Terrace, Dishes, Atmosphere",
+      "description": "Discover Le Divino in pictures: terrace on place Jean Jaurès, French cuisine dishes, warm atmosphere. Restaurant in Agde city centre.",
+      "keywords": "photos restaurant agde, le divino gallery, terrace restaurant agde, atmosphere restaurant agde, french cuisine dishes agde"
     },
     "vins": {
-      "title": "Wine List — Le Divino | Restaurant Agde",
-      "description": "Discover the wine list at Le Divino restaurant in Agde: carefully selected red, white, rosé and sparkling wines.",
-      "keywords": "wine list agde, le divino wines, red white rosé wines agde restaurant"
+      "title": "Wine List — Le Divino Restaurant Agde | Languedoc & French Selection",
+      "description": "Wine list at Le Divino restaurant in Agde: red, white, rosé and sparkling wines. Selection from Languedoc and across France.",
+      "keywords": "wine list agde, languedoc wines restaurant agde, le divino wines, red white rosé wines agde"
     },
     "boissons": {
-      "title": "Our Drinks — Le Divino | Restaurant Agde",
-      "description": "Discover the drinks menu at Le Divino restaurant in Agde: soft drinks, cocktails, beers, spirits and hot drinks.",
-      "keywords": "drinks restaurant agde, cocktails le divino, drinks menu agde"
+      "title": "Drinks — Le Divino Restaurant Agde | Cocktails, Beers, Soft Drinks",
+      "description": "Drinks menu at Le Divino restaurant in Agde: cocktails, craft beers, soft drinks, hot beverages. Enjoy on our terrace.",
+      "keywords": "drinks restaurant agde, cocktails agde, craft beers agde, drinks menu le divino, terrace agde"
     },
     "events": {
-      "title": "Events — Le Divino | Restaurant Agde",
-      "description": "Discover upcoming events at Le Divino restaurant in Agde: evenings, concerts, entertainment and special events.",
-      "keywords": "events restaurant agde, le divino evenings, concerts agde, restaurant entertainment"
+      "title": "Events — Le Divino Restaurant Agde | Themed Evenings & Entertainment",
+      "description": "Events at Le Divino restaurant in Agde: themed evenings, concerts, entertainment. Check our schedule and book.",
+      "keywords": "events restaurant agde, evenings agde, concerts restaurant agde, le divino entertainment, things to do agde"
     },
     "contact": {
-      "title": "Contact & Directions — Le Divino | Restaurant Agde",
-      "description": "Contact Le Divino: 5 place Jean Jaurès, 34300 Agde. Opening hours, phone, email and directions.",
-      "keywords": "contact le divino agde, restaurant agde address, le divino hours, directions restaurant agde"
+      "title": "Contact & Directions — Le Divino Restaurant Agde | Place Jean Jaurès, Free Parking",
+      "description": "Le Divino restaurant, 5 place Jean Jaurès, 34300 Agde. 5 min from Cap d'Agde. Free parking 2 min away. Tel: 04 48 17 78 75.",
+      "keywords": "contact le divino agde, restaurant agde address, restaurant place jean jaurès agde, parking restaurant agde, directions cap d'agde"
     },
     "breadcrumb": {
       "home": "Home"

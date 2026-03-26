@@ -118,7 +118,7 @@ export function GalleryClient({ images }: { images: GalleryImage[] }) {
               <div className="relative aspect-[4/3]">
                 <Image
                   src={img.url}
-                  alt={img.caption || "Le Divino"}
+                  alt={img.caption ? `${img.caption} — Restaurant Le Divino Agde` : "Photo du restaurant Le Divino à Agde"}
                   fill
                   className="object-cover transition-all duration-300 group-hover:brightness-105"
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
@@ -175,7 +175,7 @@ export function GalleryClient({ images }: { images: GalleryImage[] }) {
           >
             <Image
               src={filtered[lightboxIndex].url}
-              alt={filtered[lightboxIndex].caption || "Le Divino"}
+              alt={filtered[lightboxIndex].caption ? `${filtered[lightboxIndex].caption} — Restaurant Le Divino Agde` : "Photo du restaurant Le Divino à Agde"}
               width={1200}
               height={900}
               className="max-h-[85vh] w-auto rounded-lg object-contain"

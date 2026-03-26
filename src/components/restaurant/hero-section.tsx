@@ -12,7 +12,7 @@ export function HeroSection() {
       {/* Background photo */}
       <Image
         src="/images/hero-exterior-night.jpg"
-        alt="Le Divino restaurant"
+        alt="Restaurant Le Divino de nuit place Jean Jaurès Agde"
         fill
         priority
         className="object-cover"

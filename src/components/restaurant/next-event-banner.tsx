@@ -60,7 +60,7 @@ export function NextEventBanner({ event, imageUrl, locale }: Props) {
                 <div className="relative aspect-[4/3]">
                   <Image
                     src={imageUrl}
-                    alt={title}
+                    alt={`${title} — événement au restaurant Le Divino Agde`}
                     fill
                     className="object-cover"
                     sizes="(max-width: 768px) 100vw, 320px"
@@ -149,7 +149,7 @@ export function NextEventBanner({ event, imageUrl, locale }: Props) {
           >
             <Image
               src={imageUrl}
-              alt={title}
+              alt={`${title} — événement au restaurant Le Divino Agde`}
               width={1200}
               height={900}
               className="h-auto max-h-[85vh] w-auto object-contain"

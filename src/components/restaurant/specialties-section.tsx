@@ -44,7 +44,7 @@ export function SpecialtiesSection({ dishes, imageUrls, locale }: Props) {
                 >
                   <Image
                     src={url}
-                    alt={getDishName(dish)}
+                    alt={`${getDishName(dish)} — spécialité du restaurant Le Divino Agde`}
                     fill
                     className="object-cover transition-transform duration-700 group-hover:scale-105"
                     sizes="(max-width: 768px) 100vw, 33vw"
@@ -81,7 +81,7 @@ export function SpecialtiesSection({ dishes, imageUrls, locale }: Props) {
           <div className="relative max-h-[90vh] max-w-[90vw]" onClick={(e) => e.stopPropagation()}>
             <Image
               src={lightboxUrl}
-              alt="Photo du plat"
+              alt="Plat du restaurant Le Divino à Agde"
               width={1024}
               height={1024}
               className="h-auto max-h-[85vh] w-auto rounded-lg object-contain"
