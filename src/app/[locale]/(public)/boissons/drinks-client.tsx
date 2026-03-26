@@ -75,7 +75,6 @@ export function DrinksClient({ groups, locale, imageUrls }: Props) {
                           fill
                           className="object-cover transition-transform duration-300 hover:scale-110"
                           sizes="64px"
-                          unoptimized
                         />
                       </button>
                     )}
@@ -156,7 +155,6 @@ export function DrinksClient({ groups, locale, imageUrls }: Props) {
               width={600}
               height={600}
               className="h-auto max-h-[85vh] w-auto rounded-lg object-contain"
-              unoptimized
             />
           </div>
         </div>

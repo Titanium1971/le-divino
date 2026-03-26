@@ -2,7 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import type { ActivityLog } from "@/lib/supabase/activity-log";
 import { ActivityClient } from "./activity-client";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 3600;
 
 export default async function ActivityPage() {
   const supabase = await createClient();

@@ -6,7 +6,7 @@ import { getDishesGrouped, getDishImageUrl } from "@/lib/supabase/dishes";
 import { MenuClient } from "./menu-client";
 import { generatePageMetadata, breadcrumbJsonLd } from "@/lib/seo/metadata";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 3600;
 
 type Props = {
   params: Promise<{ locale: string }>;

@@ -261,7 +261,6 @@ export function DishesManager({ initialGroups }: Props) {
               width={1024}
               height={1024}
               className="h-auto w-full rounded-lg"
-              unoptimized
             />
           )}
         </DialogContent>
@@ -333,7 +332,6 @@ function DishRow({ dish, onEdit, onDuplicate, onDelete, onToggle, onGenerateImag
                 fill
                 className="object-cover"
                 sizes="48px"
-                unoptimized={!!imageTs}
               />
             </button>
           ) : (

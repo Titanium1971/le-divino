@@ -316,7 +316,6 @@ export function GalleryManager({ initialItems }: Props) {
                     fill
                     className="object-cover"
                     sizes="(max-width: 768px) 100vw, (max-width: 1024px) 33vw, 25vw"
-                    unoptimized
                     onError={(e) => {
                       (e.target as HTMLImageElement).style.display = "none";
                     }}

@@ -19,7 +19,10 @@ const DAY_KEYS: (keyof Horaires)[] = [
   "lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi", "dimanche",
 ];
 
-export function buildRestaurantJsonLd(horaires: Horaires) {
+export function buildRestaurantJsonLd(
+  horaires: Horaires,
+  rating?: { ratingValue: string; ratingCount: string },
+) {
   return {
     "@context": "https://schema.org",
     "@type": "Restaurant",
@@ -54,9 +57,9 @@ export function buildRestaurantJsonLd(horaires: Horaires) {
       })),
     aggregateRating: {
       "@type": "AggregateRating",
-      ratingValue: "4.9",
+      ratingValue: rating?.ratingValue ?? "4.9",
       bestRating: "5",
-      ratingCount: "76",
+      ratingCount: rating?.ratingCount ?? "76",
     },
     sameAs: [c.social.instagram, c.social.facebook].filter(Boolean),
     acceptsReservations: "True",

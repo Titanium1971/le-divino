@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
 import { Raleway } from "next/font/google";
 import { CookieBanner } from "@/components/restaurant/cookie-banner";
+import { GoogleAnalytics } from "@/components/restaurant/google-analytics";
 import { SITE_URL, LOCALES, DEFAULT_LOCALE, buildRestaurantJsonLd } from "@/lib/seo/constants";
 import { createClient } from "@/lib/supabase/server";
 import { getHoraires } from "@/lib/supabase/horaires";
+import { getGoogleRating } from "@/lib/google-rating";
 import "./globals.css";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 3600;
 
 
 const raleway = Raleway({
@@ -33,8 +35,11 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const supabase = await createClient();
-  const horaires = await getHoraires(supabase);
-  const jsonLd = buildRestaurantJsonLd(horaires);
+  const [horaires, rating] = await Promise.all([
+    getHoraires(supabase),
+    getGoogleRating(),
+  ]);
+  const jsonLd = buildRestaurantJsonLd(horaires, rating);
 
   return (
     <html lang="fr" suppressHydrationWarning>
@@ -46,6 +51,7 @@ export default async function RootLayout({
       </head>
       <body className={`${raleway.variable} font-sans antialiased`}>
         {children}
+        <GoogleAnalytics />
         <CookieBanner />
       </body>
     </html>

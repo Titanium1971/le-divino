@@ -7,7 +7,7 @@ import type { Dish, Menu } from "@/lib/types/database";
 import { MenusClient } from "./menus-client";
 import { generatePageMetadata, breadcrumbJsonLd } from "@/lib/seo/metadata";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 3600;
 
 type Props = {
   params: Promise<{ locale: string }>;

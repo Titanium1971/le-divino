@@ -188,7 +188,6 @@ export function QrClient({
                           fill
                           className="object-cover"
                           sizes="56px"
-                          unoptimized
                         />
                       </button>
                     )}
@@ -295,7 +294,6 @@ export function QrClient({
                                         fill
                                         className="object-cover"
                                         sizes="48px"
-                                        unoptimized
                                       />
                                     </button>
                                   )}
@@ -366,7 +364,6 @@ export function QrClient({
                           fill
                           className="object-cover"
                           sizes="44px"
-                          unoptimized
                         />
                       </button>
                     )}
@@ -445,7 +442,6 @@ export function QrClient({
                           fill
                           className="object-cover"
                           sizes="48px"
-                          unoptimized
                         />
                       </button>
                     )}
@@ -584,7 +580,6 @@ export function QrClient({
               width={800}
               height={800}
               className="h-auto max-h-[85vh] w-auto rounded-lg object-contain"
-              unoptimized
             />
           </div>
         </div>

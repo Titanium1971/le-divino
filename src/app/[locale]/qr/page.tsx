@@ -7,7 +7,7 @@ import { getDrinks, getDrinksGrouped, getDrinkImageUrl } from "@/lib/supabase/dr
 import type { Dish, Menu } from "@/lib/types/database";
 import { QrClient } from "./qr-client";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 3600;
 
 type Props = {
   params: Promise<{ locale: string }>;

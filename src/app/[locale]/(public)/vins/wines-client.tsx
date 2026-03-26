@@ -78,7 +78,6 @@ export function WinesClient({ groups, locale, imageUrls }: Props) {
                           fill
                           className="object-cover transition-transform duration-300 hover:scale-110"
                           sizes="56px"
-                          unoptimized
                         />
                       </button>
                     )}
@@ -154,7 +153,6 @@ export function WinesClient({ groups, locale, imageUrls }: Props) {
               width={600}
               height={900}
               className="h-auto max-h-[85vh] w-auto rounded-lg object-contain"
-              unoptimized
             />
           </div>
         </div>

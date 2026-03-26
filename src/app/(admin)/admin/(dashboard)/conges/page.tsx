@@ -2,7 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getSetting } from "@/lib/supabase/settings";
 import { CongesManager } from "@/components/admin/conges-manager";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 3600;
 
 export default async function CongesPage() {
   const supabase = await createClient();

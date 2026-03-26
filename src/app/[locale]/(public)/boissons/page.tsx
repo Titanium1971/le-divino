@@ -6,7 +6,7 @@ import { getDrinks, getDrinksGrouped, getDrinkImageUrl } from "@/lib/supabase/dr
 import { DrinksClient } from "./drinks-client";
 import { generatePageMetadata, breadcrumbJsonLd } from "@/lib/seo/metadata";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 3600;
 
 type Props = {
   params: Promise<{ locale: string }>;

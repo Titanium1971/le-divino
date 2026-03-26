@@ -192,7 +192,6 @@ function DailySpecialSlide({
             fill
             className="object-cover"
             sizes="60vw"
-            unoptimized
           />
         </div>
       )}
@@ -259,7 +258,6 @@ function EventSlide({
             fill
             className="object-cover"
             sizes="100vw"
-            unoptimized
           />
           <div className="absolute inset-0 bg-black/60" />
         </>
@@ -306,7 +304,6 @@ function GallerySlide({
           fill
           className="object-cover"
           sizes="100vw"
-          unoptimized
         />
       )}
       {/* Subtle gradient overlay at bottom for text */}
@@ -350,7 +347,6 @@ function PosterSlide({
           fill
           className="object-contain"
           sizes="100vw"
-          unoptimized
         />
       ) : (
         <div className="flex h-full w-full items-center justify-center bg-[#1a0a0a]">

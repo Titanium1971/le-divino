@@ -139,7 +139,6 @@ export function MenusClient({ menus, locale }: Props) {
                                       fill
                                       className="object-cover transition-transform duration-300 hover:scale-110"
                                       sizes="64px"
-                                      unoptimized
                                     />
                                   </button>
                                 )}
@@ -196,7 +195,6 @@ export function MenusClient({ menus, locale }: Props) {
               width={1024}
               height={1024}
               className="h-auto max-h-[85vh] w-auto rounded-lg object-contain"
-              unoptimized
             />
           </div>
         </div>

@@ -6,7 +6,7 @@ import { getWines, getWinesGrouped, getWineImageUrl } from "@/lib/supabase/wines
 import { WinesClient } from "./wines-client";
 import { generatePageMetadata, breadcrumbJsonLd } from "@/lib/seo/metadata";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 3600;
 
 type Props = {
   params: Promise<{ locale: string }>;

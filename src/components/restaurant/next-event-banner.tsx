@@ -64,7 +64,6 @@ export function NextEventBanner({ event, imageUrl, locale }: Props) {
                     fill
                     className="object-cover"
                     sizes="(max-width: 768px) 100vw, 320px"
-                    unoptimized
                   />
                 </div>
                 {/* Glossy shine — diagonal highlight */}
@@ -154,7 +153,6 @@ export function NextEventBanner({ event, imageUrl, locale }: Props) {
               width={1200}
               height={900}
               className="h-auto max-h-[85vh] w-auto object-contain"
-              unoptimized
             />
             {/* Glossy overlay on lightbox too */}
             <div className="pointer-events-none absolute inset-0 rounded-lg ring-1 ring-inset ring-white/10" />

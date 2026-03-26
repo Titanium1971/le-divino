@@ -129,7 +129,6 @@ export function GoogleReviews() {
                     width={36}
                     height={36}
                     className="rounded-full"
-                    unoptimized
                   />
                 ) : (
                   <div className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-bordeaux/40 text-sm font-light text-brand-cream">

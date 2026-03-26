@@ -475,7 +475,7 @@ export function DishFormSheet({ open, onOpenChange, dish, onSaved, onRefresh }: 
                       fill
                       className="object-cover"
                       sizes="80px"
-                      unoptimized
+                      unoptimized={displayImage.startsWith("blob:") || displayImage.startsWith("data:")}
                     />
                   )}
                 </div>

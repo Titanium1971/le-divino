@@ -48,7 +48,6 @@ export function SpecialtiesSection({ dishes, imageUrls, locale }: Props) {
                     fill
                     className="object-cover transition-transform duration-700 group-hover:scale-105"
                     sizes="(max-width: 768px) 100vw, 33vw"
-                    unoptimized
                   />
                   <div className="absolute inset-0 bg-brand-dark/10 transition-opacity duration-500 group-hover:bg-brand-dark/0" />
                 </button>
@@ -86,7 +85,6 @@ export function SpecialtiesSection({ dishes, imageUrls, locale }: Props) {
               width={1024}
               height={1024}
               className="h-auto max-h-[85vh] w-auto rounded-lg object-contain"
-              unoptimized
             />
           </div>
         </div>

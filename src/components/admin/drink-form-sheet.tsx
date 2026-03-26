@@ -456,7 +456,6 @@ export function DrinkFormSheet({ open, onOpenChange, drink, onSaved, onRefresh }
                         fill
                         className="object-cover"
                         sizes="80px"
-                        unoptimized
                       />
                     </div>
                     <div className="flex flex-col gap-2">

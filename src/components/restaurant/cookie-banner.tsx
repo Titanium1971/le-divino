@@ -10,7 +10,6 @@ type CookieConsent = {
 };
 
 const STORAGE_KEY = "cookie_consent";
-const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
 
 function getStoredConsent(): CookieConsent | null {
   if (typeof window === "undefined") return null;
@@ -25,31 +24,8 @@ function getStoredConsent(): CookieConsent | null {
 
 function saveConsent(consent: CookieConsent) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(consent));
-}
-
-/**
- * Inject GA4 scripts into the page only when the user has consented.
- * This ensures zero third-party scripts are loaded before explicit consent,
- * which is the strictest CNIL interpretation.
- */
-function loadGA4() {
-  if (!GA_ID || typeof window === "undefined") return;
-  // Prevent double-loading
-  if (document.querySelector(`script[src*="googletagmanager.com/gtag"]`)) return;
-
-  // 1. Load gtag.js script
-  const script = document.createElement("script");
-  script.src = `https://www.googletagmanager.com/gtag/js?id=${GA_ID}`;
-  script.async = true;
-  document.head.appendChild(script);
-
-  // 2. Initialize gtag dataLayer
-  window.dataLayer = window.dataLayer || [];
-  function gtag(...args: unknown[]) {
-    window.dataLayer!.push(args);
-  }
-  gtag("js", new Date());
-  gtag("config", GA_ID, { anonymize_ip: true });
+  // Notify same-tab listeners (GoogleAnalytics component)
+  window.dispatchEvent(new Event("cookie_consent_update"));
 }
 
 /** Remove GA4 cookies and prevent further tracking */
@@ -66,13 +42,6 @@ function removeGA4() {
   }
 }
 
-// Extend window for gtag dataLayer
-declare global {
-  interface Window {
-    dataLayer?: unknown[];
-  }
-}
-
 export function CookieBanner() {
   const [visible, setVisible] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
@@ -81,9 +50,6 @@ export function CookieBanner() {
   useEffect(() => {
     const stored = getStoredConsent();
     if (stored) {
-      if (stored.analytics) {
-        loadGA4();
-      }
       setVisible(false);
     } else {
       // No consent yet — no script loaded at all
@@ -98,7 +64,6 @@ export function CookieBanner() {
       timestamp: new Date().toISOString(),
     };
     saveConsent(consent);
-    loadGA4();
     setVisible(false);
   }, []);
 
@@ -120,9 +85,7 @@ export function CookieBanner() {
       timestamp: new Date().toISOString(),
     };
     saveConsent(consent);
-    if (analyticsEnabled) {
-      loadGA4();
-    } else {
+    if (!analyticsEnabled) {
       removeGA4();
     }
     setVisible(false);
