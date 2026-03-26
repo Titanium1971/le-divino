@@ -1,5 +1,5 @@
 import Image from "next/image";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { getTranslations } from "next-intl/server";
 import { restaurantConfig } from "@/restaurant.config";
 import { createClient } from "@/lib/supabase/server";
