@@ -13,8 +13,10 @@ import { ReservationWidget } from "@/components/restaurant/reservation-widget";
 import { CongesBanner } from "@/components/restaurant/conges-banner";
 import { GoogleReviews } from "@/components/restaurant/google-reviews";
 import { SpecialtiesSection } from "@/components/restaurant/specialties-section";
+import { FaqSection } from "@/components/restaurant/faq-section";
 import { Link } from "@/i18n/navigation";
-import { generatePageMetadata } from "@/lib/seo/metadata";
+import { generatePageMetadata, homeBreadcrumbJsonLd } from "@/lib/seo/metadata";
+import { buildFaqJsonLd, FAQ_KEYS } from "@/lib/seo/constants";
 
 type Props = {
   params: Promise<{ locale: string }>;
@@ -24,6 +26,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
   return generatePageMetadata(locale, "home");
 }
+
 
 const HIGHLIGHT_IMAGES: Record<string, string> = {
   cuisine: "/images/bar-divino.jpg",
@@ -35,6 +38,15 @@ export default async function HomePage({ params }: Props) {
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("home");
+  const seoT = await getTranslations("seo");
+  const breadcrumb = homeBreadcrumbJsonLd(locale, seoT("breadcrumb.home"));
+
+  // Build FAQ data for JSON-LD and visible section
+  const faqItems = FAQ_KEYS.map((key) => ({
+    question: t(`faq.items.${key}.question`),
+    answer: t(`faq.items.${key}.answer`),
+  }));
+  const faqJsonLd = buildFaqJsonLd(faqItems);
 
   const supabase = await createClient();
 
@@ -68,6 +80,14 @@ export default async function HomePage({ params }: Props) {
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
       {/* ── Hero plein écran ── */}
       <HeroSection />
 
@@ -165,6 +185,9 @@ export default async function HomePage({ params }: Props) {
           locale={locale}
         />
       )}
+
+      {/* ── FAQ ── */}
+      <FaqSection title={t("faq.title")} items={faqItems} />
 
       {/* ── Widget flottant réservation ── */}
       {!conges.actif && <ReservationWidget locale={locale} />}

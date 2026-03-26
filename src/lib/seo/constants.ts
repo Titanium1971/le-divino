@@ -83,6 +83,51 @@ export function buildRestaurantJsonLd(
   };
 }
 
+export function buildOrganizationJsonLd() {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: c.name,
+    url: SITE_URL,
+    logo: `${SITE_URL}/logo-divino.png`,
+    contactPoint: {
+      "@type": "ContactPoint",
+      telephone: c.phoneIntl,
+      contactType: "reservations",
+      availableLanguage: ["French", "English", "Italian", "Spanish", "German"],
+    },
+    sameAs: [c.social.instagram, c.social.facebook].filter(Boolean),
+  };
+}
+
+export function buildFaqJsonLd(
+  items: { question: string; answer: string }[],
+) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: items.map((item) => ({
+      "@type": "Question",
+      name: item.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: item.answer,
+      },
+    })),
+  };
+}
+
+export const FAQ_KEYS = [
+  "hours",
+  "reservation",
+  "vegetarian",
+  "accessibility",
+  "terrace",
+  "group",
+  "payment",
+  "parking",
+] as const;
+
 export const PUBLIC_PAGES = [
   { path: "", priority: 1.0, changeFrequency: "weekly" as const },
   { path: "menu", priority: 0.9, changeFrequency: "weekly" as const },

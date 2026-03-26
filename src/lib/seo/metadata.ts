@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { SITE_URL, LOCALES, DEFAULT_LOCALE, getPageUrl } from "./constants";
+import type { DishGroup } from "@/lib/supabase/dishes";
 
 type PageKey = "home" | "menu" | "menus" | "vins" | "boissons" | "reservation" | "gallery" | "events" | "contact";
 
@@ -63,6 +64,24 @@ export async function generatePageMetadata(
   };
 }
 
+export function homeBreadcrumbJsonLd(
+  locale: string,
+  homeLabel: string,
+) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: homeLabel,
+        item: getPageUrl(locale, ""),
+      },
+    ],
+  };
+}
+
 export function breadcrumbJsonLd(
   locale: string,
   pageName: string,
@@ -86,5 +105,43 @@ export function breadcrumbJsonLd(
         item: getPageUrl(locale, path),
       },
     ],
+  };
+}
+
+const LOCALE_SUFFIX: Record<string, "fr" | "en" | "it" | "es" | "de"> = {
+  fr: "fr",
+  en: "en",
+  it: "it",
+  es: "es",
+  de: "de",
+};
+
+export function menuJsonLd(locale: string, groups: DishGroup[]) {
+  const lang = LOCALE_SUFFIX[locale] ?? "fr";
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "Menu",
+    name: "La Carte — Le Divino",
+    url: getPageUrl(locale, "menu"),
+    hasMenuSection: groups.map((group) => ({
+      "@type": "MenuSection",
+      name: group.label,
+      hasMenuItem: group.dishes.map((dish) => {
+        const name = dish[`name_${lang}`] ?? dish.name_fr;
+        const description = dish[`description_${lang}`] ?? dish.description_fr;
+
+        return {
+          "@type": "MenuItem",
+          name,
+          ...(description ? { description } : {}),
+          offers: {
+            "@type": "Offer",
+            price: dish.price.toFixed(2),
+            priceCurrency: "EUR",
+          },
+        };
+      }),
+    })),
   };
 }

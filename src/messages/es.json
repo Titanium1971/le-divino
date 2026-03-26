@@ -40,6 +40,43 @@
     },
     "specialties": {
       "title": "Nuestras Especialidades"
+    },
+    "faq": {
+      "title": "Preguntas Frecuentes",
+      "items": {
+        "hours": {
+          "question": "¿Cuáles son sus horarios de apertura?",
+          "answer": "Nuestros horarios de apertura están disponibles en nuestra página de contacto y varían según la temporada. No dude en contactarnos para más detalles."
+        },
+        "reservation": {
+          "question": "¿Cómo puedo reservar una mesa?",
+          "answer": "Puede reservar directamente a través de nuestro sitio web o por teléfono al +33 4 48 17 78 75."
+        },
+        "vegetarian": {
+          "question": "¿Ofrecen opciones vegetarianas?",
+          "answer": "Sí, varias opciones vegetarianas están disponibles en nuestra carta. Nuestro chef prepara platos deliciosos adaptados a todas las preferencias alimentarias."
+        },
+        "accessibility": {
+          "question": "¿El restaurante es accesible para personas con movilidad reducida?",
+          "answer": "Sí, el restaurante es totalmente accesible para personas con movilidad reducida."
+        },
+        "terrace": {
+          "question": "¿Tienen terraza?",
+          "answer": "Sí, disponemos de una terraza con sombra en la plaza Jean Jaurès, ideal para disfrutar de los días soleados."
+        },
+        "group": {
+          "question": "¿Aceptan reservas para grupos?",
+          "answer": "Sí, recibimos grupos con mucho gusto. Para grupos de más de 8 personas, le invitamos a contactarnos directamente."
+        },
+        "payment": {
+          "question": "¿Qué métodos de pago aceptan?",
+          "answer": "Aceptamos tarjetas de crédito, efectivo y cheques restaurante."
+        },
+        "parking": {
+          "question": "¿Hay aparcamiento cerca?",
+          "answer": "Sí, hay un aparcamiento gratuito a 2 minutos a pie del restaurante (parking de la promenade)."
+        }
+      }
     }
   },
   "menu": {

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Raleway } from "next/font/google";
 import { CookieBanner } from "@/components/restaurant/cookie-banner";
 import { GoogleAnalytics } from "@/components/restaurant/google-analytics";
-import { SITE_URL, LOCALES, DEFAULT_LOCALE, buildRestaurantJsonLd } from "@/lib/seo/constants";
+import { SITE_URL, LOCALES, DEFAULT_LOCALE, buildRestaurantJsonLd, buildOrganizationJsonLd } from "@/lib/seo/constants";
 import { createClient } from "@/lib/supabase/server";
 import { getHoraires } from "@/lib/supabase/horaires";
 import { getGoogleRating } from "@/lib/google-rating";
@@ -40,6 +40,7 @@ export default async function RootLayout({
     getGoogleRating(),
   ]);
   const jsonLd = buildRestaurantJsonLd(horaires, rating);
+  const orgJsonLd = buildOrganizationJsonLd();
 
   return (
     <html lang="fr" suppressHydrationWarning>
@@ -47,6 +48,10 @@ export default async function RootLayout({
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}
         />
       </head>
       <body className={`${raleway.variable} font-sans antialiased`}>

@@ -40,6 +40,43 @@
     },
     "specialties": {
       "title": "Nos Spécialités"
+    },
+    "faq": {
+      "title": "Questions Fréquentes",
+      "items": {
+        "hours": {
+          "question": "Quels sont vos horaires d'ouverture ?",
+          "answer": "Nos horaires d'ouverture sont disponibles sur notre page contact et varient selon la saison. N'hésitez pas à nous contacter pour plus de détails."
+        },
+        "reservation": {
+          "question": "Comment réserver une table ?",
+          "answer": "Vous pouvez réserver directement via notre site web ou par téléphone au 04 48 17 78 75."
+        },
+        "vegetarian": {
+          "question": "Proposez-vous des options végétariennes ?",
+          "answer": "Oui, plusieurs options végétariennes sont disponibles sur notre carte. Notre chef propose des plats savoureux adaptés à tous les régimes."
+        },
+        "accessibility": {
+          "question": "Le restaurant est-il accessible aux personnes à mobilité réduite ?",
+          "answer": "Oui, le restaurant est entièrement accessible aux personnes à mobilité réduite."
+        },
+        "terrace": {
+          "question": "Avez-vous une terrasse ?",
+          "answer": "Oui, nous disposons d'une terrasse ombragée sur la place Jean Jaurès, idéale pour profiter des beaux jours."
+        },
+        "group": {
+          "question": "Acceptez-vous les réservations de groupe ?",
+          "answer": "Oui, nous accueillons les groupes avec plaisir. Pour les groupes de plus de 8 personnes, nous vous invitons à nous contacter directement."
+        },
+        "payment": {
+          "question": "Quels moyens de paiement acceptez-vous ?",
+          "answer": "Nous acceptons les cartes bancaires, les espèces et les titres restaurant."
+        },
+        "parking": {
+          "question": "Y a-t-il un parking à proximité ?",
+          "answer": "Oui, un parking gratuit se trouve à 2 minutes à pied du restaurant (parking de la promenade)."
+        }
+      }
     }
   },
   "menu": {

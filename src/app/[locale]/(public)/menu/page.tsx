@@ -4,7 +4,7 @@ import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 import { getDishesGrouped, getDishImageUrl } from "@/lib/supabase/dishes";
 import { MenuClient } from "./menu-client";
-import { generatePageMetadata, breadcrumbJsonLd } from "@/lib/seo/metadata";
+import { generatePageMetadata, breadcrumbJsonLd, menuJsonLd } from "@/lib/seo/metadata";
 
 export const revalidate = 3600;
 
@@ -42,12 +42,17 @@ export default async function MenuPage({ params }: Props) {
   }
 
   const breadcrumb = breadcrumbJsonLd(locale, "menu", t("title"));
+  const menuSchema = menuJsonLd(locale, filteredGrouped);
 
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(menuSchema) }}
       />
       {/* Page header */}
       <section className="bg-brand-dark pt-32 pb-16">
