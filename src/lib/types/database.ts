@@ -301,6 +301,40 @@ export const DRINK_CATEGORIES: { value: DrinkCategory; label: string }[] = [
   { value: "autre", label: "Autres" },
 ];
 
+// ── FAQ ──
+
+export type Faq = {
+  id: string;
+  question_fr: string;
+  question_en: string | null;
+  question_it: string | null;
+  question_es: string | null;
+  question_de: string | null;
+  answer_fr: string;
+  answer_en: string | null;
+  answer_it: string | null;
+  answer_es: string | null;
+  answer_de: string | null;
+  sort_order: number;
+  published: boolean;
+  created_at: string;
+};
+
+export type FaqFormData = {
+  question_fr: string;
+  question_en?: string | null;
+  question_it?: string | null;
+  question_es?: string | null;
+  question_de?: string | null;
+  answer_fr: string;
+  answer_en?: string | null;
+  answer_it?: string | null;
+  answer_es?: string | null;
+  answer_de?: string | null;
+  sort_order?: number;
+  published?: boolean;
+};
+
 export const ALLERGENS = [
   "Gluten",
   "Crustacés",

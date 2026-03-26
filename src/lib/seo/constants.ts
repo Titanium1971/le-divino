@@ -117,17 +117,6 @@ export function buildFaqJsonLd(
   };
 }
 
-export const FAQ_KEYS = [
-  "hours",
-  "reservation",
-  "vegetarian",
-  "accessibility",
-  "terrace",
-  "group",
-  "payment",
-  "parking",
-] as const;
-
 export const PUBLIC_PAGES = [
   { path: "", priority: 1.0, changeFrequency: "weekly" as const },
   { path: "menu", priority: 0.9, changeFrequency: "weekly" as const },

@@ -11,7 +11,8 @@ export type ActivityEntityType =
   | "event"
   | "gallery"
   | "settings"
-  | "conges";
+  | "conges"
+  | "faq";
 
 export type ActivityLog = {
   id: string;

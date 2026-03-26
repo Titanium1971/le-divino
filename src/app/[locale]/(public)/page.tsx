@@ -5,7 +5,7 @@ import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 import { getDishImageUrl } from "@/lib/supabase/dishes";
 import { getUpcomingEvents, getEventImageUrl } from "@/lib/supabase/events";
-import type { Dish } from "@/lib/types/database";
+import type { Dish, Faq } from "@/lib/types/database";
 import { getConges } from "@/lib/supabase/conges";
 import { HeroSection } from "@/components/restaurant/hero-section";
 import { NextEventBanner } from "@/components/restaurant/next-event-banner";
@@ -16,7 +16,8 @@ import { SpecialtiesSection } from "@/components/restaurant/specialties-section"
 import { FaqSection } from "@/components/restaurant/faq-section";
 import { Link } from "@/i18n/navigation";
 import { generatePageMetadata, homeBreadcrumbJsonLd } from "@/lib/seo/metadata";
-import { buildFaqJsonLd, FAQ_KEYS } from "@/lib/seo/constants";
+import { buildFaqJsonLd } from "@/lib/seo/constants";
+import { getPublishedFaqs } from "@/lib/supabase/faqs";
 
 type Props = {
   params: Promise<{ locale: string }>;
@@ -41,14 +42,17 @@ export default async function HomePage({ params }: Props) {
   const seoT = await getTranslations("seo");
   const breadcrumb = homeBreadcrumbJsonLd(locale, seoT("breadcrumb.home"));
 
-  // Build FAQ data for JSON-LD and visible section
-  const faqItems = FAQ_KEYS.map((key) => ({
-    question: t(`faq.items.${key}.question`),
-    answer: t(`faq.items.${key}.answer`),
+  const supabase = await createClient();
+
+  // Fetch published FAQs from Supabase
+  const publishedFaqs = await getPublishedFaqs(supabase);
+  const qKey = `question_${locale}` as keyof Faq;
+  const aKey = `answer_${locale}` as keyof Faq;
+  const faqItems = publishedFaqs.map((faq) => ({
+    question: (faq[qKey] as string | null) || faq.question_fr,
+    answer: (faq[aKey] as string | null) || faq.answer_fr,
   }));
   const faqJsonLd = buildFaqJsonLd(faqItems);
-
-  const supabase = await createClient();
 
   // Fetch congés status
   const conges = await getConges(supabase, locale);
