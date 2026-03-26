@@ -1,19 +1,31 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import { getTranslations, setRequestLocale } from "next-intl/server";
+import { Link } from "@/i18n/navigation";
 
-export const metadata: Metadata = {
-  title: "Politique de Confidentialité — Le Divino",
-  description:
-    "Politique de confidentialité et protection des données personnelles du restaurant Le Divino, conformément au RGPD.",
+type Props = {
+  params: Promise<{ locale: string }>;
 };
 
-export default function PolitiqueConfidentialitePage() {
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "privacy" });
+  return {
+    title: t("seo_title"),
+    description: t("seo_description"),
+  };
+}
+
+export default async function PolitiqueConfidentialitePage({ params }: Props) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+  const t = await getTranslations("privacy");
+
   return (
     <section className="bg-brand-dark pt-32 pb-20">
       <div className="mx-auto max-w-3xl px-6">
         {/* Header */}
         <h1 className="text-4xl font-light tracking-[0.2em] text-brand-cream uppercase md:text-5xl text-center">
-          Politique de Confidentialité
+          {t("title")}
         </h1>
         <div className="mx-auto mt-4 h-px w-16 bg-brand-gold" />
 
@@ -21,37 +33,40 @@ export default function PolitiqueConfidentialitePage() {
           {/* Introduction */}
           <div>
             <p>
-              Le restaurant <strong className="text-brand-cream">Le Divino</strong> (SIRET :
-              99935890600017), situé au 5 place Jean Jaurès, 34300 Agde, France,
-              s&apos;engage à protéger la vie privée des utilisateurs de son site
-              internet{" "}
-              <span className="text-brand-cream">www.ledivino-agde.fr</span>.
+              {t.rich("intro_text", {
+                strong: (chunks) => (
+                  <strong className="text-brand-cream">{chunks}</strong>
+                ),
+                website: (chunks) => (
+                  <span className="text-brand-cream">{chunks}</span>
+                ),
+              })}
             </p>
-            <p className="mt-3">
-              La présente politique de confidentialité a pour objet de vous
-              informer sur la manière dont nous collectons, utilisons et
-              protégeons vos données personnelles, conformément au Règlement
-              Général sur la Protection des Données (RGPD — Règlement UE
-              2016/679) et à la loi Informatique et Libertés.
-            </p>
+            <p className="mt-3">{t("intro_commitment")}</p>
           </div>
 
           {/* 1. Responsable du traitement */}
           <div>
             <h2 className="text-lg font-normal tracking-[0.15em] text-brand-gold uppercase mb-4">
-              1. Responsable du traitement
+              {t("controller_title")}
             </h2>
             <ul className="space-y-1">
               <li>
-                <span className="text-brand-cream/60">Identité :</span> Le
-                Divino
+                <span className="text-brand-cream/60">
+                  {t("controller_identity_label")}
+                </span>{" "}
+                {t("controller_identity_value")}
               </li>
               <li>
-                <span className="text-brand-cream/60">Adresse :</span> 5 place
-                Jean Jaurès, 34300 Agde, France
+                <span className="text-brand-cream/60">
+                  {t("controller_address_label")}
+                </span>{" "}
+                {t("controller_address_value")}
               </li>
               <li>
-                <span className="text-brand-cream/60">Email :</span>{" "}
+                <span className="text-brand-cream/60">
+                  {t("controller_email_label")}
+                </span>{" "}
                 <a
                   href="mailto:contact@ledivino-agde.fr"
                   className="text-brand-cream/90 hover:text-brand-gold transition-colors"
@@ -60,7 +75,9 @@ export default function PolitiqueConfidentialitePage() {
                 </a>
               </li>
               <li>
-                <span className="text-brand-cream/60">Téléphone :</span>{" "}
+                <span className="text-brand-cream/60">
+                  {t("controller_phone_label")}
+                </span>{" "}
                 <a
                   href="tel:+33448177875"
                   className="text-brand-cream/90 hover:text-brand-gold transition-colors"
@@ -74,39 +91,27 @@ export default function PolitiqueConfidentialitePage() {
           {/* 2. Données collectées */}
           <div>
             <h2 className="text-lg font-normal tracking-[0.15em] text-brand-gold uppercase mb-4">
-              2. Données personnelles collectées
+              {t("data_collected_title")}
             </h2>
-            <p>
-              Nous collectons les données suivantes dans le cadre de
-              l&apos;utilisation de notre site :
-            </p>
+            <p>{t("data_collected_intro")}</p>
             <div className="mt-4 space-y-4">
               <div>
                 <h3 className="text-brand-cream font-normal mb-2">
-                  Formulaire de réservation
+                  {t("data_reservation_title")}
                 </h3>
-                <p>
-                  Nom, prénom, adresse email, numéro de téléphone, date et heure
-                  souhaitées, nombre de convives, demandes spéciales
-                  (allergies, occasions).
-                </p>
+                <p>{t("data_reservation_desc")}</p>
               </div>
               <div>
                 <h3 className="text-brand-cream font-normal mb-2">
-                  Formulaire de contact
+                  {t("data_contact_title")}
                 </h3>
-                <p>Nom, adresse email, objet et contenu du message.</p>
+                <p>{t("data_contact_desc")}</p>
               </div>
               <div>
                 <h3 className="text-brand-cream font-normal mb-2">
-                  Navigation sur le site
+                  {t("data_navigation_title")}
                 </h3>
-                <p>
-                  Données de navigation collectées via Google Analytics 4
-                  (adresse IP anonymisée, pages consultées, durée de visite,
-                  type d&apos;appareil, navigateur). Ces données ne sont
-                  collectées qu&apos;avec votre consentement préalable.
-                </p>
+                <p>{t("data_navigation_desc")}</p>
               </div>
             </div>
           </div>
@@ -114,43 +119,40 @@ export default function PolitiqueConfidentialitePage() {
           {/* 3. Finalités */}
           <div>
             <h2 className="text-lg font-normal tracking-[0.15em] text-brand-gold uppercase mb-4">
-              3. Finalités du traitement
+              {t("purposes_title")}
             </h2>
-            <p>Vos données sont traitées pour les finalités suivantes :</p>
+            <p>{t("purposes_intro")}</p>
             <ul className="mt-3 list-disc list-inside space-y-1">
-              <li>Gestion des réservations de table</li>
-              <li>Réponse aux demandes de contact</li>
-              <li>
-                Amélioration de l&apos;expérience utilisateur et analyse
-                statistique du site (Google Analytics 4)
-              </li>
-              <li>
-                Respect des obligations légales et réglementaires
-              </li>
+              <li>{t("purpose_reservations")}</li>
+              <li>{t("purpose_contact")}</li>
+              <li>{t("purpose_analytics")}</li>
+              <li>{t("purpose_legal")}</li>
             </ul>
           </div>
 
-          {/* 4. Base juridique (Article 6 RGPD) */}
+          {/* 4. Base juridique */}
           <div>
             <h2 className="text-lg font-normal tracking-[0.15em] text-brand-gold uppercase mb-4">
-              4. Base juridique du traitement (Article 6 RGPD)
+              {t("legal_basis_title")}
             </h2>
             <ul className="space-y-2">
               <li>
-                <strong className="text-brand-cream">Consentement</strong>{" "}
-                (article 6.1.a) : pour les cookies analytiques et le dépôt de
-                traceurs.
+                <strong className="text-brand-cream">
+                  {t("legal_basis_consent_label")}
+                </strong>{" "}
+                {t("legal_basis_consent_desc")}
               </li>
               <li>
                 <strong className="text-brand-cream">
-                  Exécution d&apos;un contrat
+                  {t("legal_basis_contract_label")}
                 </strong>{" "}
-                (article 6.1.b) : pour le traitement des réservations.
+                {t("legal_basis_contract_desc")}
               </li>
               <li>
-                <strong className="text-brand-cream">Intérêt légitime</strong>{" "}
-                (article 6.1.f) : pour répondre aux demandes de contact et
-                améliorer nos services.
+                <strong className="text-brand-cream">
+                  {t("legal_basis_interest_label")}
+                </strong>{" "}
+                {t("legal_basis_interest_desc")}
               </li>
             </ul>
           </div>
@@ -158,42 +160,52 @@ export default function PolitiqueConfidentialitePage() {
           {/* 5. Durées de conservation */}
           <div>
             <h2 className="text-lg font-normal tracking-[0.15em] text-brand-gold uppercase mb-4">
-              5. Durées de conservation
+              {t("retention_title")}
             </h2>
             <div className="overflow-x-auto">
               <table className="w-full text-left">
                 <thead>
                   <tr className="border-b border-brand-cream/20">
                     <th className="pb-3 pr-4 text-brand-cream font-normal">
-                      Type de données
+                      {t("retention_header_type")}
                     </th>
                     <th className="pb-3 text-brand-cream font-normal">
-                      Durée de conservation
+                      {t("retention_header_duration")}
                     </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-brand-cream/10">
                   <tr>
-                    <td className="py-3 pr-4">Données de réservation</td>
-                    <td className="py-3">
-                      12 mois après la date de réservation
+                    <td className="py-3 pr-4">
+                      {t("retention_reservation_type")}
                     </td>
-                  </tr>
-                  <tr>
-                    <td className="py-3 pr-4">Données de contact</td>
                     <td className="py-3">
-                      12 mois après le dernier échange
+                      {t("retention_reservation_duration")}
                     </td>
                   </tr>
                   <tr>
                     <td className="py-3 pr-4">
-                      Données de navigation (analytics)
+                      {t("retention_contact_type")}
                     </td>
-                    <td className="py-3">14 mois (paramétrage GA4)</td>
+                    <td className="py-3">
+                      {t("retention_contact_duration")}
+                    </td>
                   </tr>
                   <tr>
-                    <td className="py-3 pr-4">Cookies de consentement</td>
-                    <td className="py-3">13 mois (recommandation CNIL)</td>
+                    <td className="py-3 pr-4">
+                      {t("retention_analytics_type")}
+                    </td>
+                    <td className="py-3">
+                      {t("retention_analytics_duration")}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="py-3 pr-4">
+                      {t("retention_cookies_type")}
+                    </td>
+                    <td className="py-3">
+                      {t("retention_cookies_duration")}
+                    </td>
                   </tr>
                 </tbody>
               </table>
@@ -203,92 +215,78 @@ export default function PolitiqueConfidentialitePage() {
           {/* 6. Destinataires */}
           <div>
             <h2 className="text-lg font-normal tracking-[0.15em] text-brand-gold uppercase mb-4">
-              6. Destinataires des données
+              {t("recipients_title")}
             </h2>
-            <p>
-              Vos données personnelles peuvent être transmises aux destinataires
-              suivants :
-            </p>
+            <p>{t("recipients_intro")}</p>
             <ul className="mt-3 list-disc list-inside space-y-1">
               <li>
                 <strong className="text-brand-cream">Vercel Inc.</strong>{" "}
-                (hébergement du site) — États-Unis, couvert par les clauses
-                contractuelles types (CCT)
+                {t("recipient_vercel")}
               </li>
               <li>
                 <strong className="text-brand-cream">Supabase Inc.</strong>{" "}
-                (base de données) — États-Unis, couvert par les CCT
+                {t("recipient_supabase")}
               </li>
               <li>
                 <strong className="text-brand-cream">Google LLC</strong>{" "}
-                (Google Analytics 4) — États-Unis, couvert par le Data Privacy
-                Framework
+                {t("recipient_google")}
               </li>
             </ul>
-            <p className="mt-3">
-              Aucune donnée n&apos;est vendue ou cédée à des tiers à des fins
-              commerciales.
-            </p>
+            <p className="mt-3">{t("recipients_no_sale")}</p>
           </div>
 
-          {/* 7. Vos droits (Articles 15-22 RGPD) */}
+          {/* 7. Vos droits */}
           <div>
             <h2 className="text-lg font-normal tracking-[0.15em] text-brand-gold uppercase mb-4">
-              7. Vos droits (Articles 15 à 22 du RGPD)
+              {t("rights_title")}
             </h2>
-            <p>
-              Conformément au RGPD, vous disposez des droits suivants sur vos
-              données personnelles :
-            </p>
+            <p>{t("rights_intro")}</p>
             <ul className="mt-3 space-y-2">
               <li>
-                <strong className="text-brand-cream">Droit d&apos;accès</strong>{" "}
-                (art. 15) : obtenir la confirmation que des données vous
-                concernant sont traitées et en recevoir une copie.
+                <strong className="text-brand-cream">
+                  {t("right_access_label")}
+                </strong>{" "}
+                {t("right_access_desc")}
               </li>
               <li>
                 <strong className="text-brand-cream">
-                  Droit de rectification
+                  {t("right_rectification_label")}
                 </strong>{" "}
-                (art. 16) : faire corriger des données inexactes ou incomplètes.
+                {t("right_rectification_desc")}
               </li>
               <li>
                 <strong className="text-brand-cream">
-                  Droit à l&apos;effacement
+                  {t("right_erasure_label")}
                 </strong>{" "}
-                (art. 17) : demander la suppression de vos données dans les
-                conditions prévues par la loi.
+                {t("right_erasure_desc")}
               </li>
               <li>
                 <strong className="text-brand-cream">
-                  Droit à la limitation
+                  {t("right_restriction_label")}
                 </strong>{" "}
-                (art. 18) : demander la limitation du traitement de vos données.
+                {t("right_restriction_desc")}
               </li>
               <li>
                 <strong className="text-brand-cream">
-                  Droit à la portabilité
+                  {t("right_portability_label")}
                 </strong>{" "}
-                (art. 20) : recevoir vos données dans un format structuré et
-                lisible par machine.
+                {t("right_portability_desc")}
               </li>
               <li>
                 <strong className="text-brand-cream">
-                  Droit d&apos;opposition
+                  {t("right_objection_label")}
                 </strong>{" "}
-                (art. 21) : vous opposer au traitement de vos données pour des
-                motifs légitimes.
+                {t("right_objection_desc")}
               </li>
               <li>
                 <strong className="text-brand-cream">
-                  Droit de retrait du consentement
+                  {t("right_withdrawal_label")}
                 </strong>{" "}
-                (art. 7) : retirer votre consentement à tout moment sans
-                affecter la licéité du traitement antérieur.
+                {t("right_withdrawal_desc")}
               </li>
             </ul>
             <p className="mt-4">
-              Pour exercer ces droits, contactez-nous à :{" "}
+              {t("rights_contact")}{" "}
               <a
                 href="mailto:contact@ledivino-agde.fr"
                 className="text-brand-gold hover:underline"
@@ -297,46 +295,40 @@ export default function PolitiqueConfidentialitePage() {
               </a>
             </p>
             <p className="mt-2">
-              Nous nous engageons à répondre dans un délai de 30 jours. En cas
-              de litige, vous pouvez introduire une réclamation auprès de la{" "}
-              <strong className="text-brand-cream">CNIL</strong> (Commission
-              Nationale de l&apos;Informatique et des Libertés) — cnil.fr.
+              {t.rich("rights_response", {
+                strong: (chunks) => (
+                  <strong className="text-brand-cream">{chunks}</strong>
+                ),
+              })}
             </p>
           </div>
 
           {/* 8. Sécurité */}
           <div>
             <h2 className="text-lg font-normal tracking-[0.15em] text-brand-gold uppercase mb-4">
-              8. Sécurité des données
+              {t("security_title")}
             </h2>
-            <p>
-              Nous mettons en œuvre des mesures techniques et organisationnelles
-              appropriées pour protéger vos données personnelles contre tout
-              accès non autorisé, modification, divulgation ou destruction :
-            </p>
+            <p>{t("security_intro")}</p>
             <ul className="mt-3 list-disc list-inside space-y-1">
-              <li>Chiffrement HTTPS (TLS) pour toutes les communications</li>
-              <li>Hébergement sécurisé chez Vercel (certifié SOC 2)</li>
-              <li>
-                Accès restreint aux données (authentification administrateur)
-              </li>
-              <li>Sauvegardes régulières de la base de données</li>
+              <li>{t("security_https")}</li>
+              <li>{t("security_hosting")}</li>
+              <li>{t("security_access")}</li>
+              <li>{t("security_backup")}</li>
             </ul>
           </div>
 
           {/* 9. Cookies */}
           <div>
             <h2 className="text-lg font-normal tracking-[0.15em] text-brand-gold uppercase mb-4">
-              9. Cookies
+              {t("cookies_title")}
             </h2>
             <p>
-              Pour plus d&apos;informations sur les cookies utilisés sur ce site,
-              veuillez consulter notre{" "}
+              {t("cookies_text")}{" "}
               <Link
                 href="/politique-cookies"
                 className="text-brand-gold hover:underline"
               >
-                Politique de Gestion des Cookies
+                {t("cookies_link")}
               </Link>
               .
             </p>
@@ -345,16 +337,10 @@ export default function PolitiqueConfidentialitePage() {
           {/* 10. Mise à jour */}
           <div>
             <h2 className="text-lg font-normal tracking-[0.15em] text-brand-gold uppercase mb-4">
-              10. Mise à jour de cette politique
+              {t("update_title")}
             </h2>
-            <p>
-              La présente politique de confidentialité peut être modifiée à tout
-              moment. La date de dernière mise à jour est indiquée ci-dessous.
-              Nous vous invitons à la consulter régulièrement.
-            </p>
-            <p className="mt-3 text-brand-cream/60">
-              Dernière mise à jour : 25 mars 2026
-            </p>
+            <p>{t("update_text")}</p>
+            <p className="mt-3 text-brand-cream/60">{t("update_date")}</p>
           </div>
 
           {/* Nav RGPD */}
@@ -363,13 +349,13 @@ export default function PolitiqueConfidentialitePage() {
               href="/mentions-legales"
               className="text-brand-gold hover:underline"
             >
-              Mentions Légales
+              {t("nav_legal")}
             </Link>
             <Link
               href="/politique-cookies"
               className="text-brand-gold hover:underline"
             >
-              Politique de Gestion des Cookies
+              {t("nav_cookies")}
             </Link>
           </div>
         </div>

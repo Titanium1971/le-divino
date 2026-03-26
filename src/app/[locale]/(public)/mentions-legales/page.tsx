@@ -1,19 +1,32 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { setRequestLocale } from "next-intl/server";
+import { getTranslations } from "next-intl/server";
 
-export const metadata: Metadata = {
-  title: "Mentions Légales — Le Divino",
-  description:
-    "Mentions légales du restaurant Le Divino, 5 place Jean Jaurès, 34300 Agde. SIRET 99935890600017.",
+type Props = {
+  params: Promise<{ locale: string }>;
 };
 
-export default function MentionsLegalesPage() {
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "legal" });
+  return {
+    title: t("seo_title"),
+    description: t("seo_description"),
+  };
+}
+
+export default async function MentionsLegalesPage({ params }: Props) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+  const t = await getTranslations("legal");
+
   return (
     <section className="bg-brand-dark pt-32 pb-20">
       <div className="mx-auto max-w-3xl px-6">
         {/* Header */}
         <h1 className="text-4xl font-light tracking-[0.2em] text-brand-cream uppercase md:text-5xl text-center">
-          Mentions Légales
+          {t("title")}
         </h1>
         <div className="mx-auto mt-4 h-px w-16 bg-brand-gold" />
 
@@ -21,31 +34,31 @@ export default function MentionsLegalesPage() {
           {/* 1. Éditeur */}
           <div>
             <h2 className="text-lg font-normal tracking-[0.15em] text-brand-gold uppercase mb-4">
-              1. Éditeur du site
+              {t("editor_title")}
             </h2>
             <ul className="space-y-1">
               <li>
-                <span className="text-brand-cream/60">Raison sociale :</span>{" "}
-                Le Divino
+                <span className="text-brand-cream/60">{t("company_name_label")}</span>{" "}
+                {t("company_name")}
               </li>
               <li>
-                <span className="text-brand-cream/60">Forme juridique :</span>{" "}
-                Société par actions simplifiée (SAS)
+                <span className="text-brand-cream/60">{t("legal_form_label")}</span>{" "}
+                {t("legal_form")}
               </li>
               <li>
-                <span className="text-brand-cream/60">SIRET :</span>{" "}
+                <span className="text-brand-cream/60">{t("siret_label")}</span>{" "}
                 99935890600017
               </li>
               <li>
-                <span className="text-brand-cream/60">SIREN :</span>{" "}
+                <span className="text-brand-cream/60">{t("siren_label")}</span>{" "}
                 999 358 906
               </li>
               <li>
-                <span className="text-brand-cream/60">Adresse :</span> 5 place
-                Jean Jaurès, 34300 Agde, France
+                <span className="text-brand-cream/60">{t("address_label")}</span>{" "}
+                {t("address")}
               </li>
               <li>
-                <span className="text-brand-cream/60">Téléphone :</span>{" "}
+                <span className="text-brand-cream/60">{t("phone_label")}</span>{" "}
                 <a
                   href="tel:+33448177875"
                   className="text-brand-cream/90 hover:text-brand-gold transition-colors"
@@ -54,7 +67,7 @@ export default function MentionsLegalesPage() {
                 </a>
               </li>
               <li>
-                <span className="text-brand-cream/60">Email :</span>{" "}
+                <span className="text-brand-cream/60">{t("email_label")}</span>{" "}
                 <a
                   href="mailto:contact@ledivino-agde.fr"
                   className="text-brand-cream/90 hover:text-brand-gold transition-colors"
@@ -64,10 +77,9 @@ export default function MentionsLegalesPage() {
               </li>
               <li>
                 <span className="text-brand-cream/60">
-                  Directeur de la publication :
+                  {t("publication_director_label")}
                 </span>{" "}
-                {/* TODO: Remplacer par le nom réel du directeur de publication */}
-                [Nom du directeur de publication à compléter]
+                {t("publication_director")}
               </li>
             </ul>
           </div>
@@ -75,19 +87,20 @@ export default function MentionsLegalesPage() {
           {/* 2. Hébergeur */}
           <div>
             <h2 className="text-lg font-normal tracking-[0.15em] text-brand-gold uppercase mb-4">
-              2. Hébergeur
+              {t("hosting_title")}
             </h2>
             <ul className="space-y-1">
               <li>
-                <span className="text-brand-cream/60">Nom :</span> Vercel Inc.
+                <span className="text-brand-cream/60">{t("hosting_name_label")}</span>{" "}
+                {t("hosting_name")}
               </li>
               <li>
-                <span className="text-brand-cream/60">Adresse :</span> 440 N
-                Barranca Ave #4133, Covina, CA 91723, États-Unis
+                <span className="text-brand-cream/60">{t("hosting_address_label")}</span>{" "}
+                {t("hosting_address")}
               </li>
               <li>
-                <span className="text-brand-cream/60">Site web :</span>{" "}
-                vercel.com
+                <span className="text-brand-cream/60">{t("hosting_website_label")}</span>{" "}
+                {t("hosting_website")}
               </li>
             </ul>
           </div>
@@ -95,70 +108,41 @@ export default function MentionsLegalesPage() {
           {/* 3. Propriété intellectuelle */}
           <div>
             <h2 className="text-lg font-normal tracking-[0.15em] text-brand-gold uppercase mb-4">
-              3. Propriété intellectuelle
+              {t("ip_title")}
             </h2>
-            <p>
-              L&apos;ensemble du contenu de ce site (textes, images,
-              photographies, logos, vidéos, éléments graphiques et sonores) est
-              la propriété exclusive de Le Divino ou de ses partenaires et est
-              protégé par les lois françaises et internationales relatives à la
-              propriété intellectuelle.
-            </p>
-            <p className="mt-3">
-              Toute reproduction, représentation, modification, publication,
-              adaptation ou exploitation de tout ou partie des éléments du site,
-              quel que soit le moyen ou le procédé utilisé, est interdite sauf
-              autorisation écrite préalable de Le Divino.
-            </p>
+            <p>{t("ip_text1")}</p>
+            <p className="mt-3">{t("ip_text2")}</p>
           </div>
 
           {/* 4. Responsabilité */}
           <div>
             <h2 className="text-lg font-normal tracking-[0.15em] text-brand-gold uppercase mb-4">
-              4. Limitation de responsabilité
+              {t("liability_title")}
             </h2>
-            <p>
-              Le Divino s&apos;efforce de fournir des informations aussi précises
-              que possible sur ce site. Toutefois, il ne pourra être tenu
-              responsable des omissions, inexactitudes ou carences dans la mise à
-              jour, qu&apos;elles soient de son fait ou du fait de tiers.
-            </p>
-            <p className="mt-3">
-              Les informations présentes sur ce site sont données à titre
-              indicatif et sont susceptibles d&apos;évoluer. Notamment, les menus,
-              tarifs et horaires d&apos;ouverture peuvent être modifiés sans
-              préavis.
-            </p>
+            <p>{t("liability_text1")}</p>
+            <p className="mt-3">{t("liability_text2")}</p>
           </div>
 
           {/* 5. Liens hypertextes */}
           <div>
             <h2 className="text-lg font-normal tracking-[0.15em] text-brand-gold uppercase mb-4">
-              5. Liens hypertextes
+              {t("links_title")}
             </h2>
-            <p>
-              Le site peut contenir des liens vers d&apos;autres sites internet.
-              Le Divino ne dispose d&apos;aucun contrôle sur le contenu de ces
-              sites tiers et décline toute responsabilité quant à leur contenu ou
-              aux éventuels dommages résultant de leur utilisation.
-            </p>
+            <p>{t("links_text")}</p>
           </div>
 
           {/* 6. Données personnelles */}
           <div>
             <h2 className="text-lg font-normal tracking-[0.15em] text-brand-gold uppercase mb-4">
-              6. Données personnelles
+              {t("data_title")}
             </h2>
             <p>
-              Conformément au Règlement Général sur la Protection des Données
-              (RGPD) et à la loi Informatique et Libertés, vous disposez de
-              droits sur vos données personnelles. Pour en savoir plus,
-              consultez notre{" "}
+              {t("data_text")}{" "}
               <Link
                 href="/politique-confidentialite"
                 className="text-brand-gold hover:underline"
               >
-                Politique de Confidentialité
+                {t("data_link")}
               </Link>
               .
             </p>
@@ -167,16 +151,15 @@ export default function MentionsLegalesPage() {
           {/* 7. Cookies */}
           <div>
             <h2 className="text-lg font-normal tracking-[0.15em] text-brand-gold uppercase mb-4">
-              7. Cookies
+              {t("cookies_title")}
             </h2>
             <p>
-              Ce site utilise des cookies. Pour en savoir plus sur leur
-              utilisation et vos options de gestion, consultez notre{" "}
+              {t("cookies_text")}{" "}
               <Link
                 href="/politique-cookies"
                 className="text-brand-gold hover:underline"
               >
-                Politique de Gestion des Cookies
+                {t("cookies_link")}
               </Link>
               .
             </p>
@@ -185,23 +168,20 @@ export default function MentionsLegalesPage() {
           {/* 8. Droit applicable */}
           <div>
             <h2 className="text-lg font-normal tracking-[0.15em] text-brand-gold uppercase mb-4">
-              8. Droit applicable
+              {t("law_title")}
             </h2>
-            <p>
-              Les présentes mentions légales sont régies par le droit français.
-              En cas de litige, les tribunaux français seront seuls compétents.
-            </p>
+            <p>{t("law_text")}</p>
           </div>
 
           {/* 9. Conception */}
           <div>
             <h2 className="text-lg font-normal tracking-[0.15em] text-brand-gold uppercase mb-4">
-              9. Conception et réalisation
+              {t("design_title")}
             </h2>
             <p>
-              Site conçu et développé par{" "}
-              <span className="text-brand-cream">CC Développement</span> —
-              Création de sites web sur mesure.
+              {t("design_text")}{" "}
+              <span className="text-brand-cream">{t("design_company")}</span>{" "}
+              {t("design_suffix")}
             </p>
           </div>
 
@@ -211,13 +191,13 @@ export default function MentionsLegalesPage() {
               href="/politique-confidentialite"
               className="text-brand-gold hover:underline"
             >
-              Politique de Confidentialité
+              {t("nav_privacy")}
             </Link>
             <Link
               href="/politique-cookies"
               className="text-brand-gold hover:underline"
             >
-              Politique de Gestion des Cookies
+              {t("nav_cookies")}
             </Link>
           </div>
         </div>
