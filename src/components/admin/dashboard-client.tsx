@@ -11,9 +11,22 @@ import type { Reservation, Event, EventType } from "@/lib/types/database";
 
 type Stats = {
   today: number;
+  todayPending: number;
+  todayConfirmed: number;
+  todayGuests: number;
   week: number;
+  weekTrend: number;
+  weekGuests: number;
+  avgGuestsPerReservation: string;
   pending: number;
   confirmRate: number;
+  cancelRate: number;
+  noShowCount: number;
+  weekLunch: number;
+  weekDinner: number;
+  peakSlot: { time: string; count: number } | null;
+  tomorrow: number;
+  tomorrowGuests: number;
 };
 
 type DayCount = {
@@ -26,6 +39,7 @@ type DayCount = {
 type Props = {
   stats: Stats;
   upcoming: Reservation[];
+  todayUpcoming: Reservation[];
   events: Event[];
   weekChart: DayCount[];
 };
@@ -75,8 +89,9 @@ function formatDate(d: string) {
 
 // ── Component ──
 
-export function DashboardClient({ stats, upcoming, events, weekChart }: Props) {
+export function DashboardClient({ stats, upcoming, todayUpcoming, events, weekChart }: Props) {
   const [reservations, setReservations] = useState(upcoming);
+  const [todayReservations, setTodayReservations] = useState(todayUpcoming);
   const [eventList, setEventList] = useState(events);
   const [currentStats, setCurrentStats] = useState(stats);
   const supabase = createClient();
@@ -86,9 +101,14 @@ export function DashboardClient({ stats, upcoming, events, weekChart }: Props) {
     setReservations((prev) =>
       prev.map((r) => (r.id === id ? { ...r, status: "confirmed" as const } : r)),
     );
+    setTodayReservations((prev) =>
+      prev.map((r) => (r.id === id ? { ...r, status: "confirmed" as const } : r)),
+    );
     setCurrentStats((s) => ({
       ...s,
       pending: Math.max(0, s.pending - 1),
+      todayPending: Math.max(0, s.todayPending - 1),
+      todayConfirmed: s.todayConfirmed + 1,
       confirmRate: s.week > 0 ? Math.round(((s.week - s.pending + 1) / s.week) * 100) : 0,
     }));
   }
@@ -104,19 +124,109 @@ export function DashboardClient({ stats, upcoming, events, weekChart }: Props) {
 
   return (
     <div className="space-y-8">
-      {/* ── Stat cards ── */}
+      {/* ── Stat cards row 1 — Aujourd'hui ── */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <div className="admin-fade-up admin-fade-up-1">
-          <StatCard label="Aujourd'hui" value={currentStats.today} icon="📅" accent={false} />
+          <StatCard label="Réservations aujourd'hui" value={currentStats.today} icon="📅" accent={false} sub={`${currentStats.todayGuests} couverts`} />
         </div>
         <div className="admin-fade-up admin-fade-up-2">
-          <StatCard label="Cette semaine" value={currentStats.week} icon="📊" accent={false} />
+          <StatCard label="Demain" value={currentStats.tomorrow} icon="📆" accent={false} sub={`${currentStats.tomorrowGuests} couverts`} />
         </div>
         <div className="admin-fade-up admin-fade-up-3">
-          <StatCard label="En attente" value={currentStats.pending} icon="⏳" accent={currentStats.pending > 0} />
+          <StatCard label="En attente" value={currentStats.pending} icon="⏳" accent={currentStats.pending > 0} sub="à confirmer" />
         </div>
         <div className="admin-fade-up admin-fade-up-4">
-          <StatCard label="Taux confirmation" value={`${currentStats.confirmRate}%`} icon="✓" accent={false} />
+          <StatCard label="Taux confirmation" value={`${currentStats.confirmRate}%`} icon="✓" accent={false} sub={currentStats.cancelRate > 0 ? `${currentStats.cancelRate}% annulations` : ""} />
+        </div>
+      </div>
+
+      {/* ── Stat cards row 2 — Semaine ── */}
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="admin-fade-up" style={{ animationDelay: "80ms" }}>
+          <StatCard
+            label="Cette semaine"
+            value={currentStats.week}
+            icon="📊"
+            accent={false}
+            sub={currentStats.weekTrend > 0 ? `↑ +${currentStats.weekTrend}% vs sem. préc.` : currentStats.weekTrend < 0 ? `↓ ${currentStats.weekTrend}% vs sem. préc.` : "= sem. précédente"}
+          />
+        </div>
+        <div className="admin-fade-up" style={{ animationDelay: "100ms" }}>
+          <StatCard label="Couverts semaine" value={currentStats.weekGuests} icon="🍽" accent={false} sub={`Moy. ${currentStats.avgGuestsPerReservation} pers./résa`} />
+        </div>
+        <div className="admin-fade-up" style={{ animationDelay: "120ms" }}>
+          <StatCard label="Déjeuner / Dîner" value={`${currentStats.weekLunch} / ${currentStats.weekDinner}`} icon="🕐" accent={false} sub="répartition semaine" />
+        </div>
+        <div className="admin-fade-up" style={{ animationDelay: "140ms" }}>
+          <StatCard
+            label="Créneau le + demandé"
+            value={currentStats.peakSlot?.time || "—"}
+            icon="🔥"
+            accent={false}
+            sub={currentStats.peakSlot ? `${currentStats.peakSlot.count} réservation${currentStats.peakSlot.count > 1 ? "s" : ""}` : "aucune donnée"}
+          />
+        </div>
+      </div>
+
+      {/* ── Today's reservation summary ── */}
+      <div className="admin-card admin-fade-up p-6" style={{ animationDelay: "150ms" }}>
+        <div className="flex items-center justify-between">
+          <h2 className="text-sm font-medium tracking-wide text-[#2D1219]">
+            Réservations du jour
+          </h2>
+          <div className="flex items-center gap-3">
+            <span className="flex items-center gap-1.5 text-[10px]">
+              <span className="inline-block h-2 w-2 rounded-full bg-orange-400" />
+              {currentStats.todayPending} en attente
+            </span>
+            <span className="flex items-center gap-1.5 text-[10px]">
+              <span className="inline-block h-2 w-2 rounded-full bg-green-500" />
+              {currentStats.todayConfirmed} confirmée{currentStats.todayConfirmed > 1 ? "s" : ""}
+            </span>
+            <Link
+              href="/admin/reservations"
+              className="admin-focus rounded-sm text-xs font-medium text-[#C5A55A] transition-colors duration-150 hover:text-[#d4b368] hover:underline"
+            >
+              Voir toutes les réservations →
+            </Link>
+          </div>
+        </div>
+        <div className="mt-4 space-y-2">
+          {todayReservations.length === 0 ? (
+            <p className="text-sm text-[#8C7B72]">Aucune réservation aujourd&apos;hui</p>
+          ) : (
+            todayReservations.map((r) => (
+              <div
+                key={r.id}
+                className="admin-slide-in flex items-center gap-3 rounded-lg border border-[#E8DDD4] bg-white px-4 py-3 transition-all duration-200 hover:bg-[#FDF8F3]"
+              >
+                <span className="text-xs font-semibold text-[#C5A55A] shrink-0 w-12">
+                  {r.time}
+                </span>
+                <span className="truncate text-sm font-medium text-[#2D1219] flex-1">
+                  {r.name}
+                </span>
+                <span className="text-xs text-[#8C7B72] shrink-0">
+                  {r.guests} pers.
+                </span>
+                <span
+                  className={`rounded-full px-2 py-0.5 text-[10px] font-medium shrink-0 ${STATUS_STYLE[r.status]} ${
+                    r.status === "pending" ? "admin-pending-pulse" : ""
+                  }`}
+                >
+                  {STATUS_LABEL[r.status]}
+                </span>
+                {r.status === "pending" && (
+                  <button
+                    onClick={() => handleConfirm(r.id)}
+                    className="admin-btn admin-btn-primary admin-focus rounded-md px-2.5 py-1 text-[10px] shrink-0"
+                  >
+                    Confirmer
+                  </button>
+                )}
+              </div>
+            ))
+          )}
         </div>
       </div>
 
@@ -329,11 +439,13 @@ function StatCard({
   value,
   icon,
   accent,
+  sub,
 }: {
   label: string;
   value: number | string;
   icon: string;
   accent: boolean;
+  sub?: string;
 }) {
   return (
     <div
@@ -356,6 +468,9 @@ function StatCard({
       >
         {value}
       </p>
+      {sub && (
+        <p className="mt-1 text-[10px] text-[#8C7B72]">{sub}</p>
+      )}
     </div>
   );
 }

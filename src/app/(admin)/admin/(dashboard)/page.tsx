@@ -1,10 +1,15 @@
+export const revalidate = 0; // Admin pages must be dynamic, no caching
+
 import { createClient } from "@/lib/supabase/server";
 import { getReservationsByDateRange } from "@/lib/supabase/reservations";
 import { getEvents } from "@/lib/supabase/events";
 import { DashboardClient } from "@/components/admin/dashboard-client";
 
 function toDateStr(d: Date): string {
-  return d.toISOString().split("T")[0];
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
 }
 
 function dayLabel(d: Date): string {
@@ -38,11 +43,52 @@ export default async function AdminDashboard() {
   ]);
 
   // Stats
-  const todayCount = weekReservations.filter((r) => r.date === today).length;
+  const todayReservations = weekReservations.filter((r) => r.date === today);
+  const todayCount = todayReservations.length;
+  const todayPending = todayReservations.filter((r) => r.status === "pending").length;
+  const todayConfirmed = todayReservations.filter((r) => r.status === "confirmed").length;
+  const todayGuests = todayReservations
+    .filter((r) => r.status !== "cancelled")
+    .reduce((sum, r) => sum + (r.guests || 0), 0);
   const weekCount = weekReservations.length;
+  const prevWeekCount = prevWeekReservations.length;
+  const weekTrend = prevWeekCount > 0 ? Math.round(((weekCount - prevWeekCount) / prevWeekCount) * 100) : 0;
   const pendingCount = weekReservations.filter((r) => r.status === "pending").length;
   const confirmedCount = weekReservations.filter((r) => r.status === "confirmed").length;
+  const cancelledCount = weekReservations.filter((r) => r.status === "cancelled").length;
+  const noShowCount = weekReservations.filter((r) => r.status === "no_show").length;
   const confirmRate = weekCount > 0 ? Math.round((confirmedCount / weekCount) * 100) : 0;
+  const cancelRate = weekCount > 0 ? Math.round((cancelledCount / weekCount) * 100) : 0;
+  const weekGuests = weekReservations
+    .filter((r) => r.status !== "cancelled")
+    .reduce((sum, r) => sum + (r.guests || 0), 0);
+  const avgGuestsPerReservation = weekCount > 0 ? (weekGuests / weekCount).toFixed(1) : "0";
+
+  // Lunch vs Dinner split
+  const weekLunch = weekReservations.filter((r) => r.time < "15:00").length;
+  const weekDinner = weekReservations.filter((r) => r.time >= "15:00").length;
+
+  // Peak time slots this week
+  const timeSlotCounts: Record<string, number> = {};
+  weekReservations.forEach((r) => {
+    timeSlotCounts[r.time] = (timeSlotCounts[r.time] || 0) + 1;
+  });
+  const peakSlot = Object.entries(timeSlotCounts).sort((a, b) => b[1] - a[1])[0];
+
+  // Tomorrow's reservations
+  const tomorrow = new Date(now);
+  tomorrow.setDate(now.getDate() + 1);
+  const tomorrowStr = toDateStr(tomorrow);
+  const tomorrowReservations = weekReservations.filter((r) => r.date === tomorrowStr);
+  const tomorrowCount = tomorrowReservations.length;
+  const tomorrowGuests = tomorrowReservations
+    .filter((r) => r.status !== "cancelled")
+    .reduce((sum, r) => sum + (r.guests || 0), 0);
+
+  // Today's upcoming reservations (not cancelled, sorted by time)
+  const todayUpcoming = todayReservations
+    .filter((r) => r.status !== "cancelled")
+    .sort((a, b) => a.time.localeCompare(b.time));
 
   // Upcoming reservations (today or future, not cancelled, max 5)
   const upcoming = weekReservations
@@ -88,8 +134,16 @@ export default async function AdminDashboard() {
       </p>
       <div className="mt-6">
         <DashboardClient
-          stats={{ today: todayCount, week: weekCount, pending: pendingCount, confirmRate }}
+          stats={{
+            today: todayCount, todayPending, todayConfirmed, todayGuests,
+            week: weekCount, weekTrend, weekGuests, avgGuestsPerReservation,
+            pending: pendingCount, confirmRate, cancelRate, noShowCount,
+            weekLunch, weekDinner,
+            peakSlot: peakSlot ? { time: peakSlot[0], count: peakSlot[1] } : null,
+            tomorrow: tomorrowCount, tomorrowGuests,
+          }}
           upcoming={upcoming}
+          todayUpcoming={todayUpcoming}
           events={upcomingEvents}
           weekChart={weekChart}
         />

@@ -1,12 +1,34 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { Link } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 
+const VALID_TIME_SLOTS = [
+  "12:00", "12:30", "13:00", "13:30",
+  "19:00", "19:30", "20:00", "20:30", "21:00", "21:30",
+];
+
 export function ReservationForm() {
   const t = useTranslations("reservation");
+  const searchParams = useSearchParams();
   const [submitted, setSubmitted] = useState(false);
+  const [selectedDate, setSelectedDate] = useState("");
+  const [selectedTime, setSelectedTime] = useState("");
+
+  // Pre-fill date and time from URL params (passed by the reservation widget)
+  useEffect(() => {
+    const dateParam = searchParams.get("date");
+    const timeParam = searchParams.get("time");
+
+    if (dateParam && /^\d{4}-\d{2}-\d{2}$/.test(dateParam)) {
+      setSelectedDate(dateParam);
+    }
+    if (timeParam && VALID_TIME_SLOTS.includes(timeParam)) {
+      setSelectedTime(timeParam);
+    }
+  }, [searchParams]);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -97,6 +119,8 @@ export function ReservationForm() {
             name="date"
             type="date"
             required
+            value={selectedDate}
+            onChange={(e) => setSelectedDate(e.target.value)}
             className="mt-2 w-full border-b border-brand-dark/30 bg-transparent px-0 py-3 text-sm font-light text-brand-dark focus:border-brand-gold focus:outline-none transition-colors"
           />
         </div>
@@ -111,7 +135,8 @@ export function ReservationForm() {
             id="time"
             name="time"
             required
-            defaultValue=""
+            value={selectedTime}
+            onChange={(e) => setSelectedTime(e.target.value)}
             className="mt-2 w-full border-b border-brand-dark/30 bg-transparent px-0 py-3 text-sm font-light text-brand-dark focus:border-brand-gold focus:outline-none transition-colors"
           >
             <option value="" disabled>{t("form.selectSlot")}</option>
