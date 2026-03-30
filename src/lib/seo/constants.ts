@@ -130,6 +130,9 @@ export const PUBLIC_PAGES = [
   { path: "mentions-legales", priority: 0.3, changeFrequency: "yearly" as const },
   { path: "politique-confidentialite", priority: 0.3, changeFrequency: "yearly" as const },
   { path: "politique-cookies", priority: 0.3, changeFrequency: "yearly" as const },
+  { path: "restaurant-agde", priority: 0.9, changeFrequency: "weekly" as const },
+  { path: "restaurant-terrasse-agde", priority: 0.85, changeFrequency: "weekly" as const },
+  { path: "restaurant-cap-agde", priority: 0.85, changeFrequency: "weekly" as const },
 ] as const;
 
 export const LOCALES = ["fr", "en", "it", "es", "de"] as const;

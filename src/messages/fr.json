@@ -218,6 +218,21 @@
       "description": "Restaurant Le Divino, 5 place Jean Jaurès, 34300 Agde. À 5 min du Cap d'Agde. Parking gratuit à 2 min. Tél : 04 48 17 78 75.",
       "keywords": "contact le divino agde, adresse restaurant agde, restaurant place jean jaurès agde, parking restaurant agde, accès cap d'agde"
     },
+    "restaurant-agde": {
+      "title": "Restaurant à Agde — Le Divino | Cuisine Française, Terrasse, Centre-Ville",
+      "description": "Le Divino, restaurant à Agde centre-ville sur la place Jean Jaurès. Cuisine française traditionnelle et méditerranéenne, terrasse ombragée, produits frais. Réservez au 04 48 17 78 75.",
+      "keywords": "restaurant agde, restaurant agde centre ville, meilleur restaurant agde, où manger agde, restaurant français agde, restaurant traditionnel agde, restaurant place jean jaurès agde"
+    },
+    "restaurant-terrasse-agde": {
+      "title": "Restaurant Terrasse à Agde — Le Divino | Déjeuner & Dîner en Plein Air",
+      "description": "Restaurant avec terrasse ombragée à Agde centre-ville. Le Divino, place Jean Jaurès : déjeuner et dîner en plein air, cuisine française, cadre méditerranéen. Réservation au 04 48 17 78 75.",
+      "keywords": "restaurant terrasse agde, terrasse restaurant agde centre ville, manger en terrasse agde, restaurant plein air agde, restaurant extérieur agde, déjeuner terrasse agde"
+    },
+    "restaurant-cap-agde": {
+      "title": "Restaurant près du Cap d'Agde — Le Divino | À 5 min, Cuisine Française",
+      "description": "Restaurant Le Divino à 5 minutes du Cap d'Agde. Cuisine française traditionnelle, terrasse, parking gratuit. L'alternative au centre d'Agde pour un repas authentique. Tél : 04 48 17 78 75.",
+      "keywords": "restaurant cap d'agde, restaurant près cap agde, où manger cap d'agde, restaurant français cap agde, meilleur restaurant cap agde, restaurant agde proche cap"
+    },
     "breadcrumb": {
       "home": "Accueil"
     }
@@ -420,5 +435,84 @@
     "update_date": "Dernière mise à jour : 25 mars 2026",
     "nav_legal": "Mentions Légales",
     "nav_cookies": "Politique de Gestion des Cookies"
+  },
+  "landing": {
+    "restaurant-agde": {
+      "hero_title": "Restaurant à Agde Centre-Ville",
+      "hero_subtitle": "Cuisine française traditionnelle et méditerranéenne, sur la place Jean Jaurès",
+      "intro_title": "Le Divino, votre restaurant à Agde",
+      "intro_text": "Au cœur du centre historique d'Agde, Le Divino est bien plus qu'un restaurant : c'est une invitation à découvrir la richesse de la cuisine française traditionnelle. Installé sur la place Jean Jaurès, notre établissement vous accueille dans un cadre à la fois élégant et convivial, où chaque repas devient un moment privilégié.",
+      "cuisine_title": "Une cuisine française authentique",
+      "cuisine_text": "Notre chef sélectionne chaque jour les meilleurs produits frais auprès de producteurs locaux du Languedoc. De l'entrée au dessert, chaque plat raconte une histoire : celle d'un terroir généreux, sublimé par un savoir-faire traditionnel. Viandes, poissons, légumes de saison — notre carte évolue au fil des marchés.",
+      "ambiance_title": "Un cadre unique en centre-ville",
+      "ambiance_text": "Place Jean Jaurès, au pied de la cathédrale Saint-Étienne, Le Divino bénéficie d'un emplacement exceptionnel. La salle intérieure, chaleureuse et intimiste, contraste avec la grande terrasse ombragée qui s'ouvre sur la place. Idéal pour un déjeuner au soleil ou un dîner aux chandelles.",
+      "terrasse_title": "Terrasse ombragée",
+      "terrasse_text": "Profitez de notre terrasse spacieuse sur la place Jean Jaurès, à l'ombre des platanes.",
+      "produits_title": "Produits frais et locaux",
+      "produits_text": "Approvisionnement quotidien auprès de producteurs du Languedoc et des halles d'Agde.",
+      "service_title": "Service attentionné",
+      "service_text": "Une équipe passionnée qui prend soin de chaque détail pour votre confort.",
+      "parking_title": "Parking gratuit",
+      "parking_text": "Parking public gratuit à 2 minutes à pied du restaurant.",
+      "horaires_title": "Horaires & Accès",
+      "horaires_text": "Le Divino est ouvert 7 jours sur 7. Retrouvez-nous au 5 place Jean Jaurès, 34300 Agde — à seulement 5 minutes en voiture du Cap d'Agde.",
+      "cta_title": "Réservez votre table à Agde",
+      "cta_text": "Par téléphone ou en ligne, réservez votre table au Divino.",
+      "cta_button": "Réserver maintenant",
+      "cta_phone": "Ou appelez-nous au 04 48 17 78 75",
+      "breadcrumb": "Restaurant Agde"
+    },
+    "restaurant-terrasse-agde": {
+      "hero_title": "Restaurant avec Terrasse à Agde",
+      "hero_subtitle": "Déjeuner et dîner en plein air, place Jean Jaurès",
+      "intro_title": "La plus belle terrasse d'Agde centre-ville",
+      "intro_text": "Vous cherchez un restaurant avec terrasse à Agde ? Le Divino vous offre l'une des plus belles terrasses du centre historique. Installée sur la place Jean Jaurès, à l'ombre des platanes centenaires, notre terrasse spacieuse est le lieu idéal pour savourer une cuisine française de qualité en plein air.",
+      "terrasse_title": "Une terrasse d'exception",
+      "terrasse_text": "Notre terrasse ombragée accueille plus de 40 couverts dans un cadre méditerranéen authentique. Face à la place Jean Jaurès et à proximité de la cathédrale Saint-Étienne, vous profitez d'une atmosphère unique mêlant patrimoine historique et douceur de vivre du Sud.",
+      "dejeuner_title": "Déjeuner en terrasse",
+      "dejeuner_text": "Le midi, notre terrasse ensoleillée est parfaite pour une pause gourmande. Menu du marché à partir de 24,90€ avec entrée, plat et dessert — le tout préparé avec des produits frais du jour. Un vrai moment de détente au cœur d'Agde.",
+      "diner_title": "Dîner en plein air",
+      "diner_text": "Le soir venu, la terrasse se transforme. Éclairage tamisé, bougies sur les tables, cuisine soignée : l'ambiance est romantique et festive. Parfait pour un dîner en couple ou entre amis lors des belles soirées d'été.",
+      "saisons_title": "Ouvert toute l'année",
+      "saisons_text": "Notre terrasse est aménagée pour vous accueillir au printemps comme en été. En hiver, notre salle intérieure vous offre le même niveau de confort dans une atmosphère chaleureuse et feutrée.",
+      "avantages_title": "Pourquoi choisir notre terrasse",
+      "avantage_1": "Terrasse ombragée par les platanes de la place",
+      "avantage_2": "Vue sur la place Jean Jaurès et le centre historique",
+      "avantage_3": "Service en extérieur du déjeuner au dîner",
+      "avantage_4": "Parking gratuit à 2 minutes",
+      "avantage_5": "Accessible PMR",
+      "cta_title": "Réservez votre table en terrasse",
+      "cta_text": "Assurez-vous d'avoir une place en terrasse en réservant à l'avance.",
+      "cta_button": "Réserver en terrasse",
+      "cta_phone": "Ou appelez-nous au 04 48 17 78 75",
+      "breadcrumb": "Restaurant Terrasse Agde"
+    },
+    "restaurant-cap-agde": {
+      "hero_title": "Restaurant près du Cap d'Agde",
+      "hero_subtitle": "Le Divino — à seulement 5 minutes, au cœur d'Agde centre-ville",
+      "intro_title": "L'alternative authentique au Cap d'Agde",
+      "intro_text": "Vous séjournez au Cap d'Agde et cherchez un restaurant de qualité ? À seulement 5 minutes en voiture, Le Divino vous propose une expérience culinaire authentique loin de l'agitation touristique. Cuisine française traditionnelle, produits frais, terrasse ombragée — découvrez le vrai goût du Languedoc.",
+      "pourquoi_title": "Pourquoi quitter le Cap pour dîner à Agde ?",
+      "pourquoi_text": "Le Cap d'Agde regorge de restaurants touristiques, mais les habitués le savent : les meilleures tables se trouvent à Agde centre-ville. Au Divino, pas de menu standard — notre chef compose sa carte au gré des arrivages du marché, avec des produits locaux sélectionnés chaque matin.",
+      "acces_title": "Un accès facile depuis le Cap",
+      "acces_text": "Depuis le Cap d'Agde, empruntez la D32E4 direction Agde centre. En 5 minutes, vous êtes place Jean Jaurès. Parking public gratuit à 2 minutes à pied du restaurant. Un trajet court pour une expérience culinaire incomparable.",
+      "trajet_title": "5 min en voiture",
+      "trajet_text": "Via la D32E4, direction Agde centre depuis le Cap.",
+      "parking_title": "Parking gratuit",
+      "parking_text": "Parking public à 2 min à pied, contrairement au Cap où le stationnement est difficile.",
+      "terrasse_title": "Terrasse ombragée",
+      "terrasse_text": "Dînez en terrasse sur la place Jean Jaurès, dans le calme du centre historique.",
+      "prix_title": "Prix justes",
+      "prix_text": "Des tarifs raisonnables pour une cuisine de qualité, loin de la surenchère touristique du Cap.",
+      "carte_title": "Notre cuisine",
+      "carte_text": "Cuisine française traditionnelle et méditerranéenne : viandes, poissons, spécialités du Languedoc. Menu du marché dès 24,90€. Carte des vins régionaux soigneusement sélectionnés.",
+      "avis_title": "Ce que disent nos clients du Cap",
+      "avis_text": "Nos clients du Cap d'Agde reviennent régulièrement. Ils apprécient la qualité de la cuisine, le cadre authentique et l'accueil chaleureux — une vraie découverte à deux pas de la station balnéaire.",
+      "cta_title": "Réservez depuis le Cap d'Agde",
+      "cta_text": "Réservez votre table au Divino et profitez d'un dîner mémorable à 5 min du Cap.",
+      "cta_button": "Réserver maintenant",
+      "cta_phone": "Ou appelez-nous au 04 48 17 78 75",
+      "breadcrumb": "Restaurant Cap d'Agde"
+    }
   }
 }

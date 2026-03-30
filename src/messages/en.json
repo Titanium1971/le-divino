@@ -219,6 +219,21 @@
       "description": "Le Divino restaurant, 5 place Jean Jaurès, 34300 Agde. 5 min from Cap d'Agde. Free parking 2 min away. Tel: 04 48 17 78 75.",
       "keywords": "contact le divino agde, restaurant agde address, restaurant place jean jaurès agde, parking restaurant agde, directions cap d'agde"
     },
+    "restaurant-agde": {
+      "title": "Restaurant in Agde — Le Divino | French Cuisine, Terrace, City Centre",
+      "description": "Le Divino, restaurant in Agde city centre on Place Jean Jaurès. Traditional French and Mediterranean cuisine, shaded terrace, fresh products. Book at 04 48 17 78 75.",
+      "keywords": "restaurant agde, restaurant agde city centre, best restaurant agde, where to eat agde, french restaurant agde, traditional restaurant agde"
+    },
+    "restaurant-terrasse-agde": {
+      "title": "Restaurant with Terrace in Agde — Le Divino | Outdoor Dining",
+      "description": "Restaurant with shaded terrace in Agde city centre. Le Divino, Place Jean Jaurès: outdoor lunch and dinner, French cuisine, Mediterranean setting. Book at 04 48 17 78 75.",
+      "keywords": "restaurant terrace agde, outdoor dining agde, terrace restaurant agde, al fresco restaurant agde, outdoor restaurant agde"
+    },
+    "restaurant-cap-agde": {
+      "title": "Restaurant near Cap d'Agde — Le Divino | 5 min Away, French Cuisine",
+      "description": "Le Divino restaurant, 5 minutes from Cap d'Agde. Traditional French cuisine, terrace, free parking. The authentic alternative in Agde centre. Tel: 04 48 17 78 75.",
+      "keywords": "restaurant cap d'agde, restaurant near cap agde, where to eat cap d'agde, french restaurant cap agde, best restaurant cap agde"
+    },
     "breadcrumb": {
       "home": "Home"
     }
@@ -421,5 +436,84 @@
     "update_date": "Last updated: 25 March 2026",
     "nav_legal": "Legal Notice",
     "nav_cookies": "Cookie Management Policy"
+  },
+  "landing": {
+    "restaurant-agde": {
+      "hero_title": "Restaurant in Agde City Centre",
+      "hero_subtitle": "Traditional French and Mediterranean cuisine, on Place Jean Jaurès",
+      "intro_title": "Le Divino, your restaurant in Agde",
+      "intro_text": "In the heart of Agde's historic centre, Le Divino is more than just a restaurant: it's an invitation to discover the richness of traditional French cuisine. Located on Place Jean Jaurès, our establishment welcomes you in an elegant and friendly setting where every meal becomes a special moment.",
+      "cuisine_title": "Authentic French cuisine",
+      "cuisine_text": "Every day, our chef selects the finest fresh products from local Languedoc producers. From starters to desserts, each dish tells a story: that of a generous terroir, elevated by traditional expertise. Meats, fish, seasonal vegetables — our menu evolves with the markets.",
+      "ambiance_title": "A unique setting in the city centre",
+      "ambiance_text": "On Place Jean Jaurès, at the foot of Saint-Étienne Cathedral, Le Divino enjoys an exceptional location. The warm, intimate interior contrasts with the large shaded terrace overlooking the square. Ideal for a sunny lunch or a candlelit dinner.",
+      "terrasse_title": "Shaded terrace",
+      "terrasse_text": "Enjoy our spacious terrace on Place Jean Jaurès, in the shade of the plane trees.",
+      "produits_title": "Fresh local products",
+      "produits_text": "Daily sourcing from Languedoc producers and the Agde market halls.",
+      "service_title": "Attentive service",
+      "service_text": "A passionate team that takes care of every detail for your comfort.",
+      "parking_title": "Free parking",
+      "parking_text": "Free public car park just 2 minutes' walk from the restaurant.",
+      "horaires_title": "Hours & Access",
+      "horaires_text": "Le Divino is open 7 days a week. Find us at 5 Place Jean Jaurès, 34300 Agde — just 5 minutes by car from Cap d'Agde.",
+      "cta_title": "Book your table in Agde",
+      "cta_text": "By phone or online, book your table at Le Divino.",
+      "cta_button": "Book now",
+      "cta_phone": "Or call us on 04 48 17 78 75",
+      "breadcrumb": "Restaurant Agde"
+    },
+    "restaurant-terrasse-agde": {
+      "hero_title": "Restaurant with Terrace in Agde",
+      "hero_subtitle": "Outdoor lunch and dinner, Place Jean Jaurès",
+      "intro_title": "The finest terrace in Agde city centre",
+      "intro_text": "Looking for a restaurant with a terrace in Agde? Le Divino offers one of the most beautiful terraces in the historic centre. Set on Place Jean Jaurès, beneath century-old plane trees, our spacious terrace is the perfect spot to enjoy quality French cuisine outdoors.",
+      "terrasse_title": "An exceptional terrace",
+      "terrasse_text": "Our shaded terrace seats over 40 guests in an authentic Mediterranean setting. Facing Place Jean Jaurès and near Saint-Étienne Cathedral, you'll enjoy a unique atmosphere blending historic heritage and southern joie de vivre.",
+      "dejeuner_title": "Lunch on the terrace",
+      "dejeuner_text": "At lunchtime, our sunny terrace is perfect for a gourmet break. Market menu from €24.90 with starter, main course and dessert — all prepared with fresh daily products. A real moment of relaxation in the heart of Agde.",
+      "diner_title": "Outdoor dining",
+      "diner_text": "In the evening, the terrace transforms. Soft lighting, candles on the tables, refined cuisine: the atmosphere is romantic and festive. Perfect for a dinner for two or with friends on beautiful summer evenings.",
+      "saisons_title": "Open all year round",
+      "saisons_text": "Our terrace is set up to welcome you in spring and summer alike. In winter, our interior dining room offers the same level of comfort in a warm, cosy atmosphere.",
+      "avantages_title": "Why choose our terrace",
+      "avantage_1": "Terrace shaded by the square's plane trees",
+      "avantage_2": "View of Place Jean Jaurès and the historic centre",
+      "avantage_3": "Outdoor service from lunch to dinner",
+      "avantage_4": "Free parking 2 minutes away",
+      "avantage_5": "Wheelchair accessible",
+      "cta_title": "Book your terrace table",
+      "cta_text": "Secure your terrace spot by booking in advance.",
+      "cta_button": "Book a terrace table",
+      "cta_phone": "Or call us on 04 48 17 78 75",
+      "breadcrumb": "Terrace Restaurant Agde"
+    },
+    "restaurant-cap-agde": {
+      "hero_title": "Restaurant near Cap d'Agde",
+      "hero_subtitle": "Le Divino — just 5 minutes away, in Agde city centre",
+      "intro_title": "The authentic alternative to Cap d'Agde",
+      "intro_text": "Staying in Cap d'Agde and looking for a quality restaurant? Just 5 minutes by car, Le Divino offers an authentic culinary experience away from the tourist hustle. Traditional French cuisine, fresh products, shaded terrace — discover the true taste of Languedoc.",
+      "pourquoi_title": "Why leave the Cap to dine in Agde?",
+      "pourquoi_text": "Cap d'Agde is full of tourist restaurants, but regulars know: the best tables are in Agde city centre. At Le Divino, no standard menus — our chef creates his menu based on daily market arrivals, with locally sourced products selected each morning.",
+      "acces_title": "Easy access from the Cap",
+      "acces_text": "From Cap d'Agde, take the D32E4 towards Agde centre. In 5 minutes, you're on Place Jean Jaurès. Free public car park 2 minutes' walk from the restaurant. A short journey for an incomparable culinary experience.",
+      "trajet_title": "5 min by car",
+      "trajet_text": "Via the D32E4, towards Agde centre from the Cap.",
+      "parking_title": "Free parking",
+      "parking_text": "Public car park 2 min walk away, unlike the Cap where parking is difficult.",
+      "terrasse_title": "Shaded terrace",
+      "terrasse_text": "Dine on the terrace on Place Jean Jaurès, in the calm of the historic centre.",
+      "prix_title": "Fair prices",
+      "prix_text": "Reasonable prices for quality cuisine, far from the tourist mark-ups of the Cap.",
+      "carte_title": "Our cuisine",
+      "carte_text": "Traditional French and Mediterranean cuisine: meats, fish, Languedoc specialities. Market menu from €24.90. Carefully selected regional wine list.",
+      "avis_title": "What our Cap d'Agde guests say",
+      "avis_text": "Our guests from Cap d'Agde keep coming back. They appreciate the quality of the cuisine, the authentic setting and the warm welcome — a true discovery just minutes from the seaside resort.",
+      "cta_title": "Book from Cap d'Agde",
+      "cta_text": "Book your table at Le Divino and enjoy a memorable dinner 5 min from the Cap.",
+      "cta_button": "Book now",
+      "cta_phone": "Or call us on 04 48 17 78 75",
+      "breadcrumb": "Restaurant Cap d'Agde"
+    }
   }
 }

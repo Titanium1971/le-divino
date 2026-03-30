@@ -35,7 +35,7 @@ const nextConfig: NextConfig = {
         // Fallback for Vercel Edge: rewrite unprefixed public paths to /fr/…
         // Runs after middleware — only applies if the middleware rewrite was lost
         {
-          source: "/:path(menu|galerie|reservation|contact)",
+          source: "/:path(menu|galerie|reservation|contact|restaurant-agde|restaurant-terrasse-agde|restaurant-cap-agde)",
           destination: "/fr/:path",
         },
         {

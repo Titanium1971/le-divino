@@ -3,7 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { SITE_URL, LOCALES, DEFAULT_LOCALE, getPageUrl } from "./constants";
 import type { DishGroup } from "@/lib/supabase/dishes";
 
-type PageKey = "home" | "menu" | "menus" | "vins" | "boissons" | "reservation" | "gallery" | "events" | "contact";
+type PageKey = "home" | "menu" | "menus" | "vins" | "boissons" | "reservation" | "gallery" | "events" | "contact" | "restaurant-agde" | "restaurant-terrasse-agde" | "restaurant-cap-agde";
 
 const PAGE_PATH: Record<PageKey, string> = {
   home: "",
@@ -15,6 +15,9 @@ const PAGE_PATH: Record<PageKey, string> = {
   gallery: "galerie",
   events: "evenements",
   contact: "contact",
+  "restaurant-agde": "restaurant-agde",
+  "restaurant-terrasse-agde": "restaurant-terrasse-agde",
+  "restaurant-cap-agde": "restaurant-cap-agde",
 };
 
 export async function generatePageMetadata(
