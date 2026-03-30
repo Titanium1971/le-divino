@@ -181,7 +181,7 @@ export function QrClient({
   }
 
   // ── Global unique numbering: dishes → drinks → wines ──
-  // Dish numbering: carte dishes shown here get 1..N
+  // Dish numbering: carte dishes get 1..N
   let globalCounter = 1;
 
   const dishNumberMap = new Map<string, number>();
@@ -191,8 +191,17 @@ export function QrClient({
     }
   }
 
+  // Also number menu-only dishes (marché / non-available) that appear in menus tab
+  for (const menu of menus) {
+    for (const { dish } of menu.dishes) {
+      if (!dishNumberMap.has(dish.id)) {
+        dishNumberMap.set(dish.id, globalCounter++);
+      }
+    }
+  }
+
   // Drinks start after ALL dishes (including marché not shown on carte tab)
-  if (totalDishCount && totalDishCount > dishNumberMap.size) {
+  if (totalDishCount && totalDishCount >= globalCounter) {
     globalCounter = totalDishCount + 1;
   }
 
@@ -339,8 +348,15 @@ export function QrClient({
                               {tMenus(MENU_CATEGORY_I18N[category as DishCategory])}
                             </h4>
                             <div className="space-y-2">
-                              {items.map(({ dish, imageUrl }) => (
+                              {items.map(({ dish, imageUrl }) => {
+                                const menuDishNum = dishNumberMap.get(dish.id);
+                                return (
                                 <div key={dish.id} className="flex gap-3 border-b border-brand-dark/5 pb-2">
+                                  {menuDishNum != null && (
+                                    <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-brand-dark/8 text-[10px] font-semibold text-brand-dark/50">
+                                      {menuDishNum}
+                                    </span>
+                                  )}
                                   {imageUrl && (
                                     <button
                                       onClick={() => setLightboxUrl(imageUrl)}
@@ -364,7 +380,8 @@ export function QrClient({
                                     )}
                                   </div>
                                 </div>
-                              ))}
+                                );
+                              })}
                             </div>
                             {category === "plat" && (
                               <p className="mt-2 text-[11px] italic text-brand-dark/50">
