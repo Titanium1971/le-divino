@@ -39,6 +39,7 @@ type Props = {
   defaultTab?: TabId;
   tabOrder?: TabId[];
   showHeader?: boolean;
+  totalDishCount?: number;
 };
 
 // ── i18n maps ──
@@ -73,6 +74,14 @@ const DRINK_I18N: Record<DrinkCategory, string> = {
   autre: "autre",
 };
 
+const LOCALE_FLAGS = [
+  { code: "fr", flag: "🇫🇷" },
+  { code: "en", flag: "🇬🇧" },
+  { code: "it", flag: "🇮🇹" },
+  { code: "es", flag: "🇪🇸" },
+  { code: "de", flag: "🇩🇪" },
+];
+
 const ALL_TABS: { id: TabId; icon: string; key: string }[] = [
   { id: "carte", icon: "\ud83c\udf7d\ufe0f", key: "tabCarte" },
   { id: "menus", icon: "\ud83d\udccb", key: "tabMenus" },
@@ -92,6 +101,7 @@ export function QrClient({
   defaultTab,
   tabOrder,
   showHeader = true,
+  totalDishCount,
 }: Props) {
   const tQr = useTranslations("qr");
   const tMenu = useTranslations("menu");
@@ -104,7 +114,14 @@ export function QrClient({
     ? tabOrder.map((id) => ALL_TABS.find((t) => t.id === id)!).filter(Boolean)
     : ALL_TABS;
 
-  const [activeTab, setActiveTab] = useState<TabId>(defaultTab ?? "carte");
+  const [activeTab, setActiveTab] = useState<TabId>(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const tab = params.get("tab") as TabId | null;
+      if (tab && tabs.some((t) => t.id === tab)) return tab;
+    }
+    return defaultTab ?? "carte";
+  });
   const [lightboxUrl, setLightboxUrl] = useState<string | null>(null);
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
 
@@ -151,10 +168,46 @@ export function QrClient({
     return (wine[f] as string | null) || wine.description_fr;
   }
 
+  function getDrinkName(drink: Drink): string {
+    if (loc === "fr") return drink.name_fr || drink.name;
+    const f = `name_${loc}` as keyof Drink;
+    return (drink[f] as string | null) || drink.name_fr || drink.name;
+  }
+
   function getDrinkDesc(drink: Drink): string | null {
     if (loc === "fr") return drink.description_fr;
     const f = `description_${loc}` as keyof Drink;
     return (drink[f] as string | null) || drink.description_fr;
+  }
+
+  // ── Global unique numbering: dishes → drinks → wines ──
+  // Dish numbering: carte dishes shown here get 1..N
+  let globalCounter = 1;
+
+  const dishNumberMap = new Map<string, number>();
+  for (const group of dishGroups) {
+    for (const dish of group.dishes) {
+      dishNumberMap.set(dish.id, globalCounter++);
+    }
+  }
+
+  // Drinks start after ALL dishes (including marché not shown on carte tab)
+  if (totalDishCount && totalDishCount > dishNumberMap.size) {
+    globalCounter = totalDishCount + 1;
+  }
+
+  const drinkNumberMap = new Map<string, number>();
+  for (const group of drinkGroups) {
+    for (const drink of group.drinks) {
+      drinkNumberMap.set(drink.id, globalCounter++);
+    }
+  }
+
+  const wineNumberMap = new Map<string, number>();
+  for (const group of wineGroups) {
+    for (const wine of group.wines) {
+      wineNumberMap.set(wine.id, globalCounter++);
+    }
   }
 
   // ── Tab: La Carte ──
@@ -175,8 +228,13 @@ export function QrClient({
               {dishes.map((dish) => {
                 const desc = getDishDesc(dish);
                 const imgUrl = dishImageUrls[dish.id];
+                const num = dishNumberMap.get(dish.id);
                 return (
                   <div key={dish.id} className="flex gap-3 border-b border-brand-dark/8 pb-3">
+                    {/* Numéro du plat */}
+                    <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand-dark/8 text-[11px] font-semibold text-brand-dark/50">
+                      {num}
+                    </span>
                     {imgUrl && (
                       <button
                         onClick={() => setLightboxUrl(imgUrl)}
@@ -350,9 +408,14 @@ export function QrClient({
                 const desc = getWineDesc(wine);
                 const details = [wine.appellation, wine.region].filter(Boolean).join(" — ");
                 const imgUrl = wineImageUrls[wine.id];
+                const num = wineNumberMap.get(wine.id);
 
                 return (
                   <div key={wine.id} className="flex gap-3 border-b border-brand-dark/8 pb-3">
+                    {/* Numéro du vin */}
+                    <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand-dark/8 text-[11px] font-semibold text-brand-dark/50">
+                      {num}
+                    </span>
                     {imgUrl && (
                       <button
                         onClick={() => setLightboxUrl(imgUrl)}
@@ -428,9 +491,14 @@ export function QrClient({
               {drinks.map((drink) => {
                 const desc = getDrinkDesc(drink);
                 const imgUrl = drinkImageUrls[drink.id];
+                const num = drinkNumberMap.get(drink.id);
 
                 return (
                   <div key={drink.id} className="flex gap-3 border-b border-brand-dark/8 pb-3">
+                    {/* Numéro de la boisson */}
+                    <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand-dark/8 text-[11px] font-semibold text-brand-dark/50">
+                      {num}
+                    </span>
                     {imgUrl && (
                       <button
                         onClick={() => setLightboxUrl(imgUrl)}
@@ -438,7 +506,7 @@ export function QrClient({
                       >
                         <Image
                           src={imgUrl}
-                          alt={drink.name}
+                          alt={getDrinkName(drink)}
                           fill
                           className="object-cover"
                           sizes="48px"
@@ -448,7 +516,7 @@ export function QrClient({
                     <div className="min-w-0 flex-1">
                       <div className="flex items-start justify-between gap-2">
                         <h4 className="text-[15px] font-normal text-brand-dark leading-tight">
-                          {drink.name}
+                          {getDrinkName(drink)}
                         </h4>
                         {drink.category === "biere_pression" ? (
                           <div className="flex flex-wrap gap-x-2 gap-y-0.5 justify-end">
@@ -504,6 +572,25 @@ export function QrClient({
       {/* Header minimal */}
       {showHeader && (
         <header className="bg-brand-dark px-4 pt-8 pb-6 text-center">
+          {/* Language selector */}
+          <div className="flex justify-center gap-2 mb-4">
+            {LOCALE_FLAGS.map(({ code, flag }) => (
+              <button
+                key={code}
+                onClick={() => {
+                  document.cookie = `NEXT_LOCALE=${code};path=/;max-age=31536000`;
+                  const prefix = code === "fr" ? "" : `/${code}`;
+                  window.location.href = `${prefix}/qr?tab=${activeTab}`;
+                }}
+                className={`text-lg transition-opacity ${
+                  locale === code ? "opacity-100 scale-110" : "opacity-40 hover:opacity-70"
+                }`}
+                aria-label={code}
+              >
+                {flag}
+              </button>
+            ))}
+          </div>
           <div className="mx-auto h-16 w-16 overflow-hidden rounded-full border-2 border-brand-gold/40">
             <Image
               src="/images/logo-divino.jpg"

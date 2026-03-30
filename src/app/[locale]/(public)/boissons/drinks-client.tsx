@@ -21,9 +21,10 @@ type Props = {
   groups: DrinkGroup[];
   locale: string;
   imageUrls: Record<string, string>;
+  drinkNumbers?: Record<string, number>;
 };
 
-export function DrinksClient({ groups, locale, imageUrls }: Props) {
+export function DrinksClient({ groups, locale, imageUrls, drinkNumbers }: Props) {
   const t = useTranslations("drinks");
   const loc = locale as Locale;
   const [lightboxUrl, setLightboxUrl] = useState<string | null>(null);
@@ -38,6 +39,12 @@ export function DrinksClient({ groups, locale, imageUrls }: Props) {
     document.addEventListener("keydown", onKeyDown);
     return () => document.removeEventListener("keydown", onKeyDown);
   }, [lightboxUrl, closeLightbox]);
+
+  function getDrinkName(drink: Drink): string {
+    if (loc === "fr") return drink.name_fr || drink.name;
+    const f = `name_${loc}` as keyof Drink;
+    return (drink[f] as string | null) || drink.name_fr || drink.name;
+  }
 
   function getDescription(drink: Drink): string | null {
     if (loc === "fr") return drink.description_fr;
@@ -63,6 +70,12 @@ export function DrinksClient({ groups, locale, imageUrls }: Props) {
                     key={drink.id}
                     className="flex gap-4 border-b border-brand-dark/10 pb-4"
                   >
+                    {/* Numéro */}
+                    {drinkNumbers?.[drink.id] != null && (
+                      <span className="mt-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand-dark/8 text-[11px] font-semibold text-brand-dark/50">
+                        {drinkNumbers[drink.id]}
+                      </span>
+                    )}
                     {/* Drink photo */}
                     {drinkImageUrl && (
                       <button
@@ -71,7 +84,7 @@ export function DrinksClient({ groups, locale, imageUrls }: Props) {
                       >
                         <Image
                           src={drinkImageUrl}
-                          alt={drink.name}
+                          alt={getDrinkName(drink)}
                           fill
                           className="object-cover transition-transform duration-300 hover:scale-110"
                           sizes="64px"
@@ -82,7 +95,7 @@ export function DrinksClient({ groups, locale, imageUrls }: Props) {
                     <div className="flex min-w-0 flex-1 items-start justify-between gap-4">
                       <div className="min-w-0 flex-1">
                         <h3 className="text-base font-normal text-brand-dark">
-                          {drink.name}
+                          {getDrinkName(drink)}
                         </h3>
                         {description && (
                           <p className="mt-1 text-sm font-light text-brand-dark/70">

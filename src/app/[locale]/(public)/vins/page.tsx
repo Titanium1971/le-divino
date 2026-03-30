@@ -3,6 +3,8 @@ import { setRequestLocale } from "next-intl/server";
 import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 import { getWines, getWinesGrouped, getWineImageUrl } from "@/lib/supabase/wines";
+import { getTotalDishCount } from "@/lib/supabase/dish-count";
+import { getDrinks } from "@/lib/supabase/drinks";
 import { WinesClient } from "./wines-client";
 import { generatePageMetadata, breadcrumbJsonLd } from "@/lib/seo/metadata";
 
@@ -36,6 +38,21 @@ export default async function WinesPage({ params }: Props) {
     }
   }
 
+  // Count ALL numbered dishes (available + menu-only) for global numbering
+  const dishCount = await getTotalDishCount(supabase);
+
+  const allDrinks = await getDrinks(supabase);
+  const drinkCount = allDrinks.filter(d => d.available).length;
+
+  // Build wine number map (global numbering: after dishes + drinks)
+  const wineNumbers: Record<string, number> = {};
+  let counter = dishCount + drinkCount + 1;
+  for (const group of nonEmptyGroups) {
+    for (const wine of group.wines) {
+      wineNumbers[wine.id] = counter++;
+    }
+  }
+
   const breadcrumb = breadcrumbJsonLd(locale, "vins", t("title"));
 
   return (
@@ -63,7 +80,7 @@ export default async function WinesPage({ params }: Props) {
           {nonEmptyGroups.length === 0 ? (
             <p className="text-center text-brand-dark/70 font-light">{t("empty")}</p>
           ) : (
-            <WinesClient groups={nonEmptyGroups} locale={locale} imageUrls={imageUrls} />
+            <WinesClient groups={nonEmptyGroups} locale={locale} imageUrls={imageUrls} wineNumbers={wineNumbers} />
           )}
         </div>
       </section>

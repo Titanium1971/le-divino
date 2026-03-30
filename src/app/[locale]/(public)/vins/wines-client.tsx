@@ -17,9 +17,10 @@ type Props = {
   groups: WineGroup[];
   locale: string;
   imageUrls: Record<string, string>;
+  wineNumbers?: Record<string, number>;
 };
 
-export function WinesClient({ groups, locale, imageUrls }: Props) {
+export function WinesClient({ groups, locale, imageUrls, wineNumbers }: Props) {
   const t = useTranslations("wines");
   const loc = locale as Locale;
   const [lightboxUrl, setLightboxUrl] = useState<string | null>(null);
@@ -66,6 +67,12 @@ export function WinesClient({ groups, locale, imageUrls }: Props) {
                     key={wine.id}
                     className="flex gap-4 border-b border-brand-dark/10 pb-4"
                   >
+                    {/* Numéro */}
+                    {wineNumbers?.[wine.id] != null && (
+                      <span className="mt-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand-dark/8 text-[11px] font-semibold text-brand-dark/50">
+                        {wineNumbers[wine.id]}
+                      </span>
+                    )}
                     {/* Wine photo (portrait format) */}
                     {wineImageUrl && (
                       <button

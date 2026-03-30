@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { setRequestLocale } from "next-intl/server";
 import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
-import { getDishImageUrl } from "@/lib/supabase/dishes";
+import { getDishImageUrl, getDishesGrouped } from "@/lib/supabase/dishes";
 import type { Dish, Menu } from "@/lib/types/database";
 import { MenusClient } from "./menus-client";
 import { generatePageMetadata, breadcrumbJsonLd } from "@/lib/seo/metadata";
@@ -62,6 +62,37 @@ export default async function MenusPage({ params }: Props) {
     } as MenuWithDishes;
   });
 
+  // Build dish number map: carte dishes first (1-N), then marché dishes (N+1-M)
+  const dishGroups = await getDishesGrouped(supabase);
+  const carteGroups = dishGroups
+    .map((g) => ({ ...g, dishes: g.dishes.filter((d) => d.available && d.source === "carte") }))
+    .filter((g) => g.dishes.length > 0);
+  const marcheGroups = dishGroups
+    .map((g) => ({ ...g, dishes: g.dishes.filter((d) => d.available && d.source === "marche") }))
+    .filter((g) => g.dishes.length > 0);
+  const dishNumbers: Record<string, number> = {};
+  let counter = 1;
+  for (const group of carteGroups) {
+    for (const dish of group.dishes) {
+      dishNumbers[dish.id] = counter++;
+    }
+  }
+  for (const group of marcheGroups) {
+    for (const dish of group.dishes) {
+      if (!dishNumbers[dish.id]) {
+        dishNumbers[dish.id] = counter++;
+      }
+    }
+  }
+  // Also number any dish that appears in menus but wasn't in carte/marché groups
+  for (const menu of menusWithDishes) {
+    for (const { dish } of menu.dishes) {
+      if (!dishNumbers[dish.id]) {
+        dishNumbers[dish.id] = counter++;
+      }
+    }
+  }
+
   const breadcrumb = breadcrumbJsonLd(locale, "menus", t("title"));
 
   return (
@@ -89,7 +120,7 @@ export default async function MenusPage({ params }: Props) {
           {menusWithDishes.length === 0 ? (
             <p className="text-center text-brand-dark/70 font-light">{t("empty")}</p>
           ) : (
-            <MenusClient menus={menusWithDishes} locale={locale} />
+            <MenusClient menus={menusWithDishes} locale={locale} dishNumbers={dishNumbers} />
           )}
         </div>
       </section>

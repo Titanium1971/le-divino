@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { setRequestLocale } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 import { getDishesGrouped, getDishImageUrl } from "@/lib/supabase/dishes";
+import { getTotalDishCount } from "@/lib/supabase/dish-count";
 import { getWines, getWinesGrouped, getWineImageUrl } from "@/lib/supabase/wines";
 import { getDrinks, getDrinksGrouped, getDrinkImageUrl } from "@/lib/supabase/drinks";
 import type { Dish, Menu } from "@/lib/types/database";
@@ -103,6 +104,9 @@ export default async function QrPage({ params }: Props) {
     }
   }
 
+  // Total numbered dishes (available + menu-only) for global numbering
+  const totalDishCount = await getTotalDishCount(supabase);
+
   return (
     <QrClient
       locale={locale}
@@ -115,6 +119,7 @@ export default async function QrPage({ params }: Props) {
       drinkImageUrls={drinkImageUrls}
       defaultTab="boissons"
       tabOrder={["boissons", "carte", "menus", "vins"]}
+      totalDishCount={totalDishCount}
     />
   );
 }

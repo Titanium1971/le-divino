@@ -12,6 +12,7 @@ type Props = {
   grouped: DishGroup[];
   locale: string;
   imageUrls: Record<string, string>;
+  dishNumbers?: Record<string, number>;
 };
 
 // Map category values to i18n keys
@@ -21,7 +22,7 @@ const CATEGORY_I18N_KEY: Record<DishCategory, string> = {
   dessert: "desserts",
 };
 
-export function MenuClient({ grouped, locale, imageUrls }: Props) {
+export function MenuClient({ grouped, locale, imageUrls, dishNumbers }: Props) {
   const t = useTranslations("menu");
   const loc = locale as Locale;
 
@@ -86,8 +87,14 @@ export function MenuClient({ grouped, locale, imageUrls }: Props) {
   // Dish card with optional image
   function DishCard({ dish }: { dish: Dish }) {
     const url = imageUrls[dish.id];
+    const num = dishNumbers?.[dish.id];
     return (
       <div className="flex items-start gap-4 border-b border-brand-dark/5 pb-6">
+        {num != null && (
+          <span className="mt-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand-dark/8 text-[11px] font-semibold text-brand-dark/50">
+            {num}
+          </span>
+        )}
         {url && (
           <button
             onClick={() => setLightboxUrl(url)}

@@ -257,6 +257,11 @@ export type DrinkCategory = "soft" | "cocktail" | "biere" | "biere_pression" | "
 export type Drink = {
   id: string;
   name: string;
+  name_fr: string | null;
+  name_en: string | null;
+  name_it: string | null;
+  name_es: string | null;
+  name_de: string | null;
   description_fr: string | null;
   description_en: string | null;
   description_it: string | null;
@@ -276,6 +281,11 @@ export type Drink = {
 
 export type DrinkFormData = {
   name: string;
+  name_fr?: string | null;
+  name_en?: string | null;
+  name_it?: string | null;
+  name_es?: string | null;
+  name_de?: string | null;
   description_fr?: string | null;
   description_en?: string | null;
   description_it?: string | null;

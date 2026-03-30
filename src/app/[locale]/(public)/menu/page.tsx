@@ -41,6 +41,15 @@ export default async function MenuPage({ params }: Props) {
     }
   }
 
+  // Build dish number map (same numbering as QR menu)
+  const dishNumbers: Record<string, number> = {};
+  let counter = 1;
+  for (const group of filteredGrouped) {
+    for (const dish of group.dishes) {
+      dishNumbers[dish.id] = counter++;
+    }
+  }
+
   const breadcrumb = breadcrumbJsonLd(locale, "menu", t("title"));
   const menuSchema = menuJsonLd(locale, filteredGrouped);
 
@@ -77,6 +86,7 @@ export default async function MenuPage({ params }: Props) {
               grouped={filteredGrouped}
               locale={locale}
               imageUrls={imageUrls}
+              dishNumbers={dishNumbers}
             />
           )}
         </div>

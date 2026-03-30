@@ -3,6 +3,7 @@ import { setRequestLocale } from "next-intl/server";
 import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 import { getDrinks, getDrinksGrouped, getDrinkImageUrl } from "@/lib/supabase/drinks";
+import { getTotalDishCount } from "@/lib/supabase/dish-count";
 import { DrinksClient } from "./drinks-client";
 import { generatePageMetadata, breadcrumbJsonLd } from "@/lib/seo/metadata";
 
@@ -36,6 +37,18 @@ export default async function DrinksPage({ params }: Props) {
     }
   }
 
+  // Count ALL numbered dishes (available + menu-only) for global numbering
+  const dishCount = await getTotalDishCount(supabase);
+
+  // Build drink number map (global numbering: after dishes)
+  const drinkNumbers: Record<string, number> = {};
+  let counter = dishCount + 1;
+  for (const group of nonEmptyGroups) {
+    for (const drink of group.drinks) {
+      drinkNumbers[drink.id] = counter++;
+    }
+  }
+
   const breadcrumb = breadcrumbJsonLd(locale, "boissons", t("title"));
 
   return (
@@ -63,7 +76,7 @@ export default async function DrinksPage({ params }: Props) {
           {nonEmptyGroups.length === 0 ? (
             <p className="text-center text-brand-dark/70 font-light">{t("empty")}</p>
           ) : (
-            <DrinksClient groups={nonEmptyGroups} locale={locale} imageUrls={imageUrls} />
+            <DrinksClient groups={nonEmptyGroups} locale={locale} imageUrls={imageUrls} drinkNumbers={drinkNumbers} />
           )}
         </div>
       </section>

@@ -13,6 +13,7 @@ type MenuWithDishes = Menu & {
 type Props = {
   menus: MenuWithDishes[];
   locale: string;
+  dishNumbers?: Record<string, number>;
 };
 
 const CATEGORY_I18N_KEY: Record<DishCategory, string> = {
@@ -21,7 +22,7 @@ const CATEGORY_I18N_KEY: Record<DishCategory, string> = {
   dessert: "todayDesserts",
 };
 
-export function MenusClient({ menus, locale }: Props) {
+export function MenusClient({ menus, locale, dishNumbers }: Props) {
   const t = useTranslations("menus");
   const loc = locale as Locale;
   const [openId, setOpenId] = useState<string | null>(null);
@@ -128,6 +129,11 @@ export function MenusClient({ menus, locale }: Props) {
                                 key={dish.id}
                                 className="flex items-start gap-4 border-b border-brand-dark/5 pb-4"
                               >
+                                {dishNumbers?.[dish.id] != null && (
+                                  <span className="mt-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand-dark/8 text-[11px] font-semibold text-brand-dark/50">
+                                    {dishNumbers[dish.id]}
+                                  </span>
+                                )}
                                 {imageUrl && (
                                   <button
                                     onClick={() => setLightboxUrl(imageUrl)}
