@@ -1,4 +1,5 @@
 import Image from "next/image";
+import NextLink from "next/link";
 import { Link } from "@/i18n/navigation";
 import { getTranslations } from "next-intl/server";
 import { restaurantConfig } from "@/restaurant.config";
@@ -187,12 +188,12 @@ export async function SiteFooter() {
             &copy; {new Date().getFullYear()} {restaurantConfig.name}. {t("rights")}.
           </p>
           <div className="mt-3 text-center">
-            <Link
+            <NextLink
               href="/admin"
-              className="text-xs text-brand-cream/40 transition-colors hover:text-brand-cream/70"
+              className="text-xs text-brand-cream/60 transition-colors hover:text-brand-cream/90"
             >
               Administration
-            </Link>
+            </NextLink>
           </div>
         </div>
       </div>

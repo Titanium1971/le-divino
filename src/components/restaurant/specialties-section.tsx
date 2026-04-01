@@ -55,7 +55,7 @@ export function SpecialtiesSection({ dishes, imageUrls, locale }: Props) {
                   {getDishName(dish)}
                 </h3>
                 {dish.source === "carte" && Number(dish.price) > 0 && (
-                  <p className="mt-1 text-sm font-semibold text-brand-gold">
+                  <p className="mt-1 text-sm font-semibold text-brand-gold-dark">
                     {Number(dish.price).toFixed(2)} &euro;
                   </p>
                 )}

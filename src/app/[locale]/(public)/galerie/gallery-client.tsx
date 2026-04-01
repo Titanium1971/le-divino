@@ -99,7 +99,7 @@ export function GalleryClient({ images }: { images: GalleryImage[] }) {
 
       {/* Photo grid */}
       {filtered.length === 0 ? (
-        <p className="py-20 text-center text-sm font-light text-brand-cream/40">
+        <p className="py-20 text-center text-sm font-light text-brand-cream/60">
           {t("empty")}
         </p>
       ) : (

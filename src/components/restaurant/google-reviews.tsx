@@ -141,7 +141,7 @@ export function GoogleReviews() {
                   </p>
                   <div className="flex items-center gap-2">
                     <Stars rating={review.rating} size={12} />
-                    <span className="text-[10px] font-light text-brand-cream/40">
+                    <span className="text-[10px] font-light text-brand-cream/60">
                       {review.relativeTime}
                     </span>
                   </div>
