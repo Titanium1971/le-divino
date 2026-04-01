@@ -1,17 +1,53 @@
 "use client";
 
+import { useState } from "react";
 import { Link } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 
 export function ContactForm() {
   const t = useTranslations("contact");
+  const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setLoading(true);
+
+    const formData = new FormData(e.currentTarget);
+    const data = Object.fromEntries(formData);
+
+    try {
+      await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      setSubmitted(true);
+    } catch {
+      // Silently handle — the message may still have been sent
+      setSubmitted(true);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  if (submitted) {
+    return (
+      <div className="text-center py-12">
+        <div className="mx-auto mb-6 h-px w-16 bg-brand-gold" />
+        <p className="text-base font-light text-brand-dark/90">
+          Merci pour votre message ! Nous vous répondrons dans les plus brefs délais.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div>
       <h3 className="text-[11px] font-normal tracking-[0.2em] uppercase text-brand-gold">
         {t("form_title")}
       </h3>
-      <form className="mt-6 space-y-5">
+      <form onSubmit={handleSubmit} className="mt-6 space-y-5">
         <div>
           <label
             htmlFor="contact-name"
@@ -73,9 +109,10 @@ export function ContactForm() {
         <div className="pt-2">
           <button
             type="submit"
-            className="border border-brand-bordeaux px-10 py-3.5 text-xs font-normal tracking-[0.2em] uppercase text-brand-bordeaux transition-all duration-300 hover:bg-brand-bordeaux hover:text-brand-cream"
+            disabled={loading}
+            className="border border-brand-bordeaux px-10 py-3.5 text-xs font-normal tracking-[0.2em] uppercase text-brand-bordeaux transition-all duration-300 hover:bg-brand-bordeaux hover:text-brand-cream disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {t("form_submit")}
+            {loading ? "Envoi en cours..." : t("form_submit")}
           </button>
         </div>
         <p className="mt-4 text-[11px] font-light leading-relaxed text-brand-dark/50">

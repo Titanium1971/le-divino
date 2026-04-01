@@ -87,7 +87,7 @@ async function sendWhatsApp(to: string, message: string) {
   }
 }
 
-function buildClientEmailHTML(name: string, date: string, time: string, guests: number): string {
+function buildClientEmailHTML(name: string, date: string, time: string, guests: number, confirmLink: string): string {
   const dateFR = formatDateFR(date);
   return `
 <div style="font-family: 'Georgia', serif; max-width: 600px; margin: 0 auto; background: #FAF6F0; padding: 0;">
@@ -110,7 +110,11 @@ function buildClientEmailHTML(name: string, date: string, time: string, guests: 
       <p style="color: #FAF6F0; margin: 8px 0;"><strong>📍 Adresse :</strong> 5 place Jean Jaurès, 34300 Agde</p>
     </div>
 
-    <p style="color: #333; line-height: 1.6;">Votre réservation est en attente de confirmation. Nous vous contacterons rapidement pour la valider.</p>
+    <p style="color: #333; line-height: 1.6;">Votre réservation est en attente de confirmation. Vous pouvez la confirmer en cliquant sur le bouton ci-dessous :</p>
+
+    <div style="text-align: center; margin: 25px 0;">
+      <a href="${confirmLink}" style="display: inline-block; background: #22c55e; color: #ffffff; padding: 16px 32px; text-decoration: none; border-radius: 8px; font-size: 16px; font-weight: bold; letter-spacing: 1px;">&#9989; Confirmer ma réservation</a>
+    </div>
 
     <p style="color: #333; line-height: 1.6;">Pour toute modification ou annulation, contactez-nous au <strong>04 48 17 78 75</strong> ou répondez à cet email.</p>
 
@@ -219,13 +223,17 @@ export async function POST(request: NextRequest) {
     const guestsNum = Number(guests);
     const msgStr = (message as string) || null;
 
+    // Build confirmation link with token (first 8 chars of ID)
+    const token = String(row.id).substring(0, 8);
+    const confirmLink = `https://www.ledivino-agde.fr/api/reservation/confirm?id=${row.id}&token=${token}`;
+
     Promise.allSettled([
       // Email to client
       sendBrevoEmail(
         email,
         name,
         `Confirmation de réservation — Le Divino (${formatDateFR(date)})`,
-        buildClientEmailHTML(name, date, time, guestsNum)
+        buildClientEmailHTML(name, date, time, guestsNum, confirmLink)
       ),
       // Email to owner
       sendBrevoEmail(
