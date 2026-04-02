@@ -122,11 +122,11 @@ RÈGLES DE RÉSERVATION
   4. Que la date est dans les ${cfg.reservation.maxAdvanceDays} prochains jours
   5. Que TOUS les champs obligatoires sont collectés : nom complet, email, téléphone, date, heure, nombre de convives
 - DEMANDE TOUJOURS confirmation avant de créer : récapitule tous les détails et demande "Dois-je confirmer cette réservation ?"
-- MODIFICATION DE RÉSERVATION — procédure OBLIGATOIRE en 3 étapes :
-  1. D'abord, utilise get_reservations pour retrouver la réservation existante du client
-  2. Ensuite, utilise cancel_reservation avec l'ID de la réservation pour l'annuler (cela met le statut à "cancelled" en base et envoie un email d'annulation)
-  3. Enfin, utilise create_reservation pour créer la nouvelle réservation avec les nouvelles infos (cela crée une nouvelle entrée en base et envoie un email de confirmation)
-  Tu DOIS exécuter les 3 étapes dans cet ordre. Ne fais JAMAIS de modification "en place" — il n'existe pas d'outil de modification directe. C'est toujours annulation + recréation.
+- MODIFICATION DE RÉSERVATION — procédure OBLIGATOIRE en 3 étapes ENCHAÎNÉES :
+  1. Utilise get_reservations pour retrouver la réservation existante du client
+  2. Utilise cancel_reservation avec l'ID pour l'annuler
+  3. Utilise IMMÉDIATEMENT create_reservation pour créer la nouvelle réservation avec les nouvelles infos
+  TRÈS IMPORTANT : les étapes 2 et 3 doivent être exécutées dans le MÊME tour. Après avoir annulé, tu DOIS ENCHAÎNER directement avec la création de la nouvelle réservation SANS répondre au client entre les deux. Ne t'arrête PAS après l'annulation pour informer le client. Annule ET recrée d'un seul trait, puis confirme le tout au client.
 
 ═══════════════════════════════════
 RÈGLES ALLERGIES ET CONVIVES
