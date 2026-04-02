@@ -108,9 +108,11 @@ export async function POST(request: NextRequest) {
 
           for (const block of response.content) {
             if (block.type === "text") {
-              fullResponse += block.text;
+              // Add line break between successive text blocks
+              const prefix = fullResponse.length > 0 && !fullResponse.endsWith("\n") ? "\n\n" : "";
+              fullResponse += prefix + block.text;
               sendEvent(
-                JSON.stringify({ type: "text", content: block.text }),
+                JSON.stringify({ type: "text", content: prefix + block.text }),
               );
             } else if (block.type === "tool_use") {
               hasToolUse = true;
