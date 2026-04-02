@@ -155,6 +155,25 @@ export const chatTools: Tool[] = [
     },
   },
   {
+    name: "modify_reservation",
+    description:
+      "Modifie une réservation existante. Cet outil annule automatiquement l'ancienne réservation et en crée une nouvelle. Utilise get_reservations d'abord pour trouver l'ID de la réservation à modifier.",
+    input_schema: {
+      type: "object" as const,
+      properties: {
+        old_reservation_id: { type: "string", description: "ID de la réservation à modifier (obtenu via get_reservations)" },
+        name: { type: "string", description: "Nom complet du client" },
+        email: { type: "string", description: "Email du client" },
+        phone: { type: "string", description: "Téléphone du client" },
+        date: { type: "string", description: "Nouvelle date au format YYYY-MM-DD" },
+        time: { type: "string", description: "Nouvelle heure au format HH:MM" },
+        guests: { type: "number", description: "Nouveau nombre de convives" },
+        message: { type: "string", description: "Message optionnel" },
+      },
+      required: ["old_reservation_id", "name", "email", "phone", "date", "time", "guests"],
+    },
+  },
+  {
     name: "get_google_reviews",
     description:
       "Récupère la note Google et les meilleurs avis clients du restaurant. Utilise cet outil quand un client demande les avis, la réputation ou la note du restaurant.",

@@ -351,6 +351,86 @@ export async function handleToolCall(
       });
     }
 
+    case "modify_reservation": {
+      const oldId = input.old_reservation_id as string;
+
+      // 1. Vérifier et annuler l'ancienne réservation
+      const { data: oldRes, error: oldErr } = await supabase
+        .from("reservations")
+        .select("id, name, email, phone, date, time, guests, status")
+        .eq("id", oldId)
+        .single();
+
+      if (oldErr || !oldRes) {
+        return JSON.stringify({ success: false, error: "Ancienne réservation introuvable." });
+      }
+
+      if (oldRes.status !== "cancelled") {
+        await supabase
+          .from("reservations")
+          .update({ status: "cancelled" })
+          .eq("id", oldId);
+
+        const oldDateFR = formatDateFR(oldRes.date);
+
+        // Notifications d'annulation
+        await Promise.allSettled([
+          sendBrevoEmail(
+            oldRes.email,
+            oldRes.name,
+            `Annulation de réservation — Le Divino (${oldDateFR})`,
+            buildCancellationClientEmail(oldRes.name, oldRes.date, oldRes.time, oldRes.guests),
+          ),
+          sendBrevoEmail(
+            OWNER_EMAIL,
+            "Le Divino",
+            `❌ Annulation (modification) : ${oldRes.name} — ${oldDateFR} à ${oldRes.time}`,
+            `<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+              <div style="background: #dc2626; padding: 20px; text-align: center;">
+                <h1 style="color: white; font-size: 20px; margin: 0;">❌ Réservation modifiée (ancienne annulée)</h1>
+              </div>
+              <div style="padding: 20px; background: #f9f9f9;">
+                <p><strong>${oldRes.name}</strong> a modifié sa réservation du ${oldDateFR} à ${oldRes.time}.</p>
+                <p>Une nouvelle réservation a été créée.</p>
+              </div>
+            </div>`,
+          ),
+          sendWhatsApp(
+            OWNER_WHATSAPP,
+            `🔄 Modification de réservation\n\n👤 ${oldRes.name}\n❌ Ancienne : ${oldDateFR} à ${oldRes.time}\n\nUne nouvelle réservation suit.`,
+          ),
+        ]);
+      }
+
+      // 2. Créer la nouvelle réservation
+      try {
+        const res = await fetch(`${SITE_URL}/api/reservation`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: input.name,
+            email: input.email,
+            phone: input.phone,
+            date: input.date,
+            time: input.time,
+            guests: input.guests,
+            message: input.message || null,
+          }),
+        });
+        const result = await res.json();
+        if (result.success) {
+          const newDateFR = formatDateFR(input.date as string);
+          return JSON.stringify({
+            success: true,
+            message: `Réservation modifiée avec succès. Ancienne réservation annulée, nouvelle réservation le ${newDateFR} à ${input.time} pour ${input.guests} convives. Emails de confirmation envoyés.`,
+          });
+        }
+        return JSON.stringify({ success: false, error: result.error || "Erreur lors de la création de la nouvelle réservation" });
+      } catch (e) {
+        return JSON.stringify({ success: false, error: `Erreur: ${e}` });
+      }
+    }
+
     case "get_google_reviews": {
       try {
         const res = await fetch(`${SITE_URL}/api/google-reviews?lang=${locale}`);
