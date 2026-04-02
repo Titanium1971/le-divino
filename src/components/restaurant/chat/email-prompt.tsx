@@ -7,43 +7,48 @@ type Props = {
   locale: string;
 };
 
-const TEXTS: Record<string, { title: string; desc: string; namePlaceholder: string; emailPlaceholder: string; submit: string; gdpr: string }> = {
+const TEXTS: Record<string, { title: string; desc: string; firstNamePlaceholder: string; lastNamePlaceholder: string; emailPlaceholder: string; submit: string; gdpr: string }> = {
   fr: {
     title: "Bienvenue au Divino",
-    desc: "Pour personnaliser votre expérience, indiquez votre prénom et votre email.",
-    namePlaceholder: "Votre prénom",
+    desc: "Pour personnaliser votre expérience, merci de renseigner vos informations.",
+    firstNamePlaceholder: "Prénom",
+    lastNamePlaceholder: "Nom",
     emailPlaceholder: "votre@email.com",
     submit: "Continuer",
     gdpr: "Vos données sont utilisées uniquement pour personnaliser votre expérience. Vous pouvez demander leur suppression à tout moment.",
   },
   en: {
     title: "Welcome to Le Divino",
-    desc: "To personalize your experience, enter your first name and email.",
-    namePlaceholder: "Your first name",
+    desc: "To personalize your experience, please enter your details.",
+    firstNamePlaceholder: "First name",
+    lastNamePlaceholder: "Last name",
     emailPlaceholder: "your@email.com",
     submit: "Continue",
     gdpr: "Your data is used only to personalize your experience. You can request deletion at any time.",
   },
   it: {
     title: "Benvenuti al Divino",
-    desc: "Per personalizzare la tua esperienza, inserisci il tuo nome e la tua email.",
-    namePlaceholder: "Il tuo nome",
+    desc: "Per personalizzare la tua esperienza, inserisci le tue informazioni.",
+    firstNamePlaceholder: "Nome",
+    lastNamePlaceholder: "Cognome",
     emailPlaceholder: "tua@email.com",
     submit: "Continua",
     gdpr: "I tuoi dati sono utilizzati solo per personalizzare la tua esperienza. Puoi richiederne la cancellazione in qualsiasi momento.",
   },
   es: {
     title: "Bienvenido al Divino",
-    desc: "Para personalizar su experiencia, ingrese su nombre y email.",
-    namePlaceholder: "Su nombre",
+    desc: "Para personalizar su experiencia, ingrese sus datos.",
+    firstNamePlaceholder: "Nombre",
+    lastNamePlaceholder: "Apellido",
     emailPlaceholder: "su@email.com",
     submit: "Continuar",
     gdpr: "Sus datos se utilizan únicamente para personalizar su experiencia. Puede solicitar su eliminación en cualquier momento.",
   },
   de: {
     title: "Willkommen im Divino",
-    desc: "Um Ihr Erlebnis zu personalisieren, geben Sie Ihren Vornamen und Ihre E-Mail ein.",
-    namePlaceholder: "Ihr Vorname",
+    desc: "Um Ihr Erlebnis zu personalisieren, geben Sie bitte Ihre Daten ein.",
+    firstNamePlaceholder: "Vorname",
+    lastNamePlaceholder: "Nachname",
     emailPlaceholder: "ihre@email.com",
     submit: "Weiter",
     gdpr: "Ihre Daten werden ausschließlich zur Personalisierung Ihres Erlebnisses verwendet. Sie können jederzeit die Löschung beantragen.",
@@ -51,14 +56,16 @@ const TEXTS: Record<string, { title: string; desc: string; namePlaceholder: stri
 };
 
 export function EmailPrompt({ onSubmit, locale }: Props) {
-  const [name, setName] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const t = TEXTS[locale] || TEXTS.fr;
 
-  const isValid = name.trim().length >= 2 && email.includes("@");
+  const isValid = firstName.trim().length >= 2 && lastName.trim().length >= 2 && email.includes("@");
+  const fullName = `${firstName.trim()} ${lastName.trim()}`;
 
   function handleSubmit() {
-    if (isValid) onSubmit(email.trim(), name.trim());
+    if (isValid) onSubmit(email.trim(), fullName);
   }
 
   return (
@@ -69,13 +76,22 @@ export function EmailPrompt({ onSubmit, locale }: Props) {
       </div>
 
       <div className="mt-6 w-full max-w-xs space-y-3">
-        <input
-          type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder={t.namePlaceholder}
-          className="w-full rounded-lg border border-brand-gold/30 bg-white px-4 py-2.5 text-sm text-brand-dark placeholder:text-brand-dark/40 outline-none focus:border-brand-gold/60"
-        />
+        <div className="flex gap-2">
+          <input
+            type="text"
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value)}
+            placeholder={t.firstNamePlaceholder}
+            className="w-1/2 rounded-lg border border-brand-gold/30 bg-white px-4 py-2.5 text-sm text-brand-dark placeholder:text-brand-dark/40 outline-none focus:border-brand-gold/60"
+          />
+          <input
+            type="text"
+            value={lastName}
+            onChange={(e) => setLastName(e.target.value)}
+            placeholder={t.lastNamePlaceholder}
+            className="w-1/2 rounded-lg border border-brand-gold/30 bg-white px-4 py-2.5 text-sm text-brand-dark placeholder:text-brand-dark/40 outline-none focus:border-brand-gold/60"
+          />
+        </div>
         <input
           type="email"
           value={email}
