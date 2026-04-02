@@ -49,7 +49,7 @@ export const restaurantConfig = {
 
   // Reservation settings
   reservation: {
-    maxGuests: 12,
+    maxGuests: 8,
     minAdvanceHours: 2,
     maxAdvanceDays: 30,
     timeSlotMinutes: 30,

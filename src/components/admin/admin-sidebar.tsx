@@ -12,6 +12,7 @@ const navItems = [
   { href: "/admin/vins", label: "Vins", icon: "◗" },
   { href: "/admin/boissons", label: "Boissons", icon: "◔" },
   { href: "/admin/reservations", label: "Réservations", icon: "◉" },
+  { href: "/admin/clients", label: "Clients", icon: "◑" },
   { href: "/admin/events", label: "Événements", icon: "◎" },
   { href: "/admin/faq", label: "FAQ", icon: "?" },
   { href: "/admin/posters", label: "Affiches IA", icon: "⬡" },

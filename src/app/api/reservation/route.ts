@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient as createServerClient } from "@/lib/supabase/server";
-import { createClient as createBrowserClient } from "@supabase/supabase-js";
+import { createClient } from "@supabase/supabase-js";
 
 const DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/;
 const TIME_REGEX = /^\d{2}:\d{2}$/;
@@ -90,7 +89,7 @@ async function sendWhatsApp(to: string, message: string) {
 function buildClientEmailHTML(name: string, date: string, time: string, guests: number, confirmLink: string): string {
   const dateFR = formatDateFR(date);
   return `
-<div style="font-family: 'Georgia', serif; max-width: 600px; margin: 0 auto; background: #FAF6F0; padding: 0;">
+<div style="font-family: 'Helvetica Neue', Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #FAF6F0; padding: 0;">
   <div style="background: #0F0A0A; padding: 30px; text-align: center;">
     <h1 style="color: #C5A55A; font-size: 28px; font-weight: 400; letter-spacing: 3px; margin: 0;">LE DIVINO</h1>
     <p style="color: #FAF6F0; font-size: 12px; letter-spacing: 2px; margin-top: 5px;">CUISINE TRADITIONNELLE FRANÇAISE</p>
@@ -189,9 +188,9 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const supabase = createBrowserClient(
+    const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     );
 
     const insertData = {
@@ -219,6 +218,36 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Upsert client in chat_clients for CRM tracking
+    const { data: existingClient } = await supabase
+      .from("chat_clients")
+      .select("id, visit_count")
+      .eq("email", email)
+      .single();
+
+    if (existingClient) {
+      await supabase
+        .from("chat_clients")
+        .update({
+          name,
+          phone,
+          visit_count: (existingClient.visit_count || 0) + 1,
+          last_visit_date: date,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", existingClient.id);
+    } else {
+      await supabase.from("chat_clients").insert({
+        email,
+        name,
+        phone,
+        visit_count: 1,
+        last_visit_date: date,
+        gdpr_consent: true,
+        gdpr_consent_date: new Date().toISOString(),
+      });
+    }
+
     // Send notifications in parallel (fire-and-forget, don't block the response)
     const guestsNum = Number(guests);
     const msgStr = (message as string) || null;
@@ -227,7 +256,7 @@ export async function POST(request: NextRequest) {
     const token = String(row.id).substring(0, 8);
     const confirmLink = `https://www.ledivino-agde.fr/api/reservation/confirm?id=${row.id}&token=${token}`;
 
-    Promise.allSettled([
+    const results = await Promise.allSettled([
       // Email to client
       sendBrevoEmail(
         email,
@@ -247,12 +276,11 @@ export async function POST(request: NextRequest) {
         OWNER_WHATSAPP,
         `🔔 Nouvelle réservation !\n\n👤 ${name}\n📅 ${formatDateFR(date)}\n🕐 ${time}\n👥 ${guestsNum} personne${guestsNum > 1 ? "s" : ""}\n📞 ${phone}\n📧 ${email}${msgStr ? "\n💬 " + msgStr : ""}\n\n→ Confirme dans l'admin`
       ),
-    ]).then((results) => {
-      results.forEach((r, i) => {
-        if (r.status === "rejected") {
-          console.error(`[reservation] Notification ${i} failed:`, r.reason);
-        }
-      });
+    ]);
+    results.forEach((r, i) => {
+      if (r.status === "rejected") {
+        console.error(`[reservation] Notification ${i} failed:`, r.reason);
+      }
     });
 
     return NextResponse.json({ success: true, id: row.id });
