@@ -14,6 +14,7 @@ export function ReservationForm() {
   const t = useTranslations("reservation");
   const searchParams = useSearchParams();
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedTime, setSelectedTime] = useState("");
 
@@ -32,16 +33,23 @@ export function ReservationForm() {
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const data = Object.fromEntries(formData);
+    if (submitting) return;
+    setSubmitting(true);
 
-    await fetch("/api/reservation", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    });
+    try {
+      const formData = new FormData(e.currentTarget);
+      const data = Object.fromEntries(formData);
 
-    setSubmitted(true);
+      await fetch("/api/reservation", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+
+      setSubmitted(true);
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   if (submitted) {
@@ -195,9 +203,10 @@ export function ReservationForm() {
       <div className="pt-4 text-center">
         <button
           type="submit"
-          className="border border-brand-bordeaux px-12 py-4 text-xs font-normal tracking-[0.2em] uppercase text-brand-bordeaux transition-all duration-300 hover:bg-brand-bordeaux hover:text-brand-cream"
+          disabled={submitting}
+          className="border border-brand-bordeaux px-12 py-4 text-xs font-normal tracking-[0.2em] uppercase text-brand-bordeaux transition-all duration-300 hover:bg-brand-bordeaux hover:text-brand-cream disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {t("form.submit")}
+          {submitting ? t("form.submitting") : t("form.submit")}
         </button>
       </div>
       <p className="mt-4 text-[11px] font-light leading-relaxed text-brand-dark/50 text-center">

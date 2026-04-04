@@ -128,7 +128,8 @@
       "submit": "Confirm reservation",
       "lunch": "Lunch",
       "dinner": "Dinner",
-      "selectSlot": "Choose a time slot"
+      "selectSlot": "Choose a time slot",
+      "submitting": "Sending..."
     }
   },
   "gallery": {

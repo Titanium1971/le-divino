@@ -193,6 +193,21 @@ export async function POST(request: NextRequest) {
       process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     );
 
+    // Anti-duplicate: check if same email+date+time exists within last 5 minutes
+    const fiveMinAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
+    const { data: existing } = await supabase
+      .from("reservations")
+      .select("id")
+      .eq("email", email)
+      .eq("date", date)
+      .eq("time", time)
+      .gte("created_at", fiveMinAgo)
+      .limit(1);
+
+    if (existing && existing.length > 0) {
+      return NextResponse.json({ success: true, id: existing[0].id, duplicate: true });
+    }
+
     const insertData = {
       name,
       email,

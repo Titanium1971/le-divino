@@ -128,7 +128,8 @@
       "submit": "Confermare la prenotazione",
       "lunch": "Pranzo",
       "dinner": "Cena",
-      "selectSlot": "Scegliete un orario"
+      "selectSlot": "Scegliete un orario",
+      "submitting": "Invio in corso..."
     }
   },
   "gallery": {

@@ -128,7 +128,8 @@
       "submit": "Reservierung bestätigen",
       "lunch": "Mittagessen",
       "dinner": "Abendessen",
-      "selectSlot": "Wählen Sie eine Uhrzeit"
+      "selectSlot": "Wählen Sie eine Uhrzeit",
+      "submitting": "Wird gesendet..."
     }
   },
   "gallery": {

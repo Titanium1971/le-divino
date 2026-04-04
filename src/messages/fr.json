@@ -125,6 +125,7 @@
       "guests": "Nombre de convives",
       "message": "Message ou demande particulière",
       "submit": "Confirmer la réservation",
+      "submitting": "Envoi en cours...",
       "lunch": "Déjeuner",
       "dinner": "Dîner",
       "selectSlot": "Choisissez un créneau"
