@@ -45,6 +45,10 @@ export default async function RootLayout({
   return (
     <html lang="fr" suppressHydrationWarning>
       <head>
+        <link rel="preconnect" href="https://spncxhvqcytxdruevfrz.supabase.co" />
+        <link rel="dns-prefetch" href="https://spncxhvqcytxdruevfrz.supabase.co" />
+        <link rel="preconnect" href="https://lh3.googleusercontent.com" />
+        <link rel="dns-prefetch" href="https://lh3.googleusercontent.com" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

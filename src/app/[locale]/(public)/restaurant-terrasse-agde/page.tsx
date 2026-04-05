@@ -37,6 +37,7 @@ export default async function RestaurantTerrasseAgdePage({ params }: Props) {
           fill
           className="object-cover opacity-40"
           priority
+          fetchPriority="high"
           sizes="100vw"
           quality={80}
         />

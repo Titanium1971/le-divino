@@ -133,6 +133,9 @@ export const PUBLIC_PAGES = [
   { path: "restaurant-agde", priority: 0.9, changeFrequency: "weekly" as const },
   { path: "restaurant-terrasse-agde", priority: 0.85, changeFrequency: "weekly" as const },
   { path: "restaurant-cap-agde", priority: 0.85, changeFrequency: "weekly" as const },
+  { path: "agde/promenade", priority: 0.8, changeFrequency: "monthly" as const },
+  { path: "agde/cathedrale-saint-etienne", priority: 0.8, changeFrequency: "monthly" as const },
+  { path: "agde/musee-agathois", priority: 0.8, changeFrequency: "monthly" as const },
 ] as const;
 
 export const LOCALES = ["fr", "en", "it", "es", "de"] as const;

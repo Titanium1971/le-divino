@@ -15,8 +15,9 @@ export function HeroSection() {
         alt="Restaurant Le Divino de nuit place Jean Jaurès Agde"
         fill
         priority
+        fetchPriority="high"
         className="object-cover"
-        sizes="(max-width: 768px) 100vw, (max-width: 1280px) 100vw, 1280px"
+        sizes="100vw"
         quality={70}
       />
 
