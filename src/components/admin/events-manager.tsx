@@ -192,6 +192,7 @@ function EventRow({ event, onEdit, onDelete, onToggle, getImageUrl }: EventRowPr
               fill
               className="object-cover"
               sizes="48px"
+              unoptimized
             />
           )}
         </div>

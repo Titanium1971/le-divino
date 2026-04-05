@@ -36,6 +36,7 @@ export async function SiteFooter() {
           className="object-cover"
           sizes="100vw"
           quality={75}
+          loading="lazy"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-brand-cream via-brand-dark/60 to-brand-dark" />
       </div>
@@ -51,6 +52,7 @@ export async function SiteFooter() {
               width={80}
               height={80}
               className="rounded-full"
+              unoptimized
             />
             <p className="mt-4 text-2xl font-extralight tracking-[0.2em] text-brand-cream uppercase">
               Le Divino

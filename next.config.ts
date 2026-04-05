@@ -28,6 +28,9 @@ const nextConfig: NextConfig = {
         hostname: "lh3.googleusercontent.com",
       },
     ],
+    minimumCacheTTL: 2592000, // 30 days — reduces Vercel image optimization quota usage
+    deviceSizes: [640, 828, 1200],
+    imageSizes: [48, 96, 256],
   },
   async rewrites() {
     return {

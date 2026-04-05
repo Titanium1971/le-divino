@@ -229,6 +229,7 @@ export function DrinksManager({ initialDrinks }: Props) {
               width={600}
               height={600}
               className="h-auto max-h-[80vh] w-auto rounded-lg object-contain"
+              unoptimized
             />
           </div>
         </div>
@@ -274,6 +275,7 @@ function DrinkRow({ drink, imageTs, onEdit, onDelete, onToggle, onClickImage, ge
               fill
               className="object-cover"
               sizes="40px"
+              unoptimized
             />
           </button>
         ) : (

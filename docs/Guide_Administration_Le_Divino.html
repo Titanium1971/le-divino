@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', 'Helvetica Neue', Arial, sans-serif;
+    font-size: 9.5pt;
+    color: #1a1a1a;
+    background: #ffffff;
+    line-height: 1.6;
+  }
+
+  .page {
+    width: 210mm;
+    padding: 14mm 16mm 16mm 16mm;
+    position: relative;
+  }
+
+  /* HEADER */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 6mm;
+    border-bottom: 2px solid #09090B;
+    margin-bottom: 8mm;
+  }
+
+  .logo-area {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .logo-block {
+    width: 36px;
+    height: 36px;
+    background: #09090B;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #39FF14;
+    font-weight: 700;
+    font-size: 16px;
+    font-family: monospace;
+  }
+
+  .logo-text {
+    font-size: 18pt;
+    font-weight: 700;
+    color: #09090B;
+    letter-spacing: 0.05em;
+  }
+
+  .logo-sub {
+    font-size: 7pt;
+    color: #888;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  .doc-info {
+    text-align: right;
+  }
+
+  .doc-title {
+    font-size: 9pt;
+    font-weight: 700;
+    color: #09090B;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .doc-client {
+    font-size: 8pt;
+    color: #555;
+    margin-top: 2px;
+  }
+
+  .neon-pill {
+    display: inline-block;
+    background: #09090B;
+    color: #39FF14;
+    font-size: 7pt;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    padding: 2px 8px;
+    border-radius: 3px;
+    margin-top: 4px;
+    text-transform: uppercase;
+  }
+
+  /* COVER */
+  .cover {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 200mm;
+    text-align: center;
+  }
+
+  .cover-title {
+    font-size: 28pt;
+    font-weight: 700;
+    color: #09090B;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+
+  .cover-accent {
+    color: #39FF14;
+  }
+
+  .cover-subtitle {
+    font-size: 12pt;
+    color: #555;
+    margin-top: 8px;
+    font-weight: 300;
+  }
+
+  .cover-divider {
+    width: 60px;
+    height: 3px;
+    background: #39FF14;
+    margin: 20px auto;
+    border-radius: 2px;
+  }
+
+  .cover-client {
+    font-size: 14pt;
+    font-weight: 500;
+    color: #09090B;
+    margin-top: 10px;
+  }
+
+  .cover-url {
+    font-size: 9pt;
+    color: #888;
+    margin-top: 6px;
+    font-family: monospace;
+  }
+
+  .cover-date {
+    font-size: 9pt;
+    color: #888;
+    margin-top: 30px;
+  }
+
+  .cover-footer {
+    text-align: center;
+    font-size: 7.5pt;
+    color: #aaa;
+    border-top: 1px solid #e8e8e8;
+    padding-top: 4mm;
+    margin-top: 30mm;
+  }
+
+  /* CONTENT */
+  h1 {
+    font-size: 16pt;
+    font-weight: 700;
+    color: #09090B;
+    margin-top: 6mm;
+    margin-bottom: 4mm;
+    padding-bottom: 2mm;
+    border-bottom: 2px solid #39FF14;
+    page-break-after: avoid;
+  }
+
+  h2 {
+    font-size: 11pt;
+    font-weight: 700;
+    color: #09090B;
+    margin-top: 5mm;
+    margin-bottom: 2mm;
+    page-break-after: avoid;
+  }
+
+  h3 {
+    font-size: 9.5pt;
+    font-weight: 700;
+    color: #39FF14;
+    background: #09090B;
+    display: inline-block;
+    padding: 1px 8px;
+    border-radius: 3px;
+    margin-top: 3mm;
+    margin-bottom: 2mm;
+    page-break-after: avoid;
+  }
+
+  p {
+    margin-bottom: 2mm;
+  }
+
+  ul {
+    margin: 1mm 0 3mm 5mm;
+    padding-left: 3mm;
+  }
+
+  li {
+    margin-bottom: 1mm;
+  }
+
+  li strong {
+    color: #09090B;
+  }
+
+  ol {
+    margin: 1mm 0 3mm 5mm;
+    padding-left: 3mm;
+  }
+
+  ol li {
+    margin-bottom: 1.5mm;
+  }
+
+  .highlight {
+    background: #f0fdf0;
+    border-left: 3px solid #39FF14;
+    padding: 3mm 4mm;
+    margin: 3mm 0;
+    border-radius: 0 4px 4px 0;
+    font-size: 9pt;
+  }
+
+  .warning {
+    background: #fef3c7;
+    border-left: 3px solid #f59e0b;
+    padding: 3mm 4mm;
+    margin: 3mm 0;
+    border-radius: 0 4px 4px 0;
+    font-size: 9pt;
+  }
+
+  .section-number {
+    display: inline-block;
+    background: #09090B;
+    color: #39FF14;
+    width: 22px;
+    height: 22px;
+    text-align: center;
+    line-height: 22px;
+    border-radius: 4px;
+    font-weight: 700;
+    font-size: 10pt;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+
+  hr {
+    border: none;
+    border-top: 1px solid #e8e8e8;
+    margin: 5mm 0;
+  }
+
+  .toc {
+    margin: 6mm 0;
+  }
+
+  .toc-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 2mm 0;
+    border-bottom: 1px dotted #ddd;
+    font-size: 9.5pt;
+  }
+
+  .toc-item strong {
+    color: #09090B;
+  }
+
+  .toc-num {
+    display: inline-block;
+    background: #09090B;
+    color: #39FF14;
+    width: 18px;
+    height: 18px;
+    text-align: center;
+    line-height: 18px;
+    border-radius: 3px;
+    font-weight: 700;
+    font-size: 8pt;
+    margin-right: 6px;
+  }
+
+  .page-footer {
+    position: fixed;
+    bottom: 8mm;
+    left: 16mm;
+    right: 16mm;
+    text-align: center;
+    font-size: 7pt;
+    color: #bbb;
+  }
+
+  @media print {
+    .page { margin: 0; }
+    body { background: white; }
+  }
+</style>
+</head>
+<body>
+
+<!-- COVER PAGE -->
+<div class="page">
+  <div class="cover">
+    <div class="logo-area" style="margin-bottom: 30px;">
+      <div class="logo-block">C</div>
+      <div>
+        <div class="logo-text">CC</div>
+        <div class="logo-sub">Developpement</div>
+      </div>
+    </div>
+
+    <div class="cover-title">Guide d'administration</div>
+    <div class="cover-subtitle">Panneau de gestion du site internet</div>
+
+    <div class="cover-divider"></div>
+
+    <div class="cover-client">Le Divino</div>
+    <div class="cover-url">https://www.ledivino-agde.fr/admin</div>
+
+    <div class="cover-date">Avril 2026</div>
+  </div>
+
+  <div class="cover-footer">
+    CC Developpement — Cyril Canon — ccdeveloppement@gmail.com — SIRET 444 114 011
+  </div>
+</div>
+
+<!-- TABLE OF CONTENTS -->
+<div class="page">
+  <div class="header">
+    <div class="logo-area">
+      <div class="logo-block">C</div>
+      <div>
+        <div class="logo-text" style="font-size:14pt;">CC</div>
+        <div class="logo-sub">Developpement</div>
+      </div>
+    </div>
+    <div class="doc-info">
+      <div class="doc-title">Guide Admin</div>
+      <div class="doc-client">Le Divino — Agde</div>
+    </div>
+  </div>
+
+  <h1>Sommaire</h1>
+
+  <div class="toc">
+    <div class="toc-item"><span><span class="toc-num">0</span> <strong>Accès au panneau</strong></span></div>
+    <div class="toc-item"><span><span class="toc-num">1</span> <strong>Dashboard</strong> — Tableau de bord</span></div>
+    <div class="toc-item"><span><span class="toc-num">2</span> <strong>Plats</strong> — La Carte</span></div>
+    <div class="toc-item"><span><span class="toc-num">3</span> <strong>Menus</strong> — Formules</span></div>
+    <div class="toc-item"><span><span class="toc-num">4</span> <strong>Vins</strong> — Carte des vins</span></div>
+    <div class="toc-item"><span><span class="toc-num">5</span> <strong>Boissons</strong></span></div>
+    <div class="toc-item"><span><span class="toc-num">6</span> <strong>Reservations</strong></span></div>
+    <div class="toc-item"><span><span class="toc-num">7</span> <strong>Clients</strong> — Base CRM</span></div>
+    <div class="toc-item"><span><span class="toc-num">8</span> <strong>Evenements</strong></span></div>
+    <div class="toc-item"><span><span class="toc-num">9</span> <strong>FAQ</strong></span></div>
+    <div class="toc-item"><span><span class="toc-num">10</span> <strong>Affiches IA</strong></span></div>
+    <div class="toc-item"><span><span class="toc-num">11</span> <strong>Galerie</strong></span></div>
+    <div class="toc-item"><span><span class="toc-num">12</span> <strong>Ecran 55"</strong></span></div>
+    <div class="toc-item"><span><span class="toc-num">13</span> <strong>Parametres</strong></span></div>
+    <div class="toc-item"><span><span class="toc-num">14</span> <strong>Conges</strong> — Fermetures</span></div>
+    <div class="toc-item"><span><span class="toc-num">15</span> <strong>Activite</strong> — Journal d'audit</span></div>
+    <div class="toc-item"><span><span class="toc-num">16</span> <strong>Chatbot Concierge</strong></span></div>
+    <div class="toc-item"><span><span class="toc-num">+</span> <strong>Notifications automatiques</strong></span></div>
+    <div class="toc-item"><span><span class="toc-num">+</span> <strong>Bonnes pratiques</strong></span></div>
+  </div>
+</div>
+
+<!-- CONTENT PAGES -->
+<div class="page">
+  <div class="header">
+    <div class="logo-area">
+      <div class="logo-block">C</div>
+      <div>
+        <div class="logo-text" style="font-size:14pt;">CC</div>
+        <div class="logo-sub">Developpement</div>
+      </div>
+    </div>
+    <div class="doc-info">
+      <div class="doc-title">Guide Admin</div>
+      <div class="doc-client">Le Divino — Agde</div>
+    </div>
+  </div>
+
+  <h1><span class="section-number">0</span> Acces au panneau d'administration</h1>
+
+  <div class="highlight">
+    <strong>URL :</strong> https://www.ledivino-agde.fr/admin<br>
+    Connectez-vous avec vos identifiants email / mot de passe.
+  </div>
+
+  <h1><span class="section-number">1</span> Dashboard (Tableau de bord)</h1>
+  <p>Le Dashboard est la page d'accueil de l'administration. Il affiche en temps reel :</p>
+  <ul>
+    <li><strong>Reservations du jour</strong> : nombre total, en attente, confirmees, nombre de couverts</li>
+    <li><strong>Reservations de la semaine</strong> : total, tendance par rapport a la semaine precedente</li>
+    <li><strong>Taux de confirmation / annulation / no-show</strong></li>
+    <li><strong>Repartition midi / soir</strong> sur la semaine</li>
+    <li><strong>Creneau le plus demande</strong></li>
+    <li><strong>Prochaines reservations</strong> du jour et de la semaine</li>
+    <li><strong>Prochains evenements</strong></li>
+    <li><strong>Graphique comparatif</strong> semaine en cours vs semaine precedente</li>
+  </ul>
+
+  <h1><span class="section-number">2</span> Plats (La Carte)</h1>
+
+  <h3>Consulter les plats</h3>
+  <p>La liste affiche tous les plats avec leur nom, categorie, prix et disponibilite. Filtrez par categorie (Entrees, Plats, Desserts).</p>
+
+  <h3>Ajouter un plat</h3>
+  <p>Cliquez sur "Ajouter un plat". Remplissez :</p>
+  <ul>
+    <li><strong>Nom</strong> (francais obligatoire + anglais, italien, espagnol, allemand)</li>
+    <li><strong>Description</strong> (francais obligatoire, les autres langues sont generees automatiquement)</li>
+    <li><strong>Categorie</strong> : Entree, Plat ou Dessert</li>
+    <li><strong>Source</strong> : La Carte (permanente) ou Menu du Marche (plats du jour)</li>
+    <li><strong>Prix</strong> en euros</li>
+    <li><strong>Disponibilite</strong> : active/desactive</li>
+  </ul>
+
+  <h3>Fonctionnalites IA</h3>
+  <ul>
+    <li><strong>Generer la description</strong> : bouton IA pour creer une description appetissante</li>
+    <li><strong>Traduire automatiquement</strong> : traduit le francais vers les 4 autres langues</li>
+    <li><strong>Generer une image</strong> : cree une photo du plat par intelligence artificielle</li>
+  </ul>
+
+  <h3>Modifier / Supprimer</h3>
+  <p>Cliquez sur un plat pour le modifier. Le bouton "Supprimer" est disponible dans le formulaire (avec confirmation).</p>
+
+  <h1><span class="section-number">3</span> Menus (Formules)</h1>
+
+  <h3>Ajouter une formule</h3>
+  <ul>
+    <li><strong>Nom</strong> (multilingue)</li>
+    <li><strong>Type</strong> : Entree + Plat, Plat + Dessert, Entree + Plat + Dessert</li>
+    <li><strong>Description</strong> (multilingue), <strong>Prix</strong>, <strong>Actif</strong> : oui/non</li>
+  </ul>
+  <p>Apres creation, associez des plats a la formule. Seuls les plats disponibles sont proposes.</p>
+
+  <h1><span class="section-number">4</span> Vins</h1>
+
+  <h3>Ajouter un vin</h3>
+  <ul>
+    <li><strong>Nom</strong>, <strong>Region</strong>, <strong>Appellation</strong>, <strong>Couleur</strong> (Rouge, Blanc, Rose, Petillant)</li>
+    <li><strong>Millesime</strong>, <strong>Cepage</strong>, <strong>Degre d'alcool</strong>, <strong>Style</strong></li>
+    <li><strong>Prix bouteille</strong> et <strong>Prix au verre</strong></li>
+    <li><strong>Description</strong> (multilingue), <strong>Image</strong></li>
+  </ul>
+  <p>IA disponible : generation de descriptions de sommelier, traduction automatique, generation d'image.</p>
+
+  <h1><span class="section-number">5</span> Boissons</h1>
+
+  <h3>Ajouter une boisson</h3>
+  <ul>
+    <li><strong>Nom</strong> (multilingue), <strong>Categorie</strong> (Softs, Cocktails, Bieres, Spiritueux, Boissons Chaudes)</li>
+    <li><strong>Prix</strong> (standard ou multiple : Galopin, 25cl, 50cl, 1L pour les bieres pression)</li>
+    <li><strong>Description</strong> (multilingue), <strong>Image</strong>, <strong>Disponibilite</strong></li>
+  </ul>
+</div>
+
+<div class="page">
+  <div class="header">
+    <div class="logo-area">
+      <div class="logo-block">C</div>
+      <div>
+        <div class="logo-text" style="font-size:14pt;">CC</div>
+        <div class="logo-sub">Developpement</div>
+      </div>
+    </div>
+    <div class="doc-info">
+      <div class="doc-title">Guide Admin</div>
+      <div class="doc-client">Le Divino — Agde</div>
+    </div>
+  </div>
+
+  <h1><span class="section-number">6</span> Reservations</h1>
+
+  <h3>Modes d'affichage</h3>
+  <ul>
+    <li><strong>Liste</strong> : toutes les reservations avec filtres par statut et date</li>
+    <li><strong>Semaine</strong> : vue calendrier hebdomadaire</li>
+    <li><strong>Jour</strong> : vue detaillee d'une journee</li>
+  </ul>
+
+  <h3>Statuts</h3>
+  <ul>
+    <li><strong>En attente</strong> (orange) : reserve mais pas confirme par email</li>
+    <li><strong>Confirmee</strong> (vert) : le client a clique sur le lien de confirmation</li>
+    <li><strong>Annulee</strong> (rouge) : annulee par le client ou le restaurant</li>
+    <li><strong>Terminee</strong> (gris) : la visite a eu lieu</li>
+    <li><strong>No-show</strong> (gris fonce) : le client n'est pas venu</li>
+  </ul>
+
+  <h3>Actions</h3>
+  <ul>
+    <li><strong>Changer le statut</strong> : cliquez sur une reservation, utilisez le menu deroulant</li>
+    <li><strong>Creer manuellement</strong> : bouton "Nouvelle reservation"</li>
+    <li><strong>Supprimer</strong> : dans le detail, avec confirmation</li>
+  </ul>
+
+  <h1><span class="section-number">7</span> Clients (Base CRM)</h1>
+
+  <p>La liste affiche tous les clients ayant interagi avec le site. Recherchez par nom, email ou telephone.</p>
+
+  <h3>Informations par client</h3>
+  <ul>
+    <li><strong>Nom complet</strong>, email, telephone</li>
+    <li><strong>Nombre de visites</strong> et date de derniere visite</li>
+    <li><strong>Allergies</strong> connues, <strong>preferences alimentaires</strong></li>
+    <li><strong>Historique complet</strong> des reservations (date, heure, convives, statut)</li>
+  </ul>
+
+  <div class="highlight">La base clients se remplit automatiquement a chaque nouvelle reservation (formulaire du site ou chatbot).</div>
+
+  <h1><span class="section-number">8</span> Evenements</h1>
+
+  <h3>Ajouter un evenement</h3>
+  <ul>
+    <li><strong>Titre</strong> et <strong>Description</strong> (multilingue)</li>
+    <li><strong>Type</strong> : Karaoke, Concert, Soiree privee, Jour ferie, Animation, Autre</li>
+    <li><strong>Date</strong>, <strong>Heure de debut / fin</strong>, <strong>Image</strong></li>
+  </ul>
+
+  <h3>Options de visibilite</h3>
+  <ul>
+    <li><strong>Mis en avant</strong> : affiche en premier sur le site</li>
+    <li><strong>Afficher sur l'ecran</strong> : envoye a l'ecran 55"</li>
+    <li><strong>Actif</strong> : visible sur le site</li>
+  </ul>
+  <p>IA disponible : generation de contenu, traduction, image, creation d'affiche.</p>
+
+  <h1><span class="section-number">9</span> FAQ</h1>
+
+  <h3>Ajouter une FAQ</h3>
+  <ul>
+    <li><strong>Question</strong> (francais + 4 langues), <strong>Reponse</strong> (francais + 4 langues)</li>
+    <li><strong>Ordre d'affichage</strong>, <strong>Publie</strong> : oui/non</li>
+  </ul>
+
+  <div class="warning"><strong>Important :</strong> Les FAQ sont aussi utilisees par le chatbot comme base de connaissances. Ajoutez-y les questions recurrentes de vos clients.</div>
+
+  <h1><span class="section-number">10</span> Affiches IA</h1>
+
+  <h3>Creer une affiche</h3>
+  <ol>
+    <li>Choisir un <strong>template</strong> (soiree DJ, karaoke, concert, brunch, happy hour...)</li>
+    <li>Configurer les <strong>variables</strong> (nom, date, heure, artiste...)</li>
+    <li>Choisir l'<strong>orientation</strong> : Portrait ou Paysage</li>
+    <li>Choisir la <strong>police</strong></li>
+    <li><strong>Generer</strong> : l'IA cree l'image de fond + texte superpose</li>
+  </ol>
+
+  <h3>Actions</h3>
+  <ul>
+    <li><strong>Telecharger</strong> en PNG</li>
+    <li><strong>Envoyer vers l'ecran 55"</strong> (push direct)</li>
+    <li><strong>Marquer comme favori</strong></li>
+    <li><strong>Supprimer</strong></li>
+  </ul>
+</div>
+
+<div class="page">
+  <div class="header">
+    <div class="logo-area">
+      <div class="logo-block">C</div>
+      <div>
+        <div class="logo-text" style="font-size:14pt;">CC</div>
+        <div class="logo-sub">Developpement</div>
+      </div>
+    </div>
+    <div class="doc-info">
+      <div class="doc-title">Guide Admin</div>
+      <div class="doc-client">Le Divino — Agde</div>
+    </div>
+  </div>
+
+  <h1><span class="section-number">11</span> Galerie</h1>
+
+  <h3>Ajouter des photos</h3>
+  <ul>
+    <li><strong>Glissez-deposez</strong> des images ou cliquez pour parcourir</li>
+    <li>Formats : JPG, PNG, WebP, GIF — <strong>Upload multiple</strong> possible</li>
+  </ul>
+
+  <h3>Gerer les photos</h3>
+  <ul>
+    <li><strong>Tag</strong> : Restaurant, Plats, Evenements, Equipe, Ambiance</li>
+    <li><strong>Legende</strong> (multilingue), <strong>Ordre</strong> (haut/bas), <strong>Publie</strong> : visible/masque</li>
+  </ul>
+
+  <h1><span class="section-number">12</span> Ecran 55"</h1>
+
+  <p>L'ecran du restaurant affiche un diaporama de slides en rotation automatique (8 secondes par slide).</p>
+
+  <h3>Types de slides</h3>
+  <ul>
+    <li><strong>Affiche</strong> : generee par le module Affiches</li>
+    <li><strong>Image</strong> : photo simple</li>
+    <li><strong>Texte</strong> : message personnalise</li>
+    <li><strong>Evenement</strong> : promotion d'un evenement</li>
+    <li><strong>Menu</strong> : affichage d'une formule</li>
+    <li><strong>Plat du jour</strong> : mise en avant d'un plat</li>
+    <li><strong>QR Code</strong> : QR code du menu digital</li>
+  </ul>
+
+  <h3>Gestion</h3>
+  <p>Activer/Desactiver, reordonner, supprimer. Bouton <strong>Apercu</strong> pour voir le diaporama en temps reel. Depuis le module Affiches, envoyez directement une affiche vers l'ecran.</p>
+
+  <h1><span class="section-number">13</span> Parametres</h1>
+
+  <ul>
+    <li><strong>Informations restaurant</strong> : nom, adresse, telephone, email, site, reseaux sociaux</li>
+    <li><strong>Horaires d'ouverture</strong> : par jour, par tranches de 30 minutes</li>
+    <li><strong>Code PIN</strong> : acces au mode service</li>
+    <li><strong>QR Code</strong> : generation et telechargement (SVG, PNG, PDF en 7x7cm, 10x10cm, A4)</li>
+  </ul>
+
+  <h1><span class="section-number">14</span> Conges (Fermetures exceptionnelles)</h1>
+
+  <ol>
+    <li>Activez le mode conges</li>
+    <li>Renseignez la <strong>date de debut</strong> et la <strong>date de fin</strong></li>
+    <li>Ecrivez le <strong>message</strong> affiche sur le site (multilingue)</li>
+  </ol>
+
+  <div class="highlight">
+    <strong>Effet :</strong> Un bandeau s'affiche sur le site. Le chatbot refuse les reservations pendant cette periode. Desactivez le toggle pour reouvrir.
+  </div>
+
+  <h1><span class="section-number">15</span> Activite (Journal d'audit)</h1>
+
+  <p>Toutes les actions sont enregistrees automatiquement :</p>
+  <ul>
+    <li><strong>Creation</strong>, <strong>Modification</strong>, <strong>Suppression</strong> de tout element</li>
+    <li>Filtrable par <strong>utilisateur</strong> et <strong>type d'entite</strong></li>
+    <li>Detail : qui, quoi, quand, quels champs modifies</li>
+  </ul>
+</div>
+
+<div class="page">
+  <div class="header">
+    <div class="logo-area">
+      <div class="logo-block">C</div>
+      <div>
+        <div class="logo-text" style="font-size:14pt;">CC</div>
+        <div class="logo-sub">Developpement</div>
+      </div>
+    </div>
+    <div class="doc-info">
+      <div class="doc-title">Guide Admin</div>
+      <div class="doc-client">Le Divino — Agde</div>
+    </div>
+  </div>
+
+  <h1><span class="section-number">16</span> Chatbot Concierge IA</h1>
+
+  <p>Le chatbot est actif sur le site public. Il fonctionne de maniere autonome avec les donnees de l'administration.</p>
+
+  <h3>Ce que le chatbot utilise</h3>
+  <ul>
+    <li><strong>Plats</strong> : recommande les plats disponibles avec les prix exacts</li>
+    <li><strong>Vins</strong> : conseille des accords mets-vins</li>
+    <li><strong>Boissons</strong> : presente la carte des boissons</li>
+    <li><strong>Evenements</strong> : informe des evenements a venir</li>
+    <li><strong>Horaires</strong> : communique les heures d'ouverture</li>
+    <li><strong>FAQ</strong> : repond aux questions frequentes</li>
+    <li><strong>Conges</strong> : informe des fermetures exceptionnelles</li>
+    <li><strong>Avis Google</strong> : partage la note et les meilleurs avis</li>
+  </ul>
+
+  <h3>Ce que le chatbot fait automatiquement</h3>
+  <ul>
+    <li>Identifie les clients par prenom/nom et email</li>
+    <li>Prend des <strong>reservations</strong> (emails de confirmation + alerte WhatsApp)</li>
+    <li><strong>Modifie</strong> des reservations (annulation auto + recreation)</li>
+    <li><strong>Annule</strong> des reservations (avec email d'annulation)</li>
+    <li>Memorise les <strong>preferences et allergies</strong> des clients</li>
+    <li>Repond en <strong>5 langues</strong> (francais, anglais, italien, espagnol, allemand)</li>
+  </ul>
+
+  <h3>Impact de vos actions</h3>
+  <ul>
+    <li>Desactivez un plat → le chatbot ne le recommandera plus</li>
+    <li>Ajoutez un evenement → le chatbot le mentionnera</li>
+    <li>Modifiez les horaires → le chatbot utilisera les nouveaux</li>
+    <li>Activez les conges → le chatbot refusera les reservations</li>
+    <li>Ajoutez une FAQ → le chatbot l'utilisera pour repondre</li>
+  </ul>
+
+  <hr>
+
+  <h1>Notifications automatiques</h1>
+
+  <h3>Reservation (site ou chatbot)</h3>
+  <ul>
+    <li><strong>Email au client</strong> : confirmation avec bouton pour valider</li>
+    <li><strong>Email au proprietaire</strong> : alerte avec details</li>
+    <li><strong>WhatsApp au proprietaire</strong> : notification instantanee</li>
+  </ul>
+
+  <h3>Annulation</h3>
+  <ul>
+    <li><strong>Email au client</strong> : confirmation d'annulation</li>
+    <li><strong>Email + WhatsApp au proprietaire</strong></li>
+  </ul>
+
+  <h3>Modification</h3>
+  <ul>
+    <li><strong>Email au client</strong> : annulation ancienne + confirmation nouvelle</li>
+    <li><strong>Email + WhatsApp au proprietaire</strong></li>
+  </ul>
+
+  <hr>
+
+  <h1>Bonnes pratiques</h1>
+
+  <ol>
+    <li><strong>Mettez a jour les plats regulierement</strong> — le chatbot ne recommande que ce qui est disponible</li>
+    <li><strong>Ajoutez des descriptions en francais</strong> — les traductions sont generees automatiquement</li>
+    <li><strong>Publiez les FAQ importantes</strong> — le chatbot les utilise pour repondre aux questions</li>
+    <li><strong>Verifiez les reservations chaque matin</strong> — passez les "terminees" et les "no-show"</li>
+    <li><strong>Creez les evenements a l'avance</strong> — le chatbot les mentionne lors des reservations</li>
+    <li><strong>Activez les conges avant de partir</strong> — le bandeau et le chatbot informent automatiquement</li>
+    <li><strong>Consultez la page Clients</strong> — suivez vos clients fideles et leurs preferences</li>
+  </ol>
+
+  <div style="margin-top: 10mm; text-align: center; padding-top: 6mm; border-top: 2px solid #09090B;">
+    <div class="logo-block" style="display: inline-block; margin-bottom: 6px;">C</div>
+    <p style="font-size: 8pt; color: #888; margin-top: 4px;">CC Developpement — Cyril Canon</p>
+    <p style="font-size: 7.5pt; color: #aaa;">ccdeveloppement@gmail.com — SIRET 444 114 011</p>
+    <p style="font-size: 7.5pt; color: #aaa;">Agde, Herault — Avril 2026</p>
+  </div>
+</div>
+
+</body>
+</html>

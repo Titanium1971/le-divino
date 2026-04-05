@@ -450,7 +450,7 @@ export function EventFormSheet({ open, onOpenChange, event, onSaved }: Props) {
                       fill
                       className="object-cover"
                       sizes="80px"
-                      unoptimized={imagePreview.startsWith("blob:")}
+                      unoptimized
                     />
                   )}
                 </div>

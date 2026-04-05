@@ -492,6 +492,7 @@ export function WineFormSheet({ open, onOpenChange, wine, onSaved, onRefresh }: 
                         fill
                         className="object-cover"
                         sizes="64px"
+                        unoptimized
                       />
                     </div>
                     <div className="flex flex-col gap-2">

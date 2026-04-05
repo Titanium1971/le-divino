@@ -616,6 +616,7 @@ export function QrClient({
               height={64}
               className="h-full w-full object-cover"
               priority
+              unoptimized
             />
           </div>
           <h1 className="mt-3 text-xl font-light tracking-[0.15em] text-brand-cream uppercase">

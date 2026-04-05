@@ -239,7 +239,7 @@ export function GalleryEditSheet({ open, onOpenChange, item, onSaved, nextSortOr
                       fill
                       className="object-cover"
                       sizes="208px"
-                      unoptimized={displayImage.startsWith("blob:")}
+                      unoptimized
                     />
                   ) : (
                     <div className="flex h-full items-center justify-center text-xs text-muted-foreground">

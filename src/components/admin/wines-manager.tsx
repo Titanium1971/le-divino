@@ -229,6 +229,7 @@ export function WinesManager({ initialWines }: Props) {
               width={600}
               height={900}
               className="h-auto max-h-[80vh] w-auto rounded-lg object-contain"
+              unoptimized
             />
           </div>
         </div>
@@ -274,6 +275,7 @@ function WineRow({ wine, imageTs, onEdit, onDelete, onToggle, onClickImage, getI
               fill
               className="object-cover"
               sizes="32px"
+              unoptimized
             />
           </button>
         ) : (

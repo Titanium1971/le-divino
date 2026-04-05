@@ -122,6 +122,7 @@ export function GalleryClient({ images }: { images: GalleryImage[] }) {
                   fill
                   className="object-cover transition-all duration-300 group-hover:brightness-105"
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  loading="lazy"
                 />
                 {/* Caption overlay on hover */}
                 {img.caption && (
@@ -179,6 +180,7 @@ export function GalleryClient({ images }: { images: GalleryImage[] }) {
               width={1200}
               height={900}
               className="max-h-[85vh] w-auto rounded-lg object-contain"
+              quality={75}
             />
             {filtered[lightboxIndex].caption && (
               <p className="mt-4 text-center text-sm font-light tracking-wide text-brand-cream/80">
