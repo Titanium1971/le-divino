@@ -32,7 +32,7 @@ export default async function RestaurantTerrasseAgdePage({ params }: Props) {
       {/* ── Hero ── */}
       <section className="relative flex min-h-[60vh] items-center justify-center bg-brand-dark">
         <Image
-          src="/images/exterior-terrace.jpg"
+          src="/images/exterior-terrace.webp"
           alt="Terrasse ombragée du restaurant Le Divino à Agde, place Jean Jaurès"
           fill
           className="object-cover opacity-40"
@@ -74,7 +74,7 @@ export default async function RestaurantTerrasseAgdePage({ params }: Props) {
             <div className="relative overflow-hidden rounded-sm">
               <div className="aspect-[4/3]">
                 <Image
-                  src="/images/exterior-terrace.jpg"
+                  src="/images/exterior-terrace.webp"
                   alt="Terrasse du restaurant Le Divino Agde avec vue sur la place Jean Jaurès"
                   fill
                   className="object-cover"

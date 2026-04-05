@@ -11,7 +11,7 @@ export function HeroSection() {
     <section className="relative flex min-h-screen items-center justify-center overflow-hidden">
       {/* Background photo */}
       <Image
-        src="/images/hero-exterior-night.jpg"
+        src="/images/hero-exterior-night.webp"
         alt="Restaurant Le Divino de nuit place Jean Jaurès Agde"
         fill
         priority
