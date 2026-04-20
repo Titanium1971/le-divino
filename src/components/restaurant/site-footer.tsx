@@ -189,6 +189,30 @@ export async function SiteFooter() {
           <p className="mt-4 text-center text-[11px] font-light tracking-wider text-brand-cream/60" suppressHydrationWarning>
             &copy; {new Date().getFullYear()} {restaurantConfig.name}. {t("rights")}.
           </p>
+          <div className="mt-4 flex flex-col items-center justify-center gap-2">
+            <span className="text-[11px] font-light tracking-[0.15em] uppercase text-brand-cream/50">
+              Site réalisé par
+            </span>
+            <a
+              href="https://ccdeveloppement.eu"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="CC Développement — Création de sites web"
+              className="group flex flex-col items-center gap-1 opacity-80 transition-opacity hover:opacity-100"
+            >
+              <span className="text-sm font-light tracking-[0.2em] uppercase text-brand-cream">
+                CC Développement
+              </span>
+              <Image
+                src="/cc-developpement-logo.svg"
+                alt="CC Développement"
+                width={320}
+                height={160}
+                className="h-20 w-auto"
+                unoptimized
+              />
+            </a>
+          </div>
           <div className="mt-3 text-center">
             <NextLink
               href="/admin"

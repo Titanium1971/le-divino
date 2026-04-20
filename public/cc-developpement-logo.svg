@@ -1,0 +1,20 @@
+<svg width="800" height="400" viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg">
+  <!-- C gauche -->
+  <rect fill="#FFFFFF" x="240" y="115" width="80" height="16" rx="2"/>
+  <rect fill="#FFFFFF" x="240" y="115" width="16" height="130" rx="2"/>
+  <rect fill="#FFFFFF" x="240" y="229" width="80" height="16" rx="2"/>
+  <!-- C droite -->
+  <rect fill="#FFFFFF" x="372" y="115" width="80" height="16" rx="2"/>
+  <rect fill="#FFFFFF" x="436" y="115" width="16" height="130" rx="2"/>
+  <rect fill="#FFFFFF" x="372" y="229" width="80" height="16" rx="2"/>
+  <!-- Ligne diagonale verte -->
+  <line x1="222" y1="232" x2="466" y2="108" stroke="#39FF14" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- Point accent -->
+  <rect fill="#39FF14" x="456" y="242" width="8" height="8" rx="1.5"/>
+  <!-- Wordmark -->
+  <text fill="#FFFFFF" x="400" y="296" text-anchor="middle" font-family="'DM Sans', 'Inter', Arial, sans-serif" font-weight="300" font-size="15" letter-spacing="6">CC DÉVELOPPEMENT</text>
+  <!-- Règle verte -->
+  <rect fill="#39FF14" x="278" y="308" width="244" height="1.5" rx="0.5"/>
+  <!-- Tagline -->
+  <text fill="#888880" x="400" y="330" text-anchor="middle" font-family="'DM Sans', 'Inter', Arial, sans-serif" font-weight="300" font-size="10" letter-spacing="4">WEB · AI · AUTOMATISATION</text>
+</svg>
