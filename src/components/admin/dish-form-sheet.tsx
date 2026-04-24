@@ -270,8 +270,6 @@ export function DishFormSheet({ open, onOpenChange, dish, onSaved, onRefresh }: 
         available,
       };
 
-      console.log("Payload envoyé:", JSON.stringify(formData, null, 2));
-
       let saved: Dish;
       if (isEdit) {
         saved = await updateDish(supabase, dish.id, formData);

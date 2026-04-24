@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useRef, useEffect } from "react";
+import { useState, useCallback, useRef } from "react";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
 import {
@@ -167,7 +167,6 @@ export function GalleryManager({ initialItems }: Props) {
       const res = await fetch("/api/admin/seed-gallery", { method: "POST" });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Seed failed");
-      console.log("[GalleryManager] Seed result:", data);
       await refresh();
     } catch (err) {
       console.error("Seed error:", err);
@@ -180,17 +179,6 @@ export function GalleryManager({ initialItems }: Props) {
     GALLERY_TAGS.find((t) => t.value === tag)?.label ?? tag;
 
   const filteredItems = activeTag === "all" ? items : items.filter((i) => i.tag === activeTag);
-
-  // Debug: log generated URLs on mount and when items change
-  useEffect(() => {
-    if (items.length > 0) {
-      console.log("[GalleryManager] Items URLs:");
-      items.forEach((item) => {
-        const url = item.image_path ? getGalleryImageUrl(supabase, item.image_path) : "(no path)";
-        console.log(`  - ${item.id} | path="${item.image_path}" | url=${url}`);
-      });
-    }
-  }, [items, supabase]);
 
   return (
     <div>

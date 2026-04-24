@@ -44,7 +44,6 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    console.log("[reservation/confirm] Reservation confirmed:", id);
     return NextResponse.redirect(
       new URL("/fr/reservation/merci", request.url),
     );

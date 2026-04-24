@@ -37,7 +37,6 @@ export async function generatePosterImage(
   }
 
   const data = await response.json();
-  console.log("Gemini response:", JSON.stringify(data).slice(0, 500));
 
   if (data?.promptFeedback?.blockReason) {
     throw new Error("Prompt bloqué: " + data.promptFeedback.blockReason);

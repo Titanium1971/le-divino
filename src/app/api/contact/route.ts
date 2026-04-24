@@ -27,8 +27,6 @@ async function sendBrevoEmail(to: string, toName: string, subject: string, htmlC
     });
     if (!res.ok) {
       console.error("[contact] Brevo email error:", await res.text());
-    } else {
-      console.log("[contact] Email sent to", to);
     }
   } catch (e) {
     console.error("[contact] Email send failed:", e);

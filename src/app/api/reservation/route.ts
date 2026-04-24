@@ -46,8 +46,6 @@ async function sendBrevoEmail(to: string, toName: string, subject: string, htmlC
     });
     if (!res.ok) {
       console.error("[reservation] Brevo email error:", await res.text());
-    } else {
-      console.log("[reservation] Email sent to", to);
     }
   } catch (e) {
     console.error("[reservation] Email send failed:", e);
@@ -78,8 +76,6 @@ async function sendWhatsApp(to: string, message: string) {
     );
     if (!res.ok) {
       console.error("[reservation] WhatsApp error:", await res.text());
-    } else {
-      console.log("[reservation] WhatsApp sent to", to);
     }
   } catch (e) {
     console.error("[reservation] WhatsApp send failed:", e);
