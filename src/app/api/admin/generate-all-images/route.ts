@@ -2,7 +2,9 @@ import { NextResponse } from "next/server";
 import OpenAI from "openai";
 import { createClient } from "@/lib/supabase/server";
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+function getOpenAI() {
+  return new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+}
 
 function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -11,6 +13,7 @@ function sleep(ms: number) {
 export const maxDuration = 300; // 5 minutes for Vercel
 
 export async function POST() {
+  const openai = getOpenAI();
   const supabase = await createClient();
 
   // Check auth
