@@ -105,7 +105,7 @@ export const MAINTENANCE_HTML = `<!DOCTYPE html>
     <div class="contact">
       <div class="contact-label">Prestataire technique</div>
       <div class="contact-name">CC Développement</div>
-      <a href="mailto:ccdeveloppement@gmail.com">ccdeveloppement@gmail.com</a>
+      <a href="mailto:canon@ccdeveloppement.eu">canon@ccdeveloppement.eu</a>
     </div>
   </main>
 </body>
