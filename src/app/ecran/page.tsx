@@ -26,21 +26,36 @@ export default function DisplayScreen() {
     fetchSlides();
   }, [fetchSlides]);
 
-  // Realtime subscription
+  // Realtime subscription — fallback to polling if WebSocket is blocked
+  // (iOS Safari Lockdown Mode throws "WebSocket not available: The operation is insecure").
   useEffect(() => {
-    const channel = supabase
-      .channel("screen-slides-realtime")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "screen_slides" },
-        () => {
-          fetchSlides();
-        },
-      )
-      .subscribe();
+    let channel: ReturnType<typeof supabase.channel> | null = null;
+    let pollTimer: ReturnType<typeof setInterval> | null = null;
+
+    try {
+      channel = supabase
+        .channel("screen-slides-realtime")
+        .on(
+          "postgres_changes",
+          { event: "*", schema: "public", table: "screen_slides" },
+          () => {
+            fetchSlides();
+          },
+        )
+        .subscribe();
+    } catch {
+      pollTimer = setInterval(fetchSlides, 10000);
+    }
 
     return () => {
-      supabase.removeChannel(channel);
+      if (channel) {
+        try {
+          supabase.removeChannel(channel);
+        } catch {
+          // Ignore — channel may already be torn down.
+        }
+      }
+      if (pollTimer) clearInterval(pollTimer);
     };
   }, [supabase, fetchSlides]);
 

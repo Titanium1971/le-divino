@@ -199,21 +199,37 @@ function KitchenDashboard({ onLock }: { onLock?: () => void }) {
     fetchDishes();
   }, [fetchDishes]);
 
-  // Supabase Realtime subscription
+  // Supabase Realtime subscription — fallback to polling if WebSocket fails
+  // (iOS Safari with Lockdown Mode / restrictive content blockers throws
+  // synchronously: "WebSocket not available: The operation is insecure").
   useEffect(() => {
-    const channel = supabase
-      .channel("dishes-realtime")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "dishes" },
-        () => {
-          fetchDishes();
-        },
-      )
-      .subscribe();
+    let channel: ReturnType<typeof supabase.channel> | null = null;
+    let pollTimer: ReturnType<typeof setInterval> | null = null;
+
+    try {
+      channel = supabase
+        .channel("dishes-realtime")
+        .on(
+          "postgres_changes",
+          { event: "*", schema: "public", table: "dishes" },
+          () => {
+            fetchDishes();
+          },
+        )
+        .subscribe();
+    } catch {
+      pollTimer = setInterval(fetchDishes, 5000);
+    }
 
     return () => {
-      supabase.removeChannel(channel);
+      if (channel) {
+        try {
+          supabase.removeChannel(channel);
+        } catch {
+          // Ignore — channel may already be torn down.
+        }
+      }
+      if (pollTimer) clearInterval(pollTimer);
     };
   }, [supabase, fetchDishes]);
 
