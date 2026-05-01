@@ -136,6 +136,7 @@ export const PUBLIC_PAGES = [
   { path: "agde/promenade", priority: 0.8, changeFrequency: "monthly" as const },
   { path: "agde/cathedrale-saint-etienne", priority: 0.8, changeFrequency: "monthly" as const },
   { path: "agde/musee-agathois", priority: 0.8, changeFrequency: "monthly" as const },
+  { path: "agde/chateau-laurens", priority: 0.8, changeFrequency: "monthly" as const },
 ] as const;
 
 export const LOCALES = ["fr", "en", "it", "es", "de"] as const;

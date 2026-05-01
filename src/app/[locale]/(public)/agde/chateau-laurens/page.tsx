@@ -12,19 +12,19 @@ type Props = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
-  const canonical = `${SITE_URL}${locale === "fr" ? "" : `/${locale}`}/agde/cathedrale-saint-etienne`;
+  const canonical = `${SITE_URL}${locale === "fr" ? "" : `/${locale}`}/agde/chateau-laurens`;
 
   return {
-    title: "Restaurant a cote de la Cathedrale d'Agde | Le Divino — Place Jean Jaures",
+    title: "Restaurant pres du Chateau Laurens d'Agde | Le Divino — Place Jean Jaures",
     description:
-      "Le Divino, restaurant a cote de la cathedrale Saint-Etienne d'Agde. Cuisine francaise traditionnelle, terrasse place Jean Jaures. Dejeuner ou diner apres la visite.",
+      "Le Divino, restaurant a quelques minutes du Chateau Laurens d'Agde. Cuisine francaise traditionnelle, terrasse place Jean Jaures. Dejeuner ou diner apres la visite de la villa Belle Epoque.",
     keywords:
-      "restaurant cathedrale Agde, restaurant place Jean Jaures Agde, manger pres cathedrale Saint-Etienne",
+      "restaurant Chateau Laurens Agde, manger pres Chateau Laurens, restaurant villa Belle Epoque Agde, ou diner apres Chateau Laurens",
     alternates: { canonical },
     openGraph: {
-      title: "Restaurant a cote de la Cathedrale d'Agde | Le Divino",
+      title: "Restaurant pres du Chateau Laurens d'Agde | Le Divino",
       description:
-        "Cuisine traditionnelle francaise juste a cote de la cathedrale Saint-Etienne d'Agde. Terrasse, produits locaux, place Jean Jaures.",
+        "Cuisine traditionnelle francaise a quelques minutes du Chateau Laurens, joyau Belle Epoque d'Agde. Terrasse, produits locaux, place Jean Jaures.",
       url: canonical,
       siteName: "Le Divino",
       locale: "fr_FR",
@@ -34,7 +34,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
           url: `${SITE_URL}/images/hero-exterior-night.jpg`,
           width: 1200,
           height: 630,
-          alt: "Restaurant Le Divino a cote de la cathedrale Saint-Etienne d'Agde",
+          alt: "Restaurant Le Divino pres du Chateau Laurens d'Agde",
         },
       ],
     },
@@ -56,13 +56,13 @@ function jsonLdBreadcrumb() {
         "@type": "ListItem",
         position: 2,
         name: "Agde",
-        item: `${SITE_URL}/agde/cathedrale-saint-etienne`,
+        item: `${SITE_URL}/agde/chateau-laurens`,
       },
       {
         "@type": "ListItem",
         position: 3,
-        name: "Cathedrale Saint-Etienne",
-        item: `${SITE_URL}/agde/cathedrale-saint-etienne`,
+        name: "Chateau Laurens",
+        item: `${SITE_URL}/agde/chateau-laurens`,
       },
     ],
   };
@@ -74,7 +74,7 @@ function jsonLdLocalBusiness() {
     "@type": "Restaurant",
     name: "Le Divino",
     description:
-      "Restaurant de cuisine traditionnelle francaise situe a cote de la cathedrale Saint-Etienne d'Agde, place Jean Jaures.",
+      "Restaurant de cuisine traditionnelle francaise a quelques minutes du Chateau Laurens d'Agde, place Jean Jaures.",
     url: `${SITE_URL}`,
     telephone: "+33448177875",
     email: "contact@ledivino-agde.fr",
@@ -101,9 +101,9 @@ function jsonLdTouristAttraction() {
   return {
     "@context": "https://schema.org",
     "@type": "TouristAttraction",
-    name: "Cathedrale Saint-Etienne d'Agde",
+    name: "Chateau Laurens d'Agde",
     description:
-      "Cathedrale-forteresse du XIIe siecle construite en basalte noir. Monument historique classe, l'un des edifices les plus remarquables du Languedoc.",
+      "Villa Belle Epoque eclectique construite entre 1898 et 1901 par Emmanuel Laurens. Joyau du patrimoine d'Agde, melange unique d'Art Nouveau, d'orientalisme et de neo-egyptien. Restaure et ouvert au public en 2023.",
     address: {
       "@type": "PostalAddress",
       addressLocality: "Agde",
@@ -113,7 +113,7 @@ function jsonLdTouristAttraction() {
   };
 }
 
-export default async function CathedraleAgdePage({ params }: Props) {
+export default async function ChateauLaurensAgdePage({ params }: Props) {
   const { locale } = await params;
   setRequestLocale(locale);
 
@@ -142,7 +142,7 @@ export default async function CathedraleAgdePage({ params }: Props) {
       <section className="relative flex min-h-[60vh] items-center justify-center bg-brand-dark">
         <Image
           src="/images/hero-exterior-night.jpg"
-          alt="Restaurant Le Divino a cote de la cathedrale Saint-Etienne d'Agde, vue de nuit"
+          alt="Restaurant Le Divino pres du Chateau Laurens d'Agde, vue de nuit"
           fill
           className="object-cover opacity-40"
           priority
@@ -160,69 +160,70 @@ export default async function CathedraleAgdePage({ params }: Props) {
             <span className="mx-2">/</span>
             <span>Agde</span>
             <span className="mx-2">/</span>
-            <span className="text-brand-cream/90">Cathedrale Saint-Etienne</span>
+            <span className="text-brand-cream/90">Chateau Laurens</span>
           </nav>
           <h1 className="text-4xl font-extralight tracking-[0.15em] text-brand-cream md:text-5xl">
-            Restaurant pres de la Cathedrale Saint-Etienne d&apos;Agde
+            Restaurant pres du Chateau Laurens d&apos;Agde
           </h1>
           <div className="mx-auto mt-4 h-px w-16 bg-brand-gold" />
           <p className="mt-6 text-lg font-light tracking-wide text-brand-cream/80">
-            Savourez une cuisine d&apos;exception a l&apos;ombre de la forteresse millenaire
+            Prolongez votre visite de la villa Belle Epoque par une table d&apos;exception
           </p>
         </div>
       </section>
 
-      {/* ── La Cathedrale Saint-Etienne ── */}
+      {/* ── Le Chateau Laurens ── */}
       <section className="bg-brand-cream py-24">
         <div className="mx-auto max-w-4xl px-6">
           <div className="text-center">
             <h2 className="text-3xl font-extralight tracking-[0.15em] text-brand-bordeaux md:text-4xl">
-              La Cathedrale Saint-Etienne : sentinelle de basalte noir
+              Le Chateau Laurens : reve oriental sur les bords de l&apos;Herault
             </h2>
             <div className="mx-auto mt-4 h-px w-16 bg-brand-gold" />
           </div>
           <div className="mx-auto mt-10 max-w-3xl space-y-6 text-base font-light leading-relaxed text-brand-dark/90 md:text-lg">
             <p>
-              Dominant la vieille ville de sa silhouette massive, la cathedrale Saint-Etienne
-              d&apos;Agde est un monument qui ne ressemble a aucun autre. Erigee au XIIe siecle
-              sur les fondations d&apos;un edifice carolingien plus ancien, cette
-              cathedrale-forteresse a ete construite entierement en pierre de basalte noir,
-              ce materiau volcanique qui fait la singularite architecturale d&apos;Agde. Ses murs
-              epais, ses creneaux et son clocher donjon temoignent d&apos;une epoque ou les
-              edifices religieux devaient aussi proteger la population des incursions barbaresques
-              venues de la mer.
+              Pose au coeur de l&apos;Ile des Loisirs, sur les berges paisibles de l&apos;Herault,
+              le Chateau Laurens est sans doute le monument le plus surprenant d&apos;Agde. Loin
+              des forteresses austeres en basalte qui peuplent la vieille ville, cette villa
+              raconte une autre histoire : celle d&apos;un homme du tournant du XXe siecle, riche
+              heritier et grand voyageur, qui voulut faire de sa demeure un manifeste
+              architectural. Construit entre 1898 et 1901 pour Emmanuel Laurens, le chateau
+              melange avec une audace rare l&apos;Art Nouveau, l&apos;orientalisme, le style
+              neo-egyptien et la mythologie greco-romaine. Le resultat est une residence
+              eclectique unique, longtemps oubliee puis triomphalement restauree.
             </p>
             <p>
-              Classee monument historique depuis 1840, la cathedrale Saint-Etienne est l&apos;un
-              des plus anciens edifices fortifies du Languedoc. Sa nef unique, austere et
-              majestueuse, impressionne par sa hauteur sous voute et par l&apos;atmosphere de
-              recueillement qui y regne. Les chapelles laterales abritent quelques oeuvres d&apos;art
-              sacre remarquables, et le chevet roman, visible depuis la place de la Marine,
-              rappelle l&apos;epoque ou Agde etait un port fluvial d&apos;importance.
+              Apres plusieurs decennies de silence et un long chantier de restauration mene par
+              la communaute d&apos;agglomeration Agde Herault Mediterranee, le Chateau Laurens
+              a rouvert ses portes au public en 2023. Le bouche-a-oreille a fait le reste : la
+              villa est devenue en quelques mois l&apos;une des visites incontournables du
+              Languedoc, attirant aussi bien les amateurs d&apos;art que les curieux qui
+              decouvrent, ebahis, des plafonds peints, des vitraux orientalisants et des sols
+              mosaiques d&apos;une finesse rare.
             </p>
             <p>
-              L&apos;exterieur de l&apos;edifice n&apos;est pas moins fascinant. Les
-              contreforts puissants, les meurtieres et le chemin de ronde racontent a eux seuls
-              des siecles d&apos;histoire mouvementee. En levant les yeux vers le clocher, on
-              distingue les pierres plus claires des restaurations successives, temoins de la
-              volonte constante de preserver ce joyau du patrimoine agathois. La cathedrale
-              trône au coeur d&apos;un lacis de ruelles etroites et de placettes ombragees qui
-              menent naturellement a la place Jean Jaures, centre nevralgique de la vie sociale
-              de la vieille ville.
+              La visite traverse une succession de salons themes : la salle des Lotus aux
+              colonnes egyptiennes, le boudoir oriental aux moucharabiehs sculptes, la
+              bibliotheque aux boiseries fleuries, ou encore la salle de musique avec son
+              orgue d&apos;origine. Chaque piece est une scene, chaque detail un clin d&apos;oeil
+              aux voyages d&apos;Emmanuel Laurens en Egypte, en Inde, en Grece. On ressort de la
+              visite avec le sentiment d&apos;avoir traverse un reve d&apos;esthete fortune,
+              fige a l&apos;aube du XXe siecle.
             </p>
           </div>
         </div>
       </section>
 
-      {/* ── Histoire et architecture ── */}
+      {/* ── Histoire et restauration ── */}
       <section className="bg-brand-dark/90 py-24">
         <div className="mx-auto max-w-5xl px-6 md:flex md:items-center md:gap-12">
           <div className="md:w-1/2">
             <div className="relative overflow-hidden rounded-sm">
               <div className="aspect-[4/3]">
                 <Image
-                  src="/images/interieur-salle-bar.jpg"
-                  alt="Interieur elegant du restaurant Le Divino pres de la cathedrale d'Agde"
+                  src="/images/salle-bord-eau.jpg"
+                  alt="Salle elegante du Divino, table reservee apres la visite du Chateau Laurens"
                   fill
                   className="object-cover"
                   sizes="(max-width: 768px) 100vw, 50vw"
@@ -233,39 +234,43 @@ export default async function CathedraleAgdePage({ params }: Props) {
           </div>
           <div className="mt-10 md:mt-0 md:w-1/2">
             <h2 className="text-2xl font-extralight tracking-[0.15em] text-brand-cream md:text-3xl">
-              Neuf siecles d&apos;histoire a portee de regard
+              D&apos;un reve d&apos;heritier a un joyau public
             </h2>
             <div className="mt-4 h-px w-12 bg-brand-gold" />
             <div className="mt-6 space-y-4 text-base font-light leading-relaxed text-brand-cream/80">
               <p>
-                La construction de la cathedrale debuta vers 1173, sous l&apos;episcopat de
-                l&apos;eveque Guillaume. L&apos;edifice fut concu des l&apos;origine comme une
-                forteresse : Agde, ville cotiere, subissait alors regulierement les raids des
-                pirates sarrasins. La population devait pouvoir se refugier dans la cathedrale
-                en cas d&apos;attaque, ce qui explique l&apos;epaisseur considerable de ses murs
-                — pres de deux metres par endroits — et la presence d&apos;elements defensifs
-                inhabituels pour un lieu de culte.
+                Emmanuel Laurens, fils d&apos;une famille agathoise enrichie par le commerce et
+                la pharmacie, avait herite jeune d&apos;une fortune consequente apres le
+                deces inattendu d&apos;un parent egyptien. Plutot que de la placer, il choisit
+                de la depenser pour donner forme a ses passions : la musique, les voyages, et
+                une certaine idee du beau. Il fit appel a l&apos;architecte Olivier Garros,
+                puis a une nuee d&apos;artisans peintres, mosaistes, ferronniers, ebenistes,
+                pour faconner cette villa qui devait etre, selon ses mots, &laquo; le rêve
+                accompli d&apos;un homme libre &raquo;.
               </p>
               <p>
-                Au cours des siecles suivants, la cathedrale fut a la fois lieu de priere,
-                refuge militaire et symbole du pouvoir episcopal sur la ville. Les eveques
-                d&apos;Agde y siegerent jusqu&apos;a la Revolution, et l&apos;edifice traversa
-                les guerres de Religion, les conflits avec Beziers, et les soubresauts de
-                l&apos;histoire languedocienne sans jamais perdre sa fonction sacree.
+                Apres sa mort en 1959, le chateau passa de main en main, fut un temps lieu de
+                villegiature puis abandonne. Les decennies de friche ont failli avoir raison de
+                son ame : peintures murales menacees par l&apos;humidite, vitraux fendus,
+                mosaiques disparaissant sous les depots. Il aura fallu pres de vingt ans
+                d&apos;etudes et de travaux pour redonner au monument son eclat d&apos;origine.
+                Inscrit aux Monuments Historiques, le Chateau Laurens est aujourd&apos;hui un
+                exemple international de restauration patrimoniale.
               </p>
               <p>
-                Aujourd&apos;hui, la cathedrale Saint-Etienne est un site incontournable pour
-                tout visiteur d&apos;Agde. Les visites guidees organisees par l&apos;Office de
-                Tourisme permettent de decouvrir ses secrets : les marques de tacherons gravees
-                dans le basalte, la crypte enfouie sous le choeur, et la vue panoramique depuis
-                le sommet du clocher donjon sur les toits de la ville et le cours de l&apos;Herault.
+                Le parc qui entoure la villa merite egalement le detour. Arbres centenaires,
+                glycines, canal d&apos;eau vive : tout invite a prolonger la visite a
+                l&apos;exterieur, dans une atmosphere paisible qui contraste agreablement avec
+                la richesse foisonnante des interieurs. Au printemps et en ete, des
+                evenements culturels — concerts, lectures, expositions temporaires — animent
+                regulierement le site.
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ── Le Divino a cote de la cathedrale ── */}
+      {/* ── Le Divino apres la visite ── */}
       <section className="bg-brand-cream py-24">
         <div className="mx-auto max-w-5xl px-6 md:flex md:flex-row-reverse md:items-center md:gap-12">
           <div className="md:w-1/2">
@@ -273,7 +278,7 @@ export default async function CathedraleAgdePage({ params }: Props) {
               <div className="aspect-[4/3]">
                 <Image
                   src="/images/exterior-terrace.jpg"
-                  alt="Terrasse du restaurant Le Divino, place Jean Jaures, a cote de la cathedrale d'Agde"
+                  alt="Terrasse du restaurant Le Divino, place Jean Jaures, ideale apres la visite du Chateau Laurens"
                   fill
                   className="object-cover"
                   sizes="(max-width: 768px) 100vw, 50vw"
@@ -284,33 +289,34 @@ export default async function CathedraleAgdePage({ params }: Props) {
           </div>
           <div className="mt-10 md:mt-0 md:w-1/2">
             <h2 className="text-2xl font-extralight tracking-[0.15em] text-brand-bordeaux md:text-3xl">
-              Le Divino : votre restaurant a l&apos;ombre de la cathedrale
+              Le Divino : la table qui prolonge le reve
             </h2>
             <div className="mt-4 h-px w-12 bg-brand-gold" />
             <div className="mt-6 space-y-4 text-base font-light leading-relaxed text-brand-dark/90">
               <p>
-                En sortant de la cathedrale Saint-Etienne, il suffit de quelques pas pour
-                rejoindre la place Jean Jaures et la terrasse du Divino. Cette proximite
-                fait du restaurant l&apos;adresse naturelle pour prolonger une visite culturelle
-                par un moment de plaisir gastronomique. Nombre de visiteurs decouvrent
-                d&apos;ailleurs Le Divino apres avoir admire la cathedrale — et y reviennent
-                ensuite pour sa cuisine autant que pour son cadre.
+                Apres une visite aussi riche que celle du Chateau Laurens, l&apos;envie est
+                grande de s&apos;asseoir, de respirer, et de se laisser porter par un bon
+                repas. La place Jean Jaures, ou se trouve Le Divino, est a une dizaine de
+                minutes a pied du chateau en empruntant les berges de l&apos;Herault — une
+                promenade agreable qui prolonge naturellement l&apos;etat d&apos;esprit
+                contemplatif de la visite.
               </p>
               <p>
-                Le chef du Divino propose une cuisine traditionnelle francaise a accent
-                mediterraneen, elaboree a partir de produits frais et de saison. Les poissons
-                arrivent chaque matin du Grau d&apos;Agde, les fruits et legumes proviennent des
-                maraichers de la plaine de l&apos;Herault, et les viandes sont selectionnees
-                aupres d&apos;eleveurs de la region. Chaque assiette raconte le terroir, avec
-                la meme honnetete que les pierres de basalte racontent l&apos;histoire de la cite.
+                Notre cuisine francaise traditionnelle, a accent mediterraneen, fait la part
+                belle aux produits frais et aux producteurs locaux. Les poissons sont peches
+                au Grau d&apos;Agde, les legumes viennent des maraichers de la plaine, les
+                vins sont selectionnes parmi les meilleurs domaines du Languedoc. C&apos;est
+                ce meme souci d&apos;authenticite et de transmission qui anime aussi bien la
+                cuisine du Divino que la restauration du Chateau Laurens : faire vivre un
+                patrimoine, sans le figer.
               </p>
               <p>
-                L&apos;interieur du restaurant merite aussi le detour. La salle, chaleureuse et
-                intimiste, allie pierres apparentes et decoration contemporaine dans un
-                equilibre de bon gout. Le soir, l&apos;eclairage tamisé et les bougies creent
-                une ambiance particulierement propice aux diners romantiques — le cadre parfait
-                apres une deambulation au crepuscule dans les ruelles millenaires de la vieille
-                ville.
+                Le cadre du restaurant, chaleureux et soigne, prolonge cette atmosphere. La
+                terrasse ombragee est ideale pour un dejeuner apres la visite ; la salle
+                interieure, intimiste, accueille les diners du soir dans une lumiere tamisee.
+                Beaucoup de visiteurs du chateau, francais comme etrangers, terminent leur
+                journee chez nous — et nous racontent, autour d&apos;un verre, leurs decouvertes
+                du jour.
               </p>
             </div>
           </div>
@@ -322,7 +328,7 @@ export default async function CathedraleAgdePage({ params }: Props) {
         <div className="mx-auto max-w-5xl px-6">
           <div className="text-center">
             <h2 className="text-2xl font-extralight tracking-[0.15em] text-brand-cream md:text-3xl">
-              Votre journee a Agde : cathedrale, gastronomie et patrimoine
+              Une journee a Agde : Chateau Laurens, gastronomie et patrimoine
             </h2>
             <div className="mx-auto mt-4 h-px w-16 bg-brand-gold" />
           </div>
@@ -330,18 +336,18 @@ export default async function CathedraleAgdePage({ params }: Props) {
             {[
               {
                 step: "Matin",
-                title: "Visite de la cathedrale",
-                text: "Commencez par la decouverte de la cathedrale Saint-Etienne. Comptez environ une heure pour apprecier l'architecture, la nef et la vue depuis le clocher.",
+                title: "Visite du Chateau Laurens",
+                text: "Comptez environ 1h30 pour parcourir les salons, le parc et profiter pleinement des decors restaures. Reservation conseillee, surtout en haute saison.",
               },
               {
                 step: "Midi",
                 title: "Dejeuner au Divino",
-                text: "Rejoignez la place Jean Jaures pour un dejeuner en terrasse. La formule du midi offre un excellent rapport qualite-prix avec des produits du marche.",
+                text: "Rejoignez la place Jean Jaures a pied le long de l'Herault. Notre formule du midi, basee sur le marche du jour, offre un excellent contraste avec la richesse du chateau.",
               },
               {
                 step: "Apres-midi",
-                title: "Promenade et musee",
-                text: "Flanez le long de la promenade en bord d'Herault, puis visitez le Musee Agathois pour completer votre immersion dans l'histoire d'Agde.",
+                title: "Vieille ville et cathedrale",
+                text: "Flanez dans les ruelles de la vieille ville, decouvrez la cathedrale Saint-Etienne en basalte noir, puis revenez longer l'Herault au coucher du soleil.",
               },
             ].map((item) => (
               <div key={item.step} className="text-center">
@@ -371,7 +377,8 @@ export default async function CathedraleAgdePage({ params }: Props) {
           <div className="mt-10 space-y-3 text-base font-light text-brand-dark/90">
             <p>
               <strong className="font-normal text-brand-dark">Adresse :</strong> 5 place Jean
-              Jaures, 34300 Agde — a 1 minute a pied de la cathedrale Saint-Etienne
+              Jaures, 34300 Agde — environ 10 minutes a pied du Chateau Laurens en longeant
+              l&apos;Herault
             </p>
             <p>
               <strong className="font-normal text-brand-dark">Telephone :</strong>{" "}
@@ -384,9 +391,9 @@ export default async function CathedraleAgdePage({ params }: Props) {
               samedi 12h-14h / 19h-22h — Dimanche 12h-15h30 — Ferme le lundi
             </p>
             <p>
-              <strong className="font-normal text-brand-dark">Conseil :</strong> Reservez pour
-              le dejeuner en haute saison, la terrasse est tres prisee apres les visites de la
-              cathedrale
+              <strong className="font-normal text-brand-dark">Conseil :</strong> Reservez votre
+              table a l&apos;avance les jours d&apos;affluence du chateau (mercredi, samedi
+              apres-midi en particulier)
             </p>
           </div>
         </div>
@@ -396,13 +403,13 @@ export default async function CathedraleAgdePage({ params }: Props) {
       <section className="bg-brand-dark py-24">
         <div className="mx-auto max-w-2xl px-6 text-center">
           <h2 className="text-3xl font-extralight tracking-[0.15em] text-brand-cream md:text-4xl">
-            Reservez votre table pres de la cathedrale
+            Reservez votre table apres le Chateau Laurens
           </h2>
           <div className="mx-auto mt-4 h-px w-16 bg-brand-gold" />
           <p className="mt-6 text-base font-light text-brand-cream/80">
-            Apres la decouverte de la cathedrale Saint-Etienne, offrez-vous un moment de
-            gastronomie au Divino. Dejeuner en terrasse ou diner intimiste, nous vous
-            accueillons place Jean Jaures.
+            Apres avoir admire les salons orientaux et les vitraux du Chateau Laurens, offrez-vous
+            un dejeuner ou un diner a la hauteur de votre journee. Nous vous accueillons place
+            Jean Jaures, a quelques minutes du chateau.
           </p>
           <Link
             href="/reservation"
@@ -425,22 +432,22 @@ export default async function CathedraleAgdePage({ params }: Props) {
           <div className="mx-auto mt-4 h-px w-16 bg-brand-gold" />
           <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center sm:flex-wrap">
             <Link
-              href="/agde/chateau-laurens"
+              href="/agde/cathedrale-saint-etienne"
               className="border border-brand-bordeaux px-8 py-3 text-xs font-normal tracking-[0.2em] uppercase text-brand-bordeaux transition-all duration-300 hover:bg-brand-bordeaux hover:text-brand-cream"
             >
-              Chateau Laurens
-            </Link>
-            <Link
-              href="/agde/promenade"
-              className="border border-brand-bordeaux px-8 py-3 text-xs font-normal tracking-[0.2em] uppercase text-brand-bordeaux transition-all duration-300 hover:bg-brand-bordeaux hover:text-brand-cream"
-            >
-              Promenade d&apos;Agde
+              Cathedrale Saint-Etienne
             </Link>
             <Link
               href="/agde/musee-agathois"
               className="border border-brand-bordeaux px-8 py-3 text-xs font-normal tracking-[0.2em] uppercase text-brand-bordeaux transition-all duration-300 hover:bg-brand-bordeaux hover:text-brand-cream"
             >
               Musee Agathois
+            </Link>
+            <Link
+              href="/agde/promenade"
+              className="border border-brand-bordeaux px-8 py-3 text-xs font-normal tracking-[0.2em] uppercase text-brand-bordeaux transition-all duration-300 hover:bg-brand-bordeaux hover:text-brand-cream"
+            >
+              Promenade d&apos;Agde
             </Link>
             <Link
               href="/restaurant-agde"

@@ -433,7 +433,13 @@ export default async function MuseeAgathoisPage({ params }: Props) {
             Decouvrez aussi a Agde
           </h2>
           <div className="mx-auto mt-4 h-px w-16 bg-brand-gold" />
-          <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
+          <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center sm:flex-wrap">
+            <Link
+              href="/agde/chateau-laurens"
+              className="border border-brand-bordeaux px-8 py-3 text-xs font-normal tracking-[0.2em] uppercase text-brand-bordeaux transition-all duration-300 hover:bg-brand-bordeaux hover:text-brand-cream"
+            >
+              Chateau Laurens
+            </Link>
             <Link
               href="/agde/promenade"
               className="border border-brand-bordeaux px-8 py-3 text-xs font-normal tracking-[0.2em] uppercase text-brand-bordeaux transition-all duration-300 hover:bg-brand-bordeaux hover:text-brand-cream"
