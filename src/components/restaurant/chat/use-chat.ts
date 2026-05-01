@@ -1,12 +1,21 @@
 "use client";
 
 import { useState, useCallback, useRef, useEffect } from "react";
+import { randomUUID } from "@/lib/utils";
 
 type Message = {
   id: string;
   role: "user" | "assistant";
   content: string;
 };
+
+function getStoredClientName(): string | undefined {
+  try {
+    return localStorage.getItem("divino-chat-name") || undefined;
+  } catch {
+    return undefined;
+  }
+}
 
 type UseChatReturn = {
   messages: Message[];
@@ -29,24 +38,37 @@ export function useChat(locale: string): UseChatReturn {
 
   // Initialize session ID + restore email
   useEffect(() => {
-    let id = sessionStorage.getItem("divino-chat-session");
-    if (!id) {
-      id = crypto.randomUUID();
-      sessionStorage.setItem("divino-chat-session", id);
+    // Storage access can throw on iOS Safari (private mode, content blockers, ITP).
+    // Fail open: keep an in-memory session ID so the rest of the app keeps working.
+    try {
+      let id = sessionStorage.getItem("divino-chat-session");
+      if (!id) {
+        id = randomUUID();
+        sessionStorage.setItem("divino-chat-session", id);
+      }
+      sessionIdRef.current = id;
+    } catch {
+      sessionIdRef.current = randomUUID();
     }
-    sessionIdRef.current = id;
 
-    // Restore email from localStorage
-    const savedEmail = localStorage.getItem("divino-chat-email");
-    if (savedEmail) setClientEmailState(savedEmail);
+    try {
+      const savedEmail = localStorage.getItem("divino-chat-email");
+      if (savedEmail) setClientEmailState(savedEmail);
+    } catch {
+      // Ignore — user can re-enter email if needed.
+    }
 
     setIsReady(true);
   }, []);
 
   const setClientEmail = useCallback((email: string, name: string) => {
     setClientEmailState(email);
-    localStorage.setItem("divino-chat-email", email);
-    localStorage.setItem("divino-chat-name", name);
+    try {
+      localStorage.setItem("divino-chat-email", email);
+      localStorage.setItem("divino-chat-name", name);
+    } catch {
+      // Ignore — email is still kept in component state for the session.
+    }
   }, []);
 
   const sendMessage = useCallback(
@@ -54,7 +76,7 @@ export function useChat(locale: string): UseChatReturn {
       if (!text.trim() || isLoading) return;
 
       const userMsg: Message = {
-        id: crypto.randomUUID(),
+        id: randomUUID(),
         role: "user",
         content: text.trim(),
       };
@@ -62,7 +84,7 @@ export function useChat(locale: string): UseChatReturn {
       setMessages((prev) => [...prev, userMsg]);
       setIsLoading(true);
 
-      const assistantId = crypto.randomUUID();
+      const assistantId = randomUUID();
       setMessages((prev) => [
         ...prev,
         { id: assistantId, role: "assistant", content: "" },
@@ -77,7 +99,7 @@ export function useChat(locale: string): UseChatReturn {
             message: text.trim(),
             locale,
             clientEmail,
-            clientName: localStorage.getItem("divino-chat-name") || undefined,
+            clientName: getStoredClientName(),
           }),
         });
 
