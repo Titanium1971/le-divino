@@ -7,6 +7,7 @@ import { DISH_CATEGORIES, DRINK_CATEGORIES, WINE_COLORS } from "@/lib/types/data
 import { Button } from "@/components/ui/button";
 
 type DishGroup = { category: DishCategory; label: string; dishes: Dish[] };
+type DrinkGroup = { category: DrinkCategory; label: string; drinks: Drink[] };
 
 export default function ServicePage() {
   const [authenticated, setAuthenticated] = useState(false);
@@ -124,7 +125,7 @@ export default function ServicePage() {
 // ── Service Dashboard with tabs ──
 
 function ServiceDashboard({ onLock }: { onLock: () => void }) {
-  const [tab, setTab] = useState<"cuisine" | "traducteur">("cuisine");
+  const [tab, setTab] = useState<"cuisine" | "bar" | "traducteur">("cuisine");
 
   return (
     <div className="min-h-screen">
@@ -144,6 +145,17 @@ function ServiceDashboard({ onLock }: { onLock: () => void }) {
           </button>
           <button
             type="button"
+            onClick={() => setTab("bar")}
+            className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
+              tab === "bar"
+                ? "bg-foreground text-background"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            Bar
+          </button>
+          <button
+            type="button"
             onClick={() => setTab("traducteur")}
             className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
               tab === "traducteur"
@@ -159,11 +171,9 @@ function ServiceDashboard({ onLock }: { onLock: () => void }) {
         </Button>
       </div>
 
-      {tab === "cuisine" ? (
-        <KitchenDashboard onLock={onLock} />
-      ) : (
-        <NumberedReference onLock={onLock} />
-      )}
+      {tab === "cuisine" && <KitchenDashboard onLock={onLock} />}
+      {tab === "bar" && <BarDashboard />}
+      {tab === "traducteur" && <NumberedReference onLock={onLock} />}
     </div>
   );
 }
@@ -286,6 +296,131 @@ function KitchenDashboard({ onLock }: { onLock?: () => void }) {
                   }`}
                 >
                   {dish.available ? "Disponible" : "Indisponible"}
+                </span>
+              </button>
+            ))}
+          </div>
+        </section>
+      ))}
+    </div>
+  );
+}
+
+// ── Bar Dashboard ──
+
+function BarDashboard() {
+  const supabase = createClient();
+  const [groups, setGroups] = useState<DrinkGroup[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchDrinks = useCallback(async () => {
+    const { data, error } = await supabase
+      .from("drinks")
+      .select("*")
+      .order("sort_order");
+
+    if (error) return;
+
+    const drinks = (data ?? []) as Drink[];
+
+    setGroups(
+      DRINK_CATEGORIES.map(({ value, label }) => ({
+        category: value,
+        label,
+        drinks: drinks.filter((d) => d.category === value),
+      })).filter((g) => g.drinks.length > 0),
+    );
+    setLoading(false);
+  }, [supabase]);
+
+  useEffect(() => {
+    fetchDrinks();
+  }, [fetchDrinks]);
+
+  // Realtime subscription with polling fallback (cf. KitchenDashboard).
+  useEffect(() => {
+    let channel: ReturnType<typeof supabase.channel> | null = null;
+    let pollTimer: ReturnType<typeof setInterval> | null = null;
+
+    try {
+      channel = supabase
+        .channel("drinks-realtime")
+        .on(
+          "postgres_changes",
+          { event: "*", schema: "public", table: "drinks" },
+          () => {
+            fetchDrinks();
+          },
+        )
+        .subscribe();
+    } catch {
+      pollTimer = setInterval(fetchDrinks, 5000);
+    }
+
+    return () => {
+      if (channel) {
+        try {
+          supabase.removeChannel(channel);
+        } catch {
+          // Ignore
+        }
+      }
+      if (pollTimer) clearInterval(pollTimer);
+    };
+  }, [supabase, fetchDrinks]);
+
+  async function handleToggle(drink: Drink) {
+    await supabase
+      .from("drinks")
+      .update({ available: !drink.available })
+      .eq("id", drink.id);
+    setGroups((prev) =>
+      prev.map((g) => ({
+        ...g,
+        drinks: g.drinks.map((d) =>
+          d.id === drink.id ? { ...d, available: !d.available } : d,
+        ),
+      })),
+    );
+  }
+
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <p className="text-muted-foreground">Chargement...</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="p-4">
+      {groups.map(({ category, label, drinks }) => (
+        <section key={category} className="mb-6">
+          <h2 className="sticky top-0 z-10 mb-2 bg-background py-2 text-base font-medium tracking-wide border-b">
+            {label}
+          </h2>
+          <div className="space-y-1">
+            {drinks.map((drink) => (
+              <button
+                key={drink.id}
+                type="button"
+                onClick={() => handleToggle(drink)}
+                className={`flex w-full items-center justify-between rounded-lg border p-3 text-left transition-colors ${
+                  drink.available
+                    ? "border-green-200 bg-green-50 dark:border-green-900 dark:bg-green-950"
+                    : "border-red-200 bg-red-50 opacity-60 dark:border-red-900 dark:bg-red-950"
+                }`}
+                style={{ minHeight: 48 }}
+              >
+                <span className="text-sm font-medium">{drink.name_fr || drink.name}</span>
+                <span
+                  className={`shrink-0 rounded-full px-3 py-1 text-xs font-medium ${
+                    drink.available
+                      ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
+                      : "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
+                  }`}
+                >
+                  {drink.available ? "Disponible" : "Indisponible"}
                 </span>
               </button>
             ))}
