@@ -22,6 +22,13 @@ const SUPABASE_KEY =
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 
 export async function POST(request: NextRequest) {
+  if (process.env.CHAT_ENABLED !== "true") {
+    return new Response(
+      JSON.stringify({ error: "Chat temporarily disabled" }),
+      { status: 503 },
+    );
+  }
+
   let body: ChatRequestBody;
   try {
     body = await request.json();
