@@ -49,3 +49,13 @@ supabase/.temp/
 *.tsbuildinfo
 next-env.d.ts
 .env*.local
+
+# tool artifacts
+/.playwright-mcp/
+
+# client documents — local only, never push
+/assets/LES DIVIN'S/
+/docs/bail-commercial/
+
+# photo backups (too heavy for repo)
+/assets/dishes-backup/
