@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import { setRequestLocale } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
-import { SITE_URL } from "@/lib/seo/constants";
+import { SITE_URL, LOCALES, DEFAULT_LOCALE, getPageUrl } from "@/lib/seo/constants";
 
 export const revalidate = 3600;
 
@@ -10,38 +10,52 @@ type Props = {
   params: Promise<{ locale: string }>;
 };
 
+const OG_LOCALE: Record<string, string> = {
+  fr: "fr_FR",
+  en: "en_US",
+  it: "it_IT",
+  es: "es_ES",
+  de: "de_DE",
+};
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
-  const canonical = `${SITE_URL}${locale === "fr" ? "" : `/${locale}`}/agde/musee-agathois`;
+  const t = await getTranslations({ locale, namespace: "agde" });
+  const canonical = getPageUrl(locale, "agde/musee-agathois");
+
+  const languages: Record<string, string> = {};
+  for (const loc of LOCALES) {
+    languages[loc] = getPageUrl(loc, "agde/musee-agathois");
+  }
+  languages["x-default"] = getPageUrl(DEFAULT_LOCALE, "agde/musee-agathois");
 
   return {
-    title: "Restaurant proche du Musee Agathois | Le Divino — Cuisine traditionnelle",
-    description:
-      "Le Divino, restaurant a quelques minutes du Musee Agathois d'Agde. Cuisine francaise, terrasse place Jean Jaures. Parfait apres une visite du musee et de l'Ephebe.",
-    keywords:
-      "restaurant musee Agathois, restaurant centre historique Agde, dejeuner apres musee Agde",
-    alternates: { canonical },
+    title: t("musee.seo_title"),
+    description: t("musee.seo_description"),
+    keywords: t("musee.seo_keywords"),
+    alternates: { canonical, languages },
     openGraph: {
-      title: "Restaurant proche du Musee Agathois | Le Divino",
-      description:
-        "Cuisine traditionnelle francaise a quelques minutes du Musee Agathois. Terrasse, produits locaux, place Jean Jaures a Agde.",
+      title: t("musee.og_title"),
+      description: t("musee.og_description"),
       url: canonical,
       siteName: "Le Divino",
-      locale: "fr_FR",
+      locale: OG_LOCALE[locale] ?? "fr_FR",
       type: "article",
       images: [
         {
           url: `${SITE_URL}/images/salle-bord-eau.jpg`,
           width: 1200,
           height: 630,
-          alt: "Restaurant Le Divino proche du Musee Agathois a Agde",
+          alt: t("musee.og_image_alt"),
         },
       ],
     },
   };
 }
 
-function jsonLdBreadcrumb() {
+function jsonLdBreadcrumb(
+  t: Awaited<ReturnType<typeof getTranslations>>,
+) {
   return {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -49,19 +63,19 @@ function jsonLdBreadcrumb() {
       {
         "@type": "ListItem",
         position: 1,
-        name: "Le Divino",
+        name: t("musee.breadcrumb_home"),
         item: `${SITE_URL}`,
       },
       {
         "@type": "ListItem",
         position: 2,
-        name: "Agde",
+        name: t("musee.breadcrumb_region"),
         item: `${SITE_URL}/agde/musee-agathois`,
       },
       {
         "@type": "ListItem",
         position: 3,
-        name: "Musee Agathois",
+        name: t("musee.breadcrumb_current"),
         item: `${SITE_URL}/agde/musee-agathois`,
       },
     ],
@@ -117,13 +131,14 @@ function jsonLdTouristAttraction() {
 export default async function MuseeAgathoisPage({ params }: Props) {
   const { locale } = await params;
   setRequestLocale(locale);
+  const t = await getTranslations({ locale, namespace: "agde" });
 
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(jsonLdBreadcrumb()),
+          __html: JSON.stringify(jsonLdBreadcrumb(t)),
         }}
       />
       <script
@@ -143,7 +158,7 @@ export default async function MuseeAgathoisPage({ params }: Props) {
       <section className="relative flex min-h-[60vh] items-center justify-center bg-brand-dark">
         <Image
           src="/images/salle-bord-eau.jpg"
-          alt="Restaurant Le Divino a proximite du Musee Agathois, centre historique d'Agde"
+          alt={t("musee.hero_alt")}
           fill
           className="object-cover opacity-40"
           priority
@@ -156,20 +171,19 @@ export default async function MuseeAgathoisPage({ params }: Props) {
             className="mb-8 text-xs font-light tracking-widest uppercase text-brand-cream/60"
           >
             <Link href="/" className="hover:text-brand-gold transition-colors">
-              Accueil
+              {t("musee.breadcrumb_home")}
             </Link>
             <span className="mx-2">/</span>
-            <span>Agde</span>
+            <span>{t("musee.breadcrumb_region")}</span>
             <span className="mx-2">/</span>
-            <span className="text-brand-cream/90">Musee Agathois</span>
+            <span className="text-brand-cream/90">{t("musee.breadcrumb_current")}</span>
           </nav>
           <h1 className="text-4xl font-extralight tracking-[0.15em] text-brand-cream md:text-5xl">
-            Restaurant proche du Musee Agathois
+            {t("musee.h1")}
           </h1>
           <div className="mx-auto mt-4 h-px w-16 bg-brand-gold" />
           <p className="mt-6 text-lg font-light tracking-wide text-brand-cream/80">
-            De l&apos;Ephebe d&apos;Agde a la table du Divino : un voyage entre culture et
-            gastronomie
+            {t("musee.hero_subtitle")}
           </p>
         </div>
       </section>
@@ -179,38 +193,14 @@ export default async function MuseeAgathoisPage({ params }: Props) {
         <div className="mx-auto max-w-4xl px-6">
           <div className="text-center">
             <h2 className="text-3xl font-extralight tracking-[0.15em] text-brand-bordeaux md:text-4xl">
-              Le Musee Agathois : memoire vivante d&apos;une cite millenaire
+              {t("musee.s1_title")}
             </h2>
             <div className="mx-auto mt-4 h-px w-16 bg-brand-gold" />
           </div>
           <div className="mx-auto mt-10 max-w-3xl space-y-6 text-base font-light leading-relaxed text-brand-dark/90 md:text-lg">
-            <p>
-              Niché au coeur du centre historique d&apos;Agde, le Musee Agathois — officiellement
-              baptise Musee Agathois Jules Baudou — est l&apos;un de ces lieux ou l&apos;histoire
-              prend chair. Installe dans un ancien hotel particulier de la rue de la Fraternite,
-              a quelques centaines de metres de la place Jean Jaures, il rassemble des collections
-              d&apos;une richesse remarquable qui retracent plus de vingt-six siecles d&apos;histoire
-              agathoise, de la fondation grecque a l&apos;epoque contemporaine.
-            </p>
-            <p>
-              Le musee doit une grande partie de sa renommee a un tresor exceptionnel : l&apos;Ephebe
-              d&apos;Agde. Cette statue en bronze hellenistique, decouverte en 1964 dans le lit de
-              l&apos;Herault par un plongeur amateur, est devenue l&apos;embleme de la ville. Haute
-              d&apos;environ 1,40 metre, elle represente un jeune homme dans une pose d&apos;une grace
-              saisissante. Les specialistes datent cette oeuvre du IIe siecle avant notre ere,
-              et debattent encore de son origine exacte — romaine ou grecque. Quoi qu&apos;il en
-              soit, sa beaute et son etat de conservation exceptionnel en font l&apos;une des
-              pieces maitresses de l&apos;archeologie sous-marine francaise.
-            </p>
-            <p>
-              Au-dela de l&apos;Ephebe, les salles du musee deploient un panorama fascinant de la
-              civilisation agathoise. Les collections archeologiques rassemblent des amphores
-              greco-romaines, des monnaies antiques, des outils de peche et de navigation qui
-              rappellent le passe maritime de la cite. Les salles dediees a l&apos;ethnographie
-              presentent les costumes traditionnels, les joutes languedociennes — cette tradition
-              spectaculaire qui anime encore les fetes d&apos;ete — et les savoir-faire artisanaux
-              qui ont faconne l&apos;identite de la ville.
-            </p>
+            <p>{t("musee.s1_p1")}</p>
+            <p>{t("musee.s1_p2")}</p>
+            <p>{t("musee.s1_p3")}</p>
           </div>
         </div>
       </section>
@@ -223,7 +213,7 @@ export default async function MuseeAgathoisPage({ params }: Props) {
               <div className="aspect-[4/3]">
                 <Image
                   src="/images/bar-divino.jpg"
-                  alt="Ambiance chaleureuse au restaurant Le Divino, a quelques pas du Musee Agathois"
+                  alt={t("musee.s2_image_alt")}
                   fill
                   className="object-cover"
                   sizes="(max-width: 768px) 100vw, 50vw"
@@ -234,35 +224,13 @@ export default async function MuseeAgathoisPage({ params }: Props) {
           </div>
           <div className="mt-10 md:mt-0 md:w-1/2">
             <h2 className="text-2xl font-extralight tracking-[0.15em] text-brand-cream md:text-3xl">
-              Un musee aux collections multiples
+              {t("musee.s2_title")}
             </h2>
             <div className="mt-4 h-px w-12 bg-brand-gold" />
             <div className="mt-6 space-y-4 text-base font-light leading-relaxed text-brand-cream/80">
-              <p>
-                Le parcours museographique s&apos;organise en plusieurs sections thematiques.
-                L&apos;espace consacre a la prehistoire et a l&apos;Antiquite presente les
-                temoignages les plus anciens de l&apos;occupation humaine dans la basse vallee de
-                l&apos;Herault : silex tailles, poteries, et surtout les vestiges de la colonie
-                grecque d&apos;Agatha Tyche, fondee vers 525 avant J.-C. par des navigateurs
-                venus de Phocee, via Massalia (Marseille).
-              </p>
-              <p>
-                La section maritime est particulierement evocatrice. Maquettes de bateaux,
-                instruments de navigation, filets et hamecons anciens illustrent la relation
-                intime qu&apos;Agde a toujours entretenue avec la mer et le fleuve. On y decouvre
-                comment les pecheurs agathois ont developpe des techniques de peche specifiques
-                adaptees aux conditions locales, et comment le port d&apos;Agde a joue un role
-                commercial important dans les echanges mediterraneens.
-              </p>
-              <p>
-                Enfin, les salles consacrees aux traditions populaires sont un veritable voyage
-                dans le temps. Reconstitution d&apos;interieurs agathois, collection de coiffes et
-                de costumes des fetes votives, instruments de musique traditionnels : chaque
-                vitrine raconte un pan de la vie quotidienne dans l&apos;Agde d&apos;autrefois.
-                Les joutes nautiques, inscrites au patrimoine culturel immateriel, occupent une
-                place de choix avec leurs trophees, leurs bannières et leurs photographies
-                d&apos;epoque.
-              </p>
+              <p>{t("musee.s2_p1")}</p>
+              <p>{t("musee.s2_p2")}</p>
+              <p>{t("musee.s2_p3")}</p>
             </div>
           </div>
         </div>
@@ -276,7 +244,7 @@ export default async function MuseeAgathoisPage({ params }: Props) {
               <div className="aspect-[4/3]">
                 <Image
                   src="/images/exterior-terrace.jpg"
-                  alt="Terrasse du Divino sur la place Jean Jaures, a quelques minutes du Musee Agathois"
+                  alt={t("musee.s3_image_alt")}
                   fill
                   className="object-cover"
                   sizes="(max-width: 768px) 100vw, 50vw"
@@ -287,36 +255,13 @@ export default async function MuseeAgathoisPage({ params }: Props) {
           </div>
           <div className="mt-10 md:mt-0 md:w-1/2">
             <h2 className="text-2xl font-extralight tracking-[0.15em] text-brand-bordeaux md:text-3xl">
-              Du musee a la table : Le Divino vous attend
+              {t("musee.s3_title")}
             </h2>
             <div className="mt-4 h-px w-12 bg-brand-gold" />
             <div className="mt-6 space-y-4 text-base font-light leading-relaxed text-brand-dark/90">
-              <p>
-                Apres une visite du Musee Agathois, rien de tel qu&apos;un bon repas pour
-                prolonger le plaisir de la decouverte. Le Divino se trouve a quelques minutes de
-                marche, en remontant tranquillement les ruelles du centre historique jusqu&apos;a
-                la place Jean Jaures. Le trajet est en lui-meme une promenade agreable, qui
-                permet de s&apos;impregner de l&apos;atmosphere unique de la vieille ville en
-                basalte.
-              </p>
-              <p>
-                La cuisine du Divino entretient, a sa maniere, un lien fort avec le patrimoine
-                agathois. Le chef puise son inspiration dans les traditions culinaires du
-                Languedoc et de la Mediterranee, ces memes traditions que le musee documente et
-                preserve. Les poissons arrives le matin meme du port du Grau d&apos;Agde, les
-                legumes du marche, les herbes aromatiques de la garrigue : chaque ingredient est
-                un hommage au terroir local. La carte des vins celebre les cepages
-                languedociens — picpoul, grenache, syrah — qui prospèrent sur les sols
-                volcaniques de la region.
-              </p>
-              <p>
-                En terrasse, face aux facades de basalte de la place Jean Jaures, le dejeuner
-                prend des airs de banquet mediterraneen. La lumiere du Midi, le murmure de la
-                fontaine, le parfum des plats qui s&apos;echappe de la cuisine : c&apos;est une
-                experience sensorielle complete qui vient naturellement couronner une matinee
-                culturelle au musee. Le soir, l&apos;ambiance se fait plus intimiste, et la place
-                baignee de lumiere doree invite au diner en amoureux ou entre amis.
-              </p>
+              <p>{t("musee.s3_p1")}</p>
+              <p>{t("musee.s3_p2")}</p>
+              <p>{t("musee.s3_p3")}</p>
             </div>
           </div>
         </div>
@@ -327,42 +272,35 @@ export default async function MuseeAgathoisPage({ params }: Props) {
         <div className="mx-auto max-w-5xl px-6">
           <div className="text-center">
             <h2 className="text-2xl font-extralight tracking-[0.15em] text-brand-cream md:text-3xl">
-              Un parcours culturel et gourmand dans le centre d&apos;Agde
+              {t("musee.s4_title")}
             </h2>
             <div className="mx-auto mt-4 h-px w-16 bg-brand-gold" />
           </div>
           <div className="mx-auto mt-10 max-w-3xl space-y-6 text-base font-light leading-relaxed text-brand-cream/80">
+            <p>{t("musee.s4_p1")}</p>
             <p>
-              Pour vivre une journee complete a Agde, nous vous suggerons un itineraire qui
-              combine les richesses du patrimoine et les plaisirs de la table. Debutez par la
-              visite du Musee Agathois le matin, en prenant le temps d&apos;admirer l&apos;Ephebe
-              et de parcourir les collections a votre rythme. Comptez environ une heure trente
-              pour une visite approfondie.
+              {t.rich("musee.s4_p2", {
+                link: (chunks) => (
+                  <Link
+                    href="/agde/cathedrale-saint-etienne"
+                    className="text-brand-gold underline decoration-brand-gold/50 underline-offset-4 transition-colors hover:text-brand-cream"
+                  >
+                    {chunks}
+                  </Link>
+                ),
+              })}
             </p>
             <p>
-              En sortant du musee, dirigez-vous vers la place Jean Jaures en empruntant les
-              ruelles du centre ancien. Faites un crochet par la{" "}
-              <Link
-                href="/agde/cathedrale-saint-etienne"
-                className="text-brand-gold underline decoration-brand-gold/50 underline-offset-4 transition-colors hover:text-brand-cream"
-              >
-                cathedrale Saint-Etienne
-              </Link>
-              , a deux pas du musee, pour admirer sa silhouette de forteresse en basalte. Puis
-              installez-vous au Divino pour un dejeuner qui celebre les saveurs du terroir
-              languedocien.
-            </p>
-            <p>
-              L&apos;apres-midi, poursuivez votre exploration par la{" "}
-              <Link
-                href="/agde/promenade"
-                className="text-brand-gold underline decoration-brand-gold/50 underline-offset-4 transition-colors hover:text-brand-cream"
-              >
-                promenade en bord d&apos;Herault
-              </Link>
-              . Les quais offrent une perspective superbe sur la vieille ville et ses facades de
-              pierre sombre. C&apos;est le complement ideal d&apos;une journee qui mele
-              decouverte historique, plaisir gastronomique et flanerie au fil de l&apos;eau.
+              {t.rich("musee.s4_p3", {
+                link: (chunks) => (
+                  <Link
+                    href="/agde/promenade"
+                    className="text-brand-gold underline decoration-brand-gold/50 underline-offset-4 transition-colors hover:text-brand-cream"
+                  >
+                    {chunks}
+                  </Link>
+                ),
+              })}
             </p>
           </div>
         </div>
@@ -372,31 +310,31 @@ export default async function MuseeAgathoisPage({ params }: Props) {
       <section className="bg-brand-cream py-24">
         <div className="mx-auto max-w-3xl px-6 text-center">
           <h2 className="text-2xl font-extralight tracking-[0.15em] text-brand-bordeaux md:text-3xl">
-            Informations pratiques
+            {t("musee.practical_title")}
           </h2>
           <div className="mx-auto mt-4 h-px w-16 bg-brand-gold" />
           <div className="mt-10 space-y-4 text-base font-light text-brand-dark/90">
             <div className="rounded-sm border border-brand-dark/10 p-6">
               <h3 className="text-sm font-normal tracking-[0.2em] uppercase text-brand-bordeaux">
-                Le Divino
+                {t("musee.practical_divino_title")}
               </h3>
-              <p className="mt-2">5 place Jean Jaures, 34300 Agde</p>
+              <p className="mt-2">{t("musee.practical_divino_address")}</p>
               <p>
-                Tel :{" "}
+                {t("musee.practical_divino_phone_label")}{" "}
                 <a href="tel:+33448177875" className="underline hover:text-brand-bordeaux transition-colors">
                   04 48 17 78 75
                 </a>
               </p>
-              <p>Mardi au samedi 12h-14h / 19h-22h — Dimanche 12h-15h30</p>
-              <p>Ferme le lundi</p>
+              <p>{t("musee.practical_divino_hours")}</p>
+              <p>{t("musee.practical_divino_closed")}</p>
             </div>
             <div className="rounded-sm border border-brand-dark/10 p-6">
               <h3 className="text-sm font-normal tracking-[0.2em] uppercase text-brand-bordeaux">
-                Musee Agathois Jules Baudou
+                {t("musee.practical_musee_title")}
               </h3>
-              <p className="mt-2">5 rue de la Fraternite, 34300 Agde</p>
-              <p>A 5 minutes a pied du restaurant Le Divino</p>
-              <p>Consultez les horaires d&apos;ouverture aupres de l&apos;Office de Tourisme</p>
+              <p className="mt-2">{t("musee.practical_musee_address")}</p>
+              <p>{t("musee.practical_musee_distance")}</p>
+              <p>{t("musee.practical_musee_hours")}</p>
             </div>
           </div>
         </div>
@@ -406,22 +344,20 @@ export default async function MuseeAgathoisPage({ params }: Props) {
       <section className="bg-brand-dark py-24">
         <div className="mx-auto max-w-2xl px-6 text-center">
           <h2 className="text-3xl font-extralight tracking-[0.15em] text-brand-cream md:text-4xl">
-            Reservez votre table apres le musee
+            {t("musee.cta_title")}
           </h2>
           <div className="mx-auto mt-4 h-px w-16 bg-brand-gold" />
           <p className="mt-6 text-base font-light text-brand-cream/80">
-            De l&apos;Ephebe d&apos;Agde aux saveurs du Languedoc, prolongez votre voyage
-            culturel par un repas d&apos;exception au Divino. Terrasse ensoleillée ou salle
-            intimiste, nous vous attendons place Jean Jaures.
+            {t("musee.cta_text")}
           </p>
           <Link
             href="/reservation"
             className="mt-10 inline-block border border-brand-gold px-12 py-4 text-xs font-normal tracking-[0.2em] uppercase text-brand-gold transition-all duration-300 hover:bg-brand-gold hover:text-brand-dark"
           >
-            Reserver une table
+            {t("musee.cta_button")}
           </Link>
           <p className="mt-6 text-sm font-light text-brand-cream/60">
-            Ou par telephone au 04 48 17 78 75
+            {t("musee.cta_phone")}
           </p>
         </div>
       </section>
@@ -430,7 +366,7 @@ export default async function MuseeAgathoisPage({ params }: Props) {
       <section className="bg-brand-cream py-16">
         <div className="mx-auto max-w-4xl px-6 text-center">
           <h2 className="text-2xl font-extralight tracking-[0.15em] text-brand-bordeaux md:text-3xl">
-            Decouvrez aussi a Agde
+            {t("musee.also_title")}
           </h2>
           <div className="mx-auto mt-4 h-px w-16 bg-brand-gold" />
           <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center sm:flex-wrap">
@@ -438,25 +374,25 @@ export default async function MuseeAgathoisPage({ params }: Props) {
               href="/agde/chateau-laurens"
               className="border border-brand-bordeaux px-8 py-3 text-xs font-normal tracking-[0.2em] uppercase text-brand-bordeaux transition-all duration-300 hover:bg-brand-bordeaux hover:text-brand-cream"
             >
-              Chateau Laurens
+              {t("musee.also_chateau")}
             </Link>
             <Link
               href="/agde/promenade"
               className="border border-brand-bordeaux px-8 py-3 text-xs font-normal tracking-[0.2em] uppercase text-brand-bordeaux transition-all duration-300 hover:bg-brand-bordeaux hover:text-brand-cream"
             >
-              Promenade d&apos;Agde
+              {t("musee.also_promenade")}
             </Link>
             <Link
               href="/agde/cathedrale-saint-etienne"
               className="border border-brand-bordeaux px-8 py-3 text-xs font-normal tracking-[0.2em] uppercase text-brand-bordeaux transition-all duration-300 hover:bg-brand-bordeaux hover:text-brand-cream"
             >
-              Cathedrale Saint-Etienne
+              {t("musee.also_cathedrale")}
             </Link>
             <Link
               href="/restaurant-agde"
               className="border border-brand-bordeaux px-8 py-3 text-xs font-normal tracking-[0.2em] uppercase text-brand-bordeaux transition-all duration-300 hover:bg-brand-bordeaux hover:text-brand-cream"
             >
-              Restaurant a Agde
+              {t("musee.also_restaurant")}
             </Link>
           </div>
         </div>

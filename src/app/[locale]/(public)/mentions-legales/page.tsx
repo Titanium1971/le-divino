@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Link } from "@/i18n/navigation";
 import { setRequestLocale } from "next-intl/server";
 import { getTranslations } from "next-intl/server";
+import { LOCALES, DEFAULT_LOCALE, getPageUrl } from "@/lib/seo/constants";
 
 type Props = {
   params: Promise<{ locale: string }>;
@@ -10,9 +11,22 @@ type Props = {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "legal" });
+  const canonical = getPageUrl(locale, "mentions-legales");
+  const languages: Record<string, string> = {};
+  for (const loc of LOCALES) {
+    languages[loc] = getPageUrl(loc, "mentions-legales");
+  }
+  languages["x-default"] = getPageUrl(DEFAULT_LOCALE, "mentions-legales");
   return {
     title: t("seo_title"),
     description: t("seo_description"),
+    alternates: {
+      canonical,
+      languages,
+    },
+    openGraph: {
+      url: canonical,
+    },
   };
 }
 

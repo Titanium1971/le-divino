@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
+import { LOCALES, DEFAULT_LOCALE, getPageUrl } from "@/lib/seo/constants";
 
 type Props = {
   params: Promise<{ locale: string }>;
@@ -9,9 +10,22 @@ type Props = {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "privacy" });
+  const canonical = getPageUrl(locale, "politique-confidentialite");
+  const languages: Record<string, string> = {};
+  for (const loc of LOCALES) {
+    languages[loc] = getPageUrl(loc, "politique-confidentialite");
+  }
+  languages["x-default"] = getPageUrl(DEFAULT_LOCALE, "politique-confidentialite");
   return {
     title: t("seo_title"),
     description: t("seo_description"),
+    alternates: {
+      canonical,
+      languages,
+    },
+    openGraph: {
+      url: canonical,
+    },
   };
 }
 
