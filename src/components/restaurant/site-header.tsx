@@ -14,7 +14,7 @@ function getHref(key: string) {
   return `/${key}`;
 }
 
-export function SiteHeader() {
+export function SiteHeader({ i18nEnabled = false }: { i18nEnabled?: boolean }) {
   const t = useTranslations("nav");
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
@@ -68,7 +68,7 @@ export function SiteHeader() {
 
         {/* Right: language + mobile toggle */}
         <div className="flex items-center gap-4">
-          <LanguageSwitcher />
+          {i18nEnabled && <LanguageSwitcher />}
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
             className="flex flex-col gap-2 md:hidden"
