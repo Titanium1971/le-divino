@@ -200,7 +200,11 @@ export default async function HomePage({ params }: Props) {
       <FaqSection title={t("faq.title")} items={faqItems} />
 
       {/* ── Widget flottant réservation ── */}
-      {!conges.actif && <ReservationWidget locale={locale} />}
+      {/* Kill-switch: hide booking widget when reservations disabled (unpaid invoice).
+          Re-enable by setting RESERVATIONS_ENABLED="true" on Vercel. */}
+      {process.env.RESERVATIONS_ENABLED === "true" && !conges.actif && (
+        <ReservationWidget locale={locale} />
+      )}
 
       {/* ── CTA Réservation ── */}
       <section className="bg-brand-cream py-24">

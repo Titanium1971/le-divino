@@ -21,6 +21,13 @@ const FALLBACK: RatingData = {
 let cached: { data: RatingData; ts: number } | null = null;
 
 export async function getGoogleRating(): Promise<RatingData> {
+  // Kill-switch: when live reviews are disabled (unpaid invoice / cost freeze),
+  // never call the paid Places API — serve the frozen fallback rating.
+  // Re-enable by setting REVIEWS_LIVE_ENABLED="true" on Vercel.
+  if (process.env.REVIEWS_LIVE_ENABLED !== "true") {
+    return FALLBACK;
+  }
+
   // Return from cache if still fresh
   if (cached && Date.now() - cached.ts < CACHE_TTL_MS) {
     return cached.data;

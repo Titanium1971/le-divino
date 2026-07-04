@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { setRequestLocale } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 import { getDishesGrouped, getDishImageUrl } from "@/lib/supabase/dishes";
@@ -27,6 +28,13 @@ type MenuWithDishes = Menu & {
 
 export default async function QrPage({ params }: Props) {
   const { locale } = await params;
+
+  // Kill-switch: digital QR menu disabled (unpaid invoice). Scanned QR codes
+  // return 404. Re-enable by setting MENU_QR_ENABLED="true" on Vercel.
+  if (process.env.MENU_QR_ENABLED !== "true") {
+    notFound();
+  }
+
   setRequestLocale(locale);
 
   const supabase = await createClient();

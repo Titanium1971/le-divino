@@ -153,6 +153,11 @@ function buildOwnerEmailHTML(
 }
 
 export async function POST(request: NextRequest) {
+  // Kill-switch: reservations module disabled (unpaid invoice). Re-enable with RESERVATIONS_ENABLED="true".
+  if (process.env.RESERVATIONS_ENABLED !== "true") {
+    return NextResponse.json({ error: "Réservations temporairement indisponibles" }, { status: 503 });
+  }
+
   let body: Record<string, unknown>;
   try {
     body = await request.json();

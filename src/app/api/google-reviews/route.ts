@@ -1,10 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
+import reviewsSnapshot from "@/data/google-reviews-snapshot.json";
 
 export const revalidate = 3600; // cache for 1 hour
 
 const SUPPORTED_LANGS = new Set(["fr", "en", "it", "es", "de"]);
 
 export async function GET(request: NextRequest) {
+  // Kill-switch: when live reviews are disabled (unpaid invoice / cost freeze),
+  // never call the paid Places API — serve a static snapshot of the last-known
+  // reviews. Re-enable by setting REVIEWS_LIVE_ENABLED="true" on Vercel.
+  if (process.env.REVIEWS_LIVE_ENABLED !== "true") {
+    return NextResponse.json(reviewsSnapshot);
+  }
+
   const apiKey = process.env.GOOGLE_MAPS_API_KEY;
   const placeId = process.env.NEXT_PUBLIC_GOOGLE_PLACE_ID;
 

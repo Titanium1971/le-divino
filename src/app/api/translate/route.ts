@@ -2,6 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
 
 export async function POST(request: NextRequest) {
+  // Kill-switch: admin/AI features disabled (unpaid invoice). Re-enable with ADMIN_ENABLED="true".
+  if (process.env.ADMIN_ENABLED !== "true") {
+    return NextResponse.json({ error: "Service temporairement désactivé" }, { status: 503 });
+  }
+
   if (!process.env.OPENAI_API_KEY) {
     console.error("Translation error: OPENAI_API_KEY is not set in .env.local");
     return NextResponse.json(

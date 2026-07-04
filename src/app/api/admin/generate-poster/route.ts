@@ -4,6 +4,10 @@ import { generatePosterImage } from "@/lib/gemini";
 import { getTemplate } from "@/lib/poster-templates";
 
 export async function POST(request: NextRequest) {
+  // Kill-switch: admin/AI generation disabled (unpaid invoice). Re-enable with ADMIN_ENABLED="true".
+  if (process.env.ADMIN_ENABLED !== "true") {
+    return NextResponse.json({ error: "Service temporairement désactivé" }, { status: 503 });
+  }
   const supabase = await createClient();
 
   const {

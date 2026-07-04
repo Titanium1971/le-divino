@@ -13,6 +13,10 @@ function sleep(ms: number) {
 export const maxDuration = 300; // 5 minutes for Vercel
 
 export async function POST() {
+  // Kill-switch: admin/AI generation disabled (unpaid invoice). Re-enable with ADMIN_ENABLED="true".
+  if (process.env.ADMIN_ENABLED !== "true") {
+    return NextResponse.json({ error: "Service temporairement désactivé" }, { status: 503 });
+  }
   const openai = getOpenAI();
   const supabase = await createClient();
 

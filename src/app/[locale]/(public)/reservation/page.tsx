@@ -47,7 +47,29 @@ export default async function ReservationPage({ params }: Props) {
       {/* Form or congés message */}
       <section className="bg-brand-cream py-16">
         <div className="mx-auto max-w-xl px-6">
-          {conges.actif ? (
+          {process.env.RESERVATIONS_ENABLED !== "true" ? (
+            /* Kill-switch: reservations module disabled (unpaid invoice).
+               Re-enable by setting RESERVATIONS_ENABLED="true" on Vercel. */
+            <div className="text-center py-12">
+              <div className="mx-auto mb-6 h-px w-16 bg-brand-gold" />
+              <p className="text-base font-light leading-relaxed text-brand-dark/90">
+                Les réservations en ligne sont temporairement indisponibles.
+                <br />
+                Merci de nous contacter directement au{" "}
+                <a href="tel:+33448177875" className="underline hover:text-brand-dark">
+                  04 48 17 78 75
+                </a>{" "}
+                ou par email à{" "}
+                <a
+                  href="mailto:contact@ledivino-agde.fr"
+                  className="underline hover:text-brand-dark"
+                >
+                  contact@ledivino-agde.fr
+                </a>
+                .
+              </p>
+            </div>
+          ) : conges.actif ? (
             <CongesBanner
               message={conges.message}
               dateDebut={conges.dateDebut}
