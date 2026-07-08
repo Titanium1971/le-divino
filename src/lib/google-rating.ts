@@ -2,11 +2,11 @@
  * Server-side utility to fetch the restaurant's aggregate rating
  * from the Google Places API (New).
  *
- * Results are cached in-memory for 1 hour so the Places API is not
+ * Results are cached in-memory for 24 hours so the Places API is not
  * called on every page render.
  */
 
-const CACHE_TTL_MS = 3600 * 1000; // 1 hour
+const CACHE_TTL_MS = 86400 * 1000; // 24 hours
 
 interface RatingData {
   ratingValue: string;
@@ -48,7 +48,7 @@ export async function getGoogleRating(): Promise<RatingData> {
           "X-Goog-Api-Key": apiKey,
           "X-Goog-FieldMask": "rating,userRatingCount",
         },
-        next: { revalidate: 3600 },
+        next: { revalidate: 86400 },
       },
     );
 

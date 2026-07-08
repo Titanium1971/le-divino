@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import reviewsSnapshot from "@/data/google-reviews-snapshot.json";
 
-export const revalidate = 3600; // cache for 1 hour
+export const revalidate = 86400; // cache 24h, les avis changent rarement
 
 const SUPPORTED_LANGS = new Set(["fr", "en", "it", "es", "de"]);
 
@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
           "X-Goog-Api-Key": apiKey,
           "X-Goog-FieldMask": "rating,userRatingCount,reviews",
         },
-        next: { revalidate: 3600 },
+        next: { revalidate: 86400 },
       },
     );
 
